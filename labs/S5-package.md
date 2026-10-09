@@ -106,6 +106,9 @@ copilot
 
 설치한 플러그인을 지우려면 `copilot plugin uninstall teamfeed-harness`를 실행합니다.
 
+> [!NOTE]
+> 로컬 경로 직접 설치는 실습용으로 가장 빠르지만 CLI가 `deprecated` 경고를 출력합니다. 앞으로는 `plugin@marketplace` 방식만 지원될 예정이므로, 팀 배포는 아래 marketplace 방식을 기준으로 합니다.
+
 ### 사내 marketplace는 어떻게 되나요 (강사 데모)
 
 여러 저장소에 배포하려면 플러그인 목록 파일(`.github/plugin/marketplace.json`)을 저장소에 두고 등록합니다.
@@ -115,7 +118,7 @@ copilot plugin marketplace add OWNER/REPO
 copilot plugin install teamfeed-harness@<marketplace-이름>
 ```
 
-`final` 브랜치의 `.github/plugin/marketplace.json`이 예시입니다. 조직 정책(허용할 marketplace 지정)은 이 실습의 범위 밖입니다.
+`final` 브랜치의 `.github/plugin/marketplace.json`이 예시입니다. `final`에서 `copilot plugin marketplace add .`로 저장소를 로컬 marketplace로 등록한 뒤 `copilot plugin install teamfeed-harness@teamfeed-marketplace`로 설치해 볼 수 있습니다 (사용 후 `copilot plugin marketplace remove teamfeed-marketplace`). 조직 정책(허용할 marketplace 지정)은 이 실습의 범위 밖입니다.
 
 ## 5. 완료 확인 (2분)
 
