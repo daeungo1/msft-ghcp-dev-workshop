@@ -12,6 +12,7 @@ from app.feed.routes import router as feed_router
 from app.follows.routes import router as follows_router
 from app.members.routes import router as members_router
 from app.posts.routes import router as posts_router
+from app.reports.routes import router as reports_router
 
 
 def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
@@ -66,6 +67,7 @@ def create_app(database_url: str | None = None) -> FastAPI:
     app.include_router(posts_router)
     app.include_router(follows_router)
     app.include_router(feed_router)
+    app.include_router(reports_router)
     return app
 
 
