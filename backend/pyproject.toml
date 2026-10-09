@@ -18,3 +18,36 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.importlinter]
+root_package = "app"
+
+[[tool.importlinter.contracts]]
+name = "members reaches other domains only through their api"
+type = "forbidden"
+source_modules = ["app.members"]
+forbidden_modules = [
+    "app.posts.models", "app.posts.repository", "app.posts.service",
+    "app.follows.models", "app.follows.repository", "app.follows.service",
+]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "posts reaches other domains only through their api"
+type = "forbidden"
+source_modules = ["app.posts"]
+forbidden_modules = [
+    "app.members.models", "app.members.repository", "app.members.service",
+    "app.follows.models", "app.follows.repository", "app.follows.service",
+]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "follows reaches other domains only through their api"
+type = "forbidden"
+source_modules = ["app.follows"]
+forbidden_modules = [
+    "app.members.models", "app.members.repository", "app.members.service",
+    "app.posts.models", "app.posts.repository", "app.posts.service",
+]
+allow_indirect_imports = true

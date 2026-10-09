@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - id: detect
+        name: Skip when backend has no app code yet
+        run: |
+          if find app -name '*.py' -size +0 | grep -q .; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.detect.outputs.present == 'true'
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+      - if: steps.detect.outputs.present == 'true'
+        run: uv sync
+      - if: steps.detect.outputs.present == 'true'
+        run: uv run pytest
+      - if: steps.detect.outputs.present == 'true'
+        run: uv run lint-imports
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - id: detect
+        name: Skip when frontend has no package.json
+        run: |
+          if [ -f package.json ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "present=false" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.detect.outputs.present == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - if: steps.detect.outputs.present == 'true'
+        run: npm ci
+      - if: steps.detect.outputs.present == 'true'
+        run: npm test
