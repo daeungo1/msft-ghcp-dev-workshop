@@ -29,3 +29,11 @@ def make_member(client: TestClient, name: str, role: str = "MEMBER") -> dict[str
             session.commit()
         member["role"] = role
     return member
+
+
+@pytest.fixture
+def api_client(client: TestClient) -> TestClient:
+    """기본 요청자가 ADMIN 회원인 클라이언트. 다른 사용자로 요청하려면 헤더를 직접 지정한다."""
+    admin = make_member(client, "default-admin", role="ADMIN")
+    client.headers.update(h(admin["id"]))
+    return client
