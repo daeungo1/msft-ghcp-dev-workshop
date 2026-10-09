@@ -1,11 +1,9 @@
 {
-  "_comment": "TODO(verify): confirm Agent Plugins schema and required fields against GitHub Docs.",
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "teamfeed-harness",
   "version": "0.1.0",
   "description": "TeamFeed team harness: TDD skill, role-separated agents, guardrail hooks, read-only DB MCP",
   "author": { "name": "<your team>" },
-  "skills": "skills/",
-  "agents": "agents/",
-  "hooks": "hooks/guardrails.json",
-  "mcpServers": "mcp.json"
+  "license": "MIT",
+  "keywords": ["harness", "tdd", "guardrails", "mcp"]
 }

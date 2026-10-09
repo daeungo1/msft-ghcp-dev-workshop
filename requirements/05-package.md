@@ -10,7 +10,7 @@ S0~S4에서 만든 하네스는 이 저장소 안에만 있습니다.
 
 ## 기능 요건
 
-1. `plugins/teamfeed-harness/`에 스킬, 커스텀 에이전트, 훅, MCP 설정을 플러그인 구조로 옮깁니다.
+1. `plugins/teamfeed-harness/`에 스킬, 커스텀 에이전트, 훅, MCP 설정을 Agent Plugins 1.0 구조(`plugin.json` + `skills/` + `mcp.json` + `com.github.copilot/`)로 옮깁니다. 구조는 `templates/plugin/README.md`를 따릅니다.
 2. 다른 저장소(`sandbox`)에서 플러그인을 설치해 로드되는지 확인합니다.
 3. `templates/team-rule-template.md`로 내 팀 규칙 1개를 스킬 또는 훅으로 작성해 플러그인에 추가합니다.
 4. 플러그인 버전을 0.2.0으로 올립니다.

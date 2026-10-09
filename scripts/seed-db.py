@@ -3,8 +3,8 @@
 Usage (from repo root): uv run --directory backend python ../scripts/seed-db.py
 DB path: TEAMFEED_DB env var, default backend/teamfeed.db.
 
-TODO(build): align table/column names with the s2-done schema
-(intentionally uncommon names: posts.body, posts.created_ts, follows.follower_member_id).
+Intentionally uncommon column names (posts.body, posts.created_ts, follows.follower_member_id)
+match the app schema so the S3 agent must read the real schema instead of guessing.
 """
 
 import os
@@ -34,6 +34,15 @@ CREATE TABLE IF NOT EXISTS follows (
     followee_member_id INTEGER NOT NULL REFERENCES members(id),
     PRIMARY KEY (follower_member_id, followee_member_id)
 );
+CREATE TABLE IF NOT EXISTS reports (
+    id INTEGER PRIMARY KEY,
+    post_id INTEGER NOT NULL REFERENCES posts(id),
+    reporter_member_id INTEGER NOT NULL REFERENCES members(id),
+    reason TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'OPEN',
+    created_ts TEXT NOT NULL,
+    UNIQUE (post_id, reporter_member_id)
+);
 """
 
 
@@ -42,7 +51,7 @@ def main() -> None:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.executescript(SCHEMA)
-    conn.executescript("DELETE FROM follows; DELETE FROM posts; DELETE FROM members;")
+    conn.executescript("DELETE FROM reports; DELETE FROM follows; DELETE FROM posts; DELETE FROM members;")
 
     members = [(i, f"member{i:02d}", "ADMIN" if i == 1 else "MEMBER") for i in range(1, 21)]
     conn.executemany("INSERT INTO members (id, name, role) VALUES (?, ?, ?)", members)
