@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.members.schemas import MemberOut
 from app.members.service import (
     create_member,
+    get_member,
     get_role,
     list_members,
     list_members_by_ids,
@@ -12,7 +13,8 @@ from app.members.service import (
 __all__ = [
     "MemberOut",
     "create_member",
-   "get_role",
+    "get_member",
+    "get_role",
     "list_members",
     "list_members_by_ids",
     "member_exists",
