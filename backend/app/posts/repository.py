@@ -30,14 +30,10 @@ def list_feed_posts(
     limit: int,
     before: int | None = None,
 ) -> list[Post]:
-    query: Select[tuple[Post]] = (
-        select(Post)
-        .where(Post.author_id.in_(author_ids), Post.is_hidden == 0)
-        .order_by(Post.id.desc())
-        .limit(limit)
-    )
+    query: Select[tuple[Post]] = select(Post).where(Post.author_id.in_(author_ids), Post.is_hidden == 0)
     if before is not None:
         query = query.where(Post.id < before)
+    query = query.order_by(Post.id.desc()).limit(limit)
     return list(session.scalars(query))
 
 
