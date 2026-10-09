@@ -67,7 +67,7 @@ git stash push -u -m "s2-no-harness"
 root_package = "app"
 
 [[tool.importlinter.contracts]]
-name = "follows 는 다른 도메인의 api 로만 접근한다"
+name = "follows reaches other domains only through their api"
 type = "forbidden"
 source_modules = ["app.follows"]
 forbidden_modules = [
