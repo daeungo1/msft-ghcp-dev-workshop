@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "teamfeed-harness",
+  "version": "0.2.0",
+  "description": "TeamFeed team harness: TDD skill, role-separated agents, guardrail hooks, read-only DB MCP",
+  "author": { "name": "TeamFeed Workshop Team" },
+  "license": "MIT",
+  "keywords": ["harness", "tdd", "guardrails", "mcp"]
+}
