@@ -11,6 +11,11 @@ export type Post = {
   created_at: string;
 };
 
+export type FeedPage = {
+  items: Post[];
+  next_before: number | null;
+};
+
 let currentMemberId: number | null = null;
 
 export function setCurrentMemberId(memberId: number | null) {
@@ -47,6 +52,14 @@ export function createMember(name: string) {
 
 export function getPosts() {
   return request<Post[]>("/api/posts");
+}
+
+export function getFeed(before?: number | null) {
+  const search = new URLSearchParams({ limit: "20" });
+  if (before) {
+    search.set("before", String(before));
+  }
+  return request<FeedPage>(`/api/feed?${search.toString()}`);
 }
 
 export function createPost(content: string) {
