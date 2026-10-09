@@ -8,6 +8,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.db import Base, default_database_url, import_models, make_engine
 from app.errors import AppError
+from app.feed.routes import router as feed_router
 from app.follows.routes import router as follows_router
 from app.members.routes import router as members_router
 from app.posts.routes import router as posts_router
@@ -64,6 +65,7 @@ def create_app(database_url: str | None = None) -> FastAPI:
     app.include_router(members_router)
     app.include_router(posts_router)
     app.include_router(follows_router)
+    app.include_router(feed_router)
     return app
 
 
