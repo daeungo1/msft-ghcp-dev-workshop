@@ -1,0 +1,22 @@
+{
+  "servers": {
+    "sqlite-ro": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp",
+        "python",
+        "${workspaceFolder}/templates/mcp/sqlite-ro-server/server.py"
+      ],
+      "env": {
+        "TEAMFEED_DB": "${workspaceFolder}/backend/teamfeed.db"
+      }
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}
