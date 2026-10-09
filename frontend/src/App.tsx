@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { type Member, getMembers, setCurrentMemberId } from "./api";
+import { getFollowing, type Member, getMembers, setCurrentMemberId } from "./api";
 import { MemberSelect } from "./components/MemberSelect";
 import { PostComposer } from "./components/PostComposer";
 import { PostList } from "./components/PostList";
@@ -9,6 +9,7 @@ export default function App() {
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [followingIds, setFollowingIds] = useState<number[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -24,6 +25,13 @@ export default function App() {
 
   useEffect(() => {
     setCurrentMemberId(selectedMemberId);
+    if (selectedMemberId === null) {
+      setFollowingIds([]);
+      return;
+    }
+    void getFollowing(selectedMemberId)
+      .then((items) => setFollowingIds(items.map((member) => member.id)))
+      .catch((reason: Error) => setError(reason.message));
   }, [selectedMemberId]);
 
   const memberNames = useMemo(
@@ -73,6 +81,15 @@ export default function App() {
             <PostList
               key={`${selectedMemberId}-${reloadKey}`}
               authorNames={memberNames}
+              currentMemberId={selectedMemberId}
+              followingIds={followingIds}
+              onFollowChange={(targetId, nextIsFollowing) =>
+                setFollowingIds((current) =>
+                  nextIsFollowing
+                    ? [...new Set([...current, targetId])].sort((a, b) => a - b)
+                    : current.filter((id) => id !== targetId),
+                )
+              }
               onError={setError}
             />
           ) : (

@@ -38,6 +38,10 @@ button:disabled {
   border: 1px solid #bfdbfe;
 }
 
+.small-button {
+  padding: 0.45rem 0.75rem;
+}
+
 .app-shell {
   max-width: 960px;
   margin: 0 auto;
@@ -83,7 +87,8 @@ p {
 .panel-header,
 .composer-footer,
 .feed-meta,
-.inline-form {
+.inline-form,
+.meta-actions {
   display: flex;
   gap: 0.75rem;
   justify-content: space-between;
