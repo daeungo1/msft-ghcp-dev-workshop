@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "bash \"${PLUGIN_ROOT:-.}/com.github.copilot/hooks/pre_tool_guard.sh\" 2>/dev/null || echo '{}'",
+        "cwd": ".",
+        "timeoutSec": 15
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "bash \"${PLUGIN_ROOT:-.}/com.github.copilot/hooks/post_edit_check.sh\" 2>/dev/null || echo '{}'",
+        "cwd": ".",
+        "timeoutSec": 60
+      }
+    ]
+  }
+}

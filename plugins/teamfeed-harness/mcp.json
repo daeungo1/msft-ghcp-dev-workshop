@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "sqlite-ro": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--with", "mcp", "python", "${PLUGIN_ROOT}/mcp/sqlite-ro-server/server.py"],
+      "cwd": "${PLUGIN_ROOT}"
+    }
+  }
+}
