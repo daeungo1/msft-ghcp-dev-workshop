@@ -16,6 +16,15 @@ export type FeedPage = {
   next_before: number | null;
 };
 
+export type Report = {
+  id: number;
+  post_id: number;
+  reporter_id: number;
+  reason: string;
+  status: string;
+  created_at: string;
+};
+
 let currentMemberId: number | null = null;
 
 export function setCurrentMemberId(memberId: number | null) {
@@ -83,5 +92,27 @@ export function followMember(targetId: number) {
 export function unfollowMember(targetId: number) {
   return request<void>(`/api/follows/${targetId}`, {
     method: "DELETE",
+  });
+}
+
+export function createReport(postId: number, reason: string) {
+  return request<Report>(`/api/posts/${postId}/reports`, {
+    method: "POST",
+    body: JSON.stringify({ reason }),
+  });
+}
+
+export function getReports(query = "") {
+  const search = new URLSearchParams({ status: "OPEN" });
+  if (query) {
+    search.set("q", query);
+  }
+  return request<Report[]>(`/api/reports?${search.toString()}`);
+}
+
+export function updateReport(reportId: number, status: "ACCEPTED" | "REJECTED") {
+  return request<Report>(`/api/reports/${reportId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
   });
 }

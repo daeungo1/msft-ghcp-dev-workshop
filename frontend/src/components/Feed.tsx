@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { followMember, type Post, getFeed, unfollowMember } from "../api";
+import { ReportButton } from "./ReportButton";
 
 type FeedProps = {
   authorNames: Record<number, string>;
@@ -71,15 +72,18 @@ export function Feed({
               <strong>{authorNames[post.author_id] ?? `회원 #${post.author_id}`}</strong>
               <div className="meta-actions">
                 {post.author_id !== currentMemberId ? (
-                  <button
-                    className="ghost-button small-button"
-                    type="button"
-                    onClick={() =>
-                      void handleFollow(post.author_id, followingIds.includes(post.author_id))
-                    }
-                  >
-                    {followingIds.includes(post.author_id) ? "언팔로우" : "팔로우"}
-                  </button>
+                  <>
+                    <button
+                      className="ghost-button small-button"
+                      type="button"
+                      onClick={() =>
+                        void handleFollow(post.author_id, followingIds.includes(post.author_id))
+                      }
+                    >
+                      {followingIds.includes(post.author_id) ? "언팔로우" : "팔로우"}
+                    </button>
+                    <ReportButton postId={post.id} onError={onError} />
+                  </>
                 ) : null}
                 <span>{new Date(post.created_at).toLocaleString("ko-KR")}</span>
               </div>
