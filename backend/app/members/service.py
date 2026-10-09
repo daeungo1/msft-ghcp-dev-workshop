@@ -15,6 +15,10 @@ def list_members(session: Session) -> list[MemberOut]:
     return [MemberOut.model_validate(member) for member in repository.list_members(session)]
 
 
+def list_members_by_ids(session: Session, member_ids: list[int]) -> list[MemberOut]:
+    return [MemberOut.model_validate(member) for member in repository.list_members_by_ids(session, member_ids)]
+
+
 def get_member(session: Session, member_id: int) -> MemberOut | None:
     member = repository.get_member(session, member_id)
     return None if member is None else MemberOut.model_validate(member)

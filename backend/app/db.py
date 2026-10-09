@@ -32,6 +32,7 @@ def make_engine(url: str) -> Engine:
 
 
 def import_models() -> None:
+    import app.follows.models  # noqa: F401
     import app.members.models  # noqa: F401
     import app.posts.models  # noqa: F401
 
