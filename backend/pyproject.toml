@@ -30,6 +30,7 @@ forbidden_modules = [
     "app.posts.models", "app.posts.repository", "app.posts.service",
     "app.follows.models", "app.follows.repository", "app.follows.service",
     "app.feed.models", "app.feed.repository", "app.feed.service",
+    "app.reports.models", "app.reports.repository", "app.reports.service",
 ]
 allow_indirect_imports = true
 
@@ -41,6 +42,7 @@ forbidden_modules = [
     "app.members.models", "app.members.repository", "app.members.service",
     "app.follows.models", "app.follows.repository", "app.follows.service",
     "app.feed.models", "app.feed.repository", "app.feed.service",
+    "app.reports.models", "app.reports.repository", "app.reports.service",
 ]
 allow_indirect_imports = true
 
@@ -52,6 +54,7 @@ forbidden_modules = [
     "app.members.models", "app.members.repository", "app.members.service",
     "app.posts.models", "app.posts.repository", "app.posts.service",
     "app.feed.models", "app.feed.repository", "app.feed.service",
+    "app.reports.models", "app.reports.repository", "app.reports.service",
 ]
 allow_indirect_imports = true
 
@@ -63,5 +66,18 @@ forbidden_modules = [
     "app.members.models", "app.members.repository", "app.members.service",
     "app.posts.models", "app.posts.repository", "app.posts.service",
     "app.follows.models", "app.follows.repository", "app.follows.service",
+    "app.reports.models", "app.reports.repository", "app.reports.service",
+]
+allow_indirect_imports = true
+
+[[tool.importlinter.contracts]]
+name = "reports reaches other domains only through their api"
+type = "forbidden"
+source_modules = ["app.reports"]
+forbidden_modules = [
+    "app.members.models", "app.members.repository", "app.members.service",
+    "app.posts.models", "app.posts.repository", "app.posts.service",
+    "app.follows.models", "app.follows.repository", "app.follows.service",
+    "app.feed.models", "app.feed.repository", "app.feed.service",
 ]
 allow_indirect_imports = true
