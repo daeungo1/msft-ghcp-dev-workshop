@@ -48,6 +48,23 @@ button:disabled {
   padding: 2rem 1.5rem 3rem;
 }
 
+.tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.tab-button {
+  background: white;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.tab-button.active {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
 .topbar,
 .content-grid {
   display: grid;
@@ -109,7 +126,8 @@ p {
 
 .field input,
 .field select,
-.field textarea {
+.field textarea,
+.report-inline input {
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #d1d5db;
@@ -142,6 +160,22 @@ p {
 .feed-section {
   display: grid;
   gap: 0.75rem;
+}
+
+.report-inline,
+.report-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.report-inline {
+  min-width: 0;
+}
+
+.report-panel {
+  display: grid;
+  gap: 1rem;
 }
 
 .feed-meta {
