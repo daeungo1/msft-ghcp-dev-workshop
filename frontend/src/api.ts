@@ -30,7 +30,8 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       | null;
     throw new Error(body?.error?.message ?? "요청을 처리하지 못했습니다.");
   }
-  return (await response.json()) as T;
+  const text = await response.text();
+  return (text ? (JSON.parse(text) as T) : undefined) as T;
 }
 
 export function getMembers() {
@@ -52,5 +53,22 @@ export function createPost(content: string) {
   return request<Post>("/api/posts", {
     method: "POST",
     body: JSON.stringify({ content }),
+  });
+}
+
+export function getFollowing(memberId: number) {
+  return request<Member[]>(`/api/members/${memberId}/following`);
+}
+
+export function followMember(targetId: number) {
+  return request<void>(`/api/follows/${targetId}`, {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+}
+
+export function unfollowMember(targetId: number) {
+  return request<void>(`/api/follows/${targetId}`, {
+    method: "DELETE",
   });
 }
