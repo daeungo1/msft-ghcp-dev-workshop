@@ -22,3 +22,10 @@ def get_member_by_name(session: Session, name: str) -> Member | None:
 
 def list_members(session: Session) -> list[Member]:
     return list(session.scalars(select(Member).order_by(Member.id)))
+
+
+def list_members_by_ids(session: Session, member_ids: list[int]) -> list[Member]:
+    if not member_ids:
+        return []
+    query = select(Member).where(Member.id.in_(member_ids)).order_by(Member.id)
+    return list(session.scalars(query))
