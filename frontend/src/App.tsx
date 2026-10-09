@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { getFollowing, type Member, getMembers, setCurrentMemberId } from "./api";
+import { Feed } from "./components/Feed";
 import { MemberSelect } from "./components/MemberSelect";
 import { PostComposer } from "./components/PostComposer";
-import { PostList } from "./components/PostList";
 
 export default function App() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -71,14 +71,14 @@ export default function App() {
         </section>
         <section className="panel">
           <div className="panel-header">
-            <h2>전체 글</h2>
+            <h2>피드</h2>
             <button className="ghost-button" type="button" onClick={() => setReloadKey((value) => value + 1)}>
               새로고침
             </button>
           </div>
           {error ? <p className="error-text">{error}</p> : null}
           {selectedMemberId ? (
-            <PostList
+              <Feed
               key={`${selectedMemberId}-${reloadKey}`}
               authorNames={memberNames}
               currentMemberId={selectedMemberId}
