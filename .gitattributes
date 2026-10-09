@@ -7,3 +7,4 @@
 *.py text eol=lf
 *.ts text eol=lf
 *.tsx text eol=lf
+*.toml text eol=lf
