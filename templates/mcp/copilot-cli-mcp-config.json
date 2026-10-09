@@ -1,0 +1,14 @@
+{
+  "_comment": "TODO(verify): Copilot CLI MCP config location and schema. Replace <repo> with the absolute path of this repository.",
+  "mcpServers": {
+    "sqlite-ro": {
+      "type": "local",
+      "command": "uv",
+      "args": ["run", "--with", "mcp", "python", "<repo>/templates/mcp/sqlite-ro-server/server.py"],
+      "env": {
+        "TEAMFEED_DB": "<repo>/backend/teamfeed.db"
+      },
+      "tools": ["*"]
+    }
+  }
+}
