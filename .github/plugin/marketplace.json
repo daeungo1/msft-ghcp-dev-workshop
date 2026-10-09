@@ -1,0 +1,15 @@
+{
+  "name": "teamfeed-marketplace",
+  "owner": { "name": "daeungo1" },
+  "metadata": {
+    "description": "TeamFeed 워크샵에서 만든 팀 하네스 플러그인 목록"
+  },
+  "plugins": [
+    {
+      "name": "teamfeed-harness",
+      "description": "TDD 스킬, 역할 분리 에이전트, 가드레일 훅, 읽기 전용 DB MCP, 팀 규칙",
+      "version": "1.0.0",
+      "source": "./plugins/teamfeed-harness"
+    }
+  ]
+}
