@@ -72,13 +72,14 @@ specify init --here --force --integration copilot
 | 3 | `/speckit-plan` | `specs/<번호>-<이름>/plan.md` |
 | 4 | `/speckit-tasks` | `specs/<번호>-<이름>/tasks.md` |
 
-constitution에는 다음 다섯 가지를 반드시 담습니다. 각 원칙에는 "무엇으로 검증하는가"를 한 줄 적습니다.
+constitution에는 다음 여섯 가지를 반드시 담습니다. 각 원칙에는 "무엇으로 검증하는가"를 한 줄 적습니다.
 
 1. 테스트 우선
 2. 패키지 경계: 도메인 패키지끼리는 `api` 모듈로만 접근
 3. 작은 변경: 요청 범위만 수정
 4. 에러 응답 형식 통일
 5. 보안 기본값: 인가와 입력 검증
+6. DB 접근: 스키마를 추측하지 않고 도구로 확인하며, 쓰기는 repository를 통해서만 한다
 
 plan에는 도메인 패키지 구성을 명시합니다. 이후 단계 검사가 이 구조를 전제로 합니다.
 
@@ -95,14 +96,16 @@ backend/tests/<도메인>/  도메인별 테스트
 두 파일을 직접 만듭니다. 길게 쓰지 말고 지킬 수 있는 규칙 몇 개만 적습니다.
 
 * `.github/copilot-instructions.md`: 저장소 전체에 자동 적용되는 규칙. 스타일, 에러 형식, 테스트 규칙
-* `AGENTS.md`: 에이전트용 README. 개발 명령(`cd backend && uv run pytest`, `cd frontend && npm test`)과 작업 원칙(가정은 먼저 말하기, 요청 범위만 수정)
+* `AGENTS.md`: 에이전트용 README. 개발 명령(`cd backend && uv run pytest`, `cd frontend && npm test`)과 작업 원칙(가정은 먼저 말하기, 가장 단순한 해법, 요청 범위만 수정, 검증 기준 먼저)
 
 예시는 아래와 같습니다. 그대로 쓰지 말고 우리 팀 방식으로 바꾸세요.
 
 ```markdown
 ## 작업 원칙
 * 요구에 모호함이 있으면 가정을 먼저 한 문장으로 말하고 진행한다.
+* 가장 단순한 해법을 택한다. 요청하지 않은 추상화와 기능을 넣지 않는다.
 * 요청 범위의 파일만 수정한다.
+* 검증 기준(테스트나 명령)을 먼저 정하고 시작한다.
 * 완료 보고에는 실행한 테스트 명령과 결과를 포함한다.
 
 ## 개발 명령
@@ -137,7 +140,7 @@ scripts/verify-step.sh S0
 |---|---|
 | constitution 존재 | `/speckit-constitution` 실행 |
 | spec, plan, tasks 존재 | 3-1 표의 2~4번 실행 |
-| constitution 원칙 5개 이상 | 원칙마다 `##` 또는 `###` 제목을 사용 |
+| constitution 원칙 6개 이상 | 원칙마다 `##` 또는 `###` 제목을 사용 |
 | copilot-instructions.md, AGENTS.md 존재, AGENTS.md에 `pytest` 포함 | 3-2 참고 |
 
 ## 정리

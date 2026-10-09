@@ -55,6 +55,7 @@ git stash push -u -m "s1-no-harness"
 |---|---|---|
 | `tdd` 스킬 | `.github/skills/tdd/SKILL.md` | 수용 기준을 테스트로 옮기고, 실패를 확인하고, 최소 구현을 하는 절차. 테스트를 약하게 만들어 통과시키는 것을 금지 |
 | `test-writer` 에이전트 | `.github/agents/test-writer.agent.md` | 요건의 수용 기준을 `backend/tests/<패키지>/`의 실패하는 테스트로 옮김. 구현 코드는 쓰지 않음 |
+| `python-tests` 인스트럭션 | `.github/instructions/python-tests.instructions.md` | `applyTo: backend/tests/**`. 테스트 파일을 다룰 때만 붙는 규칙(픽스처 사용, 테스트 이름, 헤더 `X-Member-Id`). 직접 5줄 이내로 작성 |
 | `implementer` 에이전트 | `.github/agents/implementer.agent.md` | 이미 커밋된 실패 테스트를 통과시키는 최소 구현. 테스트 파일은 수정하지 않음 |
 
 ```bash

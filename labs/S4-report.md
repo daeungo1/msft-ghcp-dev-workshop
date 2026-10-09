@@ -72,6 +72,8 @@ cp templates/starter/s4/security-reviewer.agent.starter.md .github/agents/securi
 * 심각도 기준에 "권한 없는 사용자가 관리자 기능을 쓸 수 있음 = Critical"을 명시합니다.
 * 보고 형식은 파일과 줄, 심각도, 재현 방법, 수정 제안입니다.
 
+인가 규칙은 경로별 인스트럭션으로도 남깁니다. `.github/instructions/security.instructions.md`를 만들고 `applyTo: backend/app/**`를 지정한 뒤, 상태를 바꾸는 라우트는 인가 검사와 403 테스트가 필요하다는 규칙, 원시 SQL 금지, 내부 오류 메시지 노출 금지를 적습니다.
+
 ### 3-2. CodeQL 워크플로 (2분)
 
 ```bash

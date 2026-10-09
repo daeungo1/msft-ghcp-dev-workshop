@@ -75,8 +75,8 @@ check_s0() {
   check "constitution exists" "/speckit-constitution 을 실행하세요" exists .specify/memory/constitution.md
   check "spec/plan/tasks exist" "/speckit-specify, /speckit-plan, /speckit-tasks 를 실행하세요" \
     bash -c 'ls specs/*/spec.md specs/*/plan.md specs/*/tasks.md'
-  check "constitution has >= 5 principles" "원칙을 5개 이상 적으세요 (## 또는 ### 제목 기준)" \
-    count_ge "$(grep -cE '^###? ' .specify/memory/constitution.md 2>/dev/null || echo 0)" 5
+  check "constitution has enough principles (>= 6 headings)" "원칙을 6개 적으세요 (## 또는 ### 제목 기준)" \
+    count_ge "$(grep -cE '^###? ' .specify/memory/constitution.md 2>/dev/null || echo 0)" 6
   check ".github/copilot-instructions.md exists" "커스텀 인스트럭션을 작성하세요" exists .github/copilot-instructions.md
   check "AGENTS.md includes test command" "AGENTS.md 에 'uv run pytest' 를 적으세요" contains AGENTS.md 'pytest'
 }
