@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="700" viewBox="0 0 1120 700" role="img" aria-labelledby="title desc">
+  <title id="title">TeamFeed 실습과 Spec Kit 워크플로우</title>
+  <desc id="desc">S0 명세, S1 회원과 글, S2 팔로우, S3 피드, S4 신고, S5 패키징 순으로 진행합니다. S0에서 constitution, spec, plan, tasks를 만들고 이후 테스트, 구현, 검증을 반복합니다. 학습 180분과 휴식 15분을 합쳐 195분입니다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#475569"/></marker>
+    <style>
+      text { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; fill: #172554; }
+      .heading { font-size: 26px; font-weight: 700; }
+      .label { font-size: 20px; font-weight: 700; }
+      .body { font-size: 17px; }
+      .small { font-size: 15px; fill: #475569; }
+      .line { fill: none; stroke: #475569; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1120" height="700" rx="16" fill="#f8fafc"/>
+  <text x="36" y="48" class="heading">명세로 시작하고, 기능마다 하네스를 쌓습니다</text>
+  <text x="36" y="79" class="body">S0~S5 165분 + 회고 15분 = 학습 180분 / 휴식 포함 195분</text>
+  <rect x="36" y="105" width="1048" height="92" rx="12" fill="#172554"/>
+  <text x="58" y="137" style="fill:#ffffff;font-size:18px;font-weight:700">S0 · Spec Kit으로 개발의 기준 만들기</text>
+  <text x="58" y="172" style="fill:#ffffff;font-size:18px">constitution  →  spec  →  plan  →  tasks</text>
+  <text x="636" y="172" style="fill:#dbeafe;font-size:16px">원칙 → 요구·수용 기준 → 설계 → 작업 순서</text>
+  <rect x="36" y="232" width="320" height="134" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="56" y="266" class="label">S0 · 원칙과 명세 / 25분</text>
+  <text x="56" y="300" class="body">앱의 범위와 검증 기준</text>
+  <text x="56" y="334" class="small">instructions + AGENTS.md</text>
+  <rect x="400" y="232" width="320" height="134" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="420" y="266" class="label">S1 · 회원·글 / 30분</text>
+  <text x="420" y="300" class="body">실패 테스트 → 커밋 → 구현</text>
+  <text x="420" y="334" class="small">TDD + test-writer / implementer</text>
+  <rect x="764" y="232" width="320" height="134" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="784" y="266" class="label">S2 · 팔로우 / 30분</text>
+  <text x="784" y="300" class="body">다른 도메인의 내부 접근 검사</text>
+  <text x="784" y="334" class="small">import-linter + hooks + CI</text>
+  <path d="M356 298H391" class="line"/>
+  <path d="M720 298H755" class="line"/>
+  <path d="M924 366V412H196V439" class="line"/>
+  <rect x="763" y="384" width="215" height="28" rx="7" fill="#ffedd5"/>
+  <text x="788" y="404" class="small">S2 뒤 휴식 · 15분</text>
+  <rect x="36" y="447" width="320" height="134" rx="12" fill="#dcfce7" stroke="#86efac"/>
+  <text x="56" y="481" class="label">S3 · 피드 / 15분</text>
+  <text x="56" y="515" class="body">스키마 확인 → 쿼리 구현</text>
+  <text x="56" y="549" class="small">SQLite 읽기 전용 MCP + GitHub MCP</text>
+  <rect x="400" y="447" width="320" height="134" rx="12" fill="#dcfce7" stroke="#86efac"/>
+  <text x="420" y="481" class="label">S4 · 신고 / 35분</text>
+  <text x="420" y="515" class="body">독립 리뷰 → 인가 테스트 → 수정</text>
+  <text x="420" y="549" class="small">reviewer + rubber duck + CodeQL</text>
+  <rect x="764" y="447" width="320" height="134" rx="12" fill="#dcfce7" stroke="#86efac"/>
+  <text x="784" y="481" class="label">S5 · 패키징 / 30분</text>
+  <text x="784" y="515" class="body">내 팀 규칙 1개 + 플러그인 0.2.0</text>
+  <text x="784" y="549" class="small">다른 저장소에 설치해 확인</text>
+  <path d="M356 513H391" class="line"/>
+  <path d="M720 513H755" class="line"/>
+  <rect x="36" y="615" width="1048" height="57" rx="12" fill="#e2e8f0"/>
+  <text x="56" y="650" class="body">단계마다: 요건 읽기 → 시도·관찰 → 하네스 추가 → 재실행·검증</text>
+  <text x="850" y="650" class="body">마지막 회고 · 15분</text>
+</svg>
