@@ -9,14 +9,33 @@
 # 그래서 스크립트 오류는 allow로 처리하고 사유를 stderr에 남깁니다.
 set -uo pipefail
 
+# Python 실행체 자동 감지 (실제 동작 여부 검증)
+PYTHON_BIN=""
+if command -v python3 >/dev/null 2>&1 && python3 -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="python3"
+elif command -v python >/dev/null 2>&1 && python -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="python"
+elif command -v py >/dev/null 2>&1 && py -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="py"
+else
+  echo '{"permissionDecision": "deny", "permissionDecisionReason": "Python 인터프리터를 찾을 수 없습니다."}'
+  exit 1
+fi
+
 HOOK_INPUT="$(cat)"
 export HOOK_INPUT
 
-python3 - <<'PY'
+"$PYTHON_BIN" - <<'PY'
 import json
 import os
 import re
 import sys
+
+# Windows 콘솔 인코딩(CP949 등) 호환성 보장
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
 
 
 def emit(decision, reason=None):
@@ -93,7 +112,12 @@ try:
     main()
 except SystemExit:
     raise
-except Exception as exc:  # 훅 자체 오류로 전체 작업이 멈추지 않게 합니다
-    print(f"pre_tool_guard: ignored internal error: {exc}", file=sys.stderr)
-    emit("allow")
+except Exception as exc:
+    # 훅 내부 오류 발생 시 안전하게 차단(fail-closed)하여 보안 우회를 방지합니다.
+    print(f"pre_tool_guard: internal error: {exc}", file=sys.stderr)
+    fail_closed = os.environ.get("GUARD_FAIL_CLOSED", "1") == "1"
+    if fail_closed:
+        emit("deny", f"보안 가드레일 내부 검사 오류로 차단되었습니다: {exc}")
+    else:
+        emit("allow")
 PY

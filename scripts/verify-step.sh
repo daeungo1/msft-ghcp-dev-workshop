@@ -7,7 +7,28 @@ set -uo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
-UVR="${VERIFY_UV_RUN-uv run}"
+# Python 실행체 자동 감지 (실제 동작 여부 검증)
+PYTHON_BIN=""
+if command -v python3 >/dev/null 2>&1 && python3 -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="python3"
+elif command -v python >/dev/null 2>&1 && python -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="python"
+elif command -v py >/dev/null 2>&1 && py -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="py"
+else
+  echo "Error: Python 인터프리터를 찾을 수 없습니다." >&2
+  exit 1
+fi
+
+# uv 실행체 자동 감지 (uv 또는 uv.exe)
+UV_BIN="uv"
+if ! command -v "$UV_BIN" >/dev/null 2>&1; then
+  if command -v uv.exe >/dev/null 2>&1; then
+    UV_BIN="uv.exe"
+  fi
+fi
+
+UVR="${VERIFY_UV_RUN-$UV_BIN run --no-sync}"
 PASS=0
 FAIL=0
 
@@ -26,15 +47,15 @@ check() {
 exists() { [ -e "$1" ]; }
 absent() { [ ! -e "$1" ]; }
 contains() { grep -Eq "$2" "$1"; }
-json_valid() { python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$1"; }
-json_has() { python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if eval(sys.argv[2]) else 1)" "$1" "$2"; }
+json_valid() { "$PYTHON_BIN" -c "import json,sys; json.load(open(sys.argv[1], encoding='utf-8'))" "$1"; }
+json_has() { "$PYTHON_BIN" -c "import json,sys; d=json.load(open(sys.argv[1], encoding='utf-8')); sys.exit(0 if eval(sys.argv[2]) else 1)" "$1" "$2"; }
 count_ge() { [ "$1" -ge "$2" ]; }
 
 backend_tests() { (cd backend && $UVR pytest -q "$@"); }
 frontend_tests() { (cd frontend && npm test --silent); }
 import_contracts() { (cd backend && $UVR lint-imports); }
 mcp_server_tests() {
-  if [ -n "$UVR" ]; then uv run --with pytest pytest -q templates/mcp/sqlite-ro-server; else pytest -q templates/mcp/sqlite-ro-server; fi
+  if [ -n "$UVR" ]; then $UV_BIN run --no-sync --with pytest pytest -q templates/mcp/sqlite-ro-server; else pytest -q templates/mcp/sqlite-ro-server; fi
 }
 
 # S1: posts 테스트 커밋이 posts 구현 커밋보다 먼저(또는 같은 시각)여야 합니다.
@@ -47,9 +68,13 @@ tests_before_impl() {
 
 # 훅 스크립트에 fixture를 넣어 결정(permissionDecision)을 확인합니다.
 hook_decision() {
-  scripts/hooks/pre_tool_guard.sh < "$1" 2>/dev/null | python3 -c "
+  scripts/hooks/pre_tool_guard.sh < "$1" 2>/dev/null | "$PYTHON_BIN" -c "
 import json, sys
-print(json.load(sys.stdin).get('permissionDecision', 'allow'))"
+try:
+    print(json.load(sys.stdin).get('permissionDecision', 'allow'))
+except Exception:
+    print('error')
+"
 }
 pre_hook_denies_forbidden() { [ "$(hook_decision scripts/hooks/fixtures/forbidden-edit.json)" = "deny" ]; }
 pre_hook_allows_normal() { [ "$(hook_decision scripts/hooks/fixtures/allowed-edit.json)" = "allow" ]; }

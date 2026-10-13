@@ -7,10 +7,23 @@
 # 오프라인 환경에서는 HOOK_UV_RUN="" 로 실행하면 uv 없이 현재 PATH의 도구를 씁니다.
 set -uo pipefail
 
+# Python 실행체 자동 감지 (실제 동작 여부 검증)
+PYTHON_BIN=""
+if command -v python3 >/dev/null 2>&1 && python3 -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="python3"
+elif command -v python >/dev/null 2>&1 && python -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="python"
+elif command -v py >/dev/null 2>&1 && py -c "import sys" >/dev/null 2>&1; then
+  PYTHON_BIN="py"
+else
+  echo "{}"
+  exit 0
+fi
+
 HOOK_INPUT="$(cat)"
 export HOOK_INPUT
 
-python3 - <<'PY'
+"$PYTHON_BIN" - <<'PY'
 import json
 import os
 import re
@@ -18,11 +31,17 @@ import shlex
 import subprocess
 import sys
 
+# Windows 콘솔 인코딩(CP949 등) 호환성 보장
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 EDIT_TOOLS = {
     "edit", "create", "write", "write_file", "edit_file", "str_replace",
     "str_replace_editor", "multi_edit", "replace_in_file", "apply_patch",
 }
-UV_RUN = shlex.split(os.environ.get("HOOK_UV_RUN", "uv run"))
+UV_RUN = shlex.split(os.environ.get("HOOK_UV_RUN", "uv run --no-sync"))
 TIMEOUT = 40
 
 
