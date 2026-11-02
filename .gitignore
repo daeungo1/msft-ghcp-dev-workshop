@@ -10,6 +10,10 @@ node_modules/
 dist/
 coverage/
 
+# Machine-local Spec Kit state
+.specify/extensions/.cache/
+.specify/.workflow-install.lock
+
 # Local data and secrets
 *.db
 *.sqlite
