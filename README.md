@@ -1,183 +1,227 @@
 ---
-title: GitHub Copilot 개발자 워크샵 Hands-on Lab
-description: 빈 저장소에서 TeamFeed를 만들며 우리 팀 BP를 GitHub Copilot 하네스로 한 겹씩 쌓는 180분 핸즈온 실습 저장소
+title: GitHub Copilot and Spec Kit Multi-Harness Workshop
+description: TeamFeed를 구현하며 Spec Kit 1.2.5, 멀티 에이전트, 다층 하네스, 수렴 검증을 익히는 개발자 워크숍
+ms.date: 2026-11-02
+ms.topic: tutorial
 ---
 
-AI-DLC 개발자 워크샵 세션 3 「트렌드 Harness 워크샵 (GHCP 기반)」의 실습 저장소입니다.
-혼자 읽고 따라 해도 끝까지 진행할 수 있도록, 각 단계의 요건, 프롬프트, 관찰 포인트, 완료 확인, 정답 위치를 모두 담았습니다.
+## TeamFeed Multi-Harness Workshop
 
-## 이 워크샵을 한 문장으로
+TeamFeed는 GitHub Copilot과 Spec Kit으로 사내 미니 SNS를 구현하며,
+재현 가능한 에이전트 개발 하네스를 설계하는 워크숍입니다.
 
-사내 미니 SNS **TeamFeed**를 GitHub Copilot으로 직접 만들면서, 기능을 하나 추가할 때마다 그 기능에서 실제로 터지는 문제를 막는 **하네스**를 한 겹씩 붙입니다.
+v0.2는 Spec Kit 1.2.5의 공식 Copilot integration을 사용합니다. 명세에서
+구현으로 끝내지 않고 extension, workflow, bundle, human gate,
+`speckit-converge`까지 연결합니다.
 
-하네스는 에이전트가 우리 팀의 방식대로 일하도록 감싸는 맥락(Context), 도구(Tools), 흐름 제어(Control Flow), 피드백(Feedback) 장치의 묶음입니다.
-인스트럭션과 스킬은 확률적 안내이고, 훅, 테스트, CI, 리뷰 게이트는 결정적 강제입니다. 이 차이를 직접 눈으로 확인하는 것이 핵심입니다.
+> [!IMPORTANT]
+> `main-v0.1`은 기존 완성 워크숍의 보존 브랜치입니다. 기존 `s0-done`부터
+> `s5-done`, `final` 브랜치도 변경하지 않습니다. 새 `main`은 v0.2 기준선이며,
+> 새 체크포인트 브랜치는 전체 경로 검증 후 배포합니다.
 
-개념이 낯설다면 먼저 [docs/concepts.md](docs/concepts.md)(10분)를 읽으세요.
-이 브랜치(`final`)는 완성본입니다. 하네스 구조, 단계별 자산, 막은 함정 요약, 마켓플레이스 설치, 자가진단 카드 예시는 [docs/final-tour.md](docs/final-tour.md)에 있습니다.
+## 수료 목표
 
-## 워크샵이 끝나면 남는 것
+워크숍을 마치면 다음을 수행할 수 있습니다.
 
-| 결과물 | 위치 | 내용 |
-|---|---|---|
-| 동작하는 앱 | `backend/`, `frontend/` | FastAPI 백엔드와 React 피드 화면 (회원, 게시글, 팔로우, 피드, 신고) |
-| 팀 하네스 자산 | `.github/`, `.specify/`, `specs/`, `AGENTS.md` | constitution, 커스텀 인스트럭션, 스킬, 커스텀 에이전트, 훅, MCP 설정, CI |
-| 팀 플러그인 | `plugins/teamfeed-harness/` | 내 팀 규칙 1개를 더한 BP 패키지. 다음 프로젝트에서 한 줄로 설치 |
+* constitution, spec, plan, tasks로 구현 의도와 검증 기준 연결
+* 조사, 계획, 테스트, 구현, 리뷰 역할을 독립 에이전트로 분리
+* instructions, skills, agents, hooks, MCP, CI의 책임 구분
+* 모델 이름이 아니라 역할 역량과 검증 계약으로 모델 선택
+* Spec Kit extension과 workflow를 bundle로 패키징
+* 테스트와 `speckit-converge`로 코드와 명세의 차이 확인
 
-## 학습 여정
+## 전체 흐름
 
 ```text
-S0 Spec ──▶ S1 회원·게시글 ──▶ S2 팔로우 ──▶ (휴식) ──▶ S3 피드 ──▶ S4 신고 ──▶ S5 패키징 ──▶ 회고
- 맥락        역할 분리           결정적 강제              도구 범위       독립 리뷰      배포·재사용      자가진단
+요청
+  |
+  v
+constitution -> specify -> clarify -> plan -> tasks
+  |
+  v
+researcher -> test-writer -> implementer -> independent reviewers
+  |
+  v
+instructions -> skills -> agents -> hooks -> MCP -> CI
+  |
+  v
+tests -> package boundaries -> security -> converge
+  |
+  v
+extension + workflow + bundle
 ```
-
-| 단계 | 시간 | 추가 요건 | 붙이는 하네스 | 막는 함정 | 통제 방식 |
-|---|---|---|---|---|---|
-| [S0 Spec](labs/S0-spec.md) | 25분 | 앱 비전, MVP | constitution, copilot-instructions.md, AGENTS.md, spec/plan/tasks | 프롬프트마다 구조와 스타일이 달라짐 | 안내 |
-| [S1 회원·게시글](labs/S1-member-post.md) | 30분 | 가입, 글 작성·목록, 피드 화면 뼈대 | `tdd` 스킬, `test-writer`·`implementer` 에이전트 | 테스트 없이 완료 보고 | 안내 + 역할 분리 |
-| [S2 팔로우](labs/S2-follow.md) | 30분 | 팔로우, 언팔로우 | import-linter, pre·postToolUse 훅, PR CI | 저장소 코드 직접 import | 강제 |
-| 휴식 | 15분 | | | | |
-| [S3 피드](labs/S3-feed.md) | 15분 | 팔로우한 사람 글 모아 보기 | 읽기 전용 SQLite MCP, GitHub MCP | 스키마를 추측한 쿼리 | 도구 범위 제한 |
-| [S4 신고](labs/S4-report.md) | 35분 | 신고, 관리자 처리 화면 | `security-reviewer` 에이전트, rubber duck, CodeQL, Copilot code review | 관리자 인가 누락 | 독립 리뷰 |
-| [S5 패키징](labs/S5-package.md) | 30분 | 다음 프로젝트에서 재사용 | 팀 플러그인 + 내 팀 규칙 1개 | 하네스가 저장소에 갇힘 | 배포·재사용 |
-| [회고·자가진단](labs/99-retro.md) | 15분 | | 함정 6개 회고표, 자가진단 카드 | | |
-
-각 단계는 같은 6단계 루프로 진행합니다.
-
-1. [requirements/](requirements/)에서 기능 요건과 Given/When/Then 수용 기준을 읽습니다.
-2. 하네스 없이 Copilot에게 그대로 구현을 요청합니다.
-3. 요건 속 함정이 실제로 재현되는지 관찰합니다.
-4. 공식 기능으로 우리 BP 하네스를 추가합니다.
-5. 같은 프롬프트로 다시 구현을 요청합니다.
-6. `scripts/verify-step.sh S<n>`으로 완료를 확인합니다.
-
-> [!TIP]
-> 관찰 포인트는 "인스트럭션은 가끔 지켜지고, 훅과 리뷰어는 반드시 막는다"는 차이입니다 (S2, S4).
-> 함정이 재현되지 않아도 괜찮습니다. 재현되지 않았다는 사실도 모델과 프롬프트에 따라 결과가 달라진다는 증거입니다.
-
-## 하네스 네 계층과 단계의 대응
-
-| 계층 | 하는 일 | 이 워크샵에서 만드는 자산 | 단계 |
-|---|---|---|---|
-| Context | 에이전트가 읽는 규칙과 명세 | constitution, copilot-instructions.md, AGENTS.md, spec/plan/tasks, 스킬 | S0, S1 |
-| Tools | 에이전트가 쓸 수 있는 도구와 그 범위 | 커스텀 에이전트(tools 제한), 읽기 전용 SQLite MCP, GitHub MCP | S1, S3, S4 |
-| Control Flow | 작업 순서와 경계를 강제 | 역할 분리(테스트 먼저), 훅, import-linter | S1, S2 |
-| Feedback | 결과를 검증하고 되돌려 줌 | pytest, postToolUse 훅, CI, CodeQL, 리뷰어 에이전트 | S2, S4 |
-
-여기에 S5에서 이 모두를 플러그인으로 묶어 저장소 밖으로 꺼냅니다.
 
 ## 시작하기
 
-1. 이 저장소 상단의 **Use this template**을 눌러 내 계정에 저장소를 만듭니다. **Include all branches**를 반드시 체크합니다.
-   템플릿을 쓸 수 없다면 `git clone` 후 `scripts/checkpoint.sh`가 정답 브랜치를 알아서 가져옵니다.
-2. 내 저장소에서 **Code > Codespaces > Create codespace on main**으로 개발 환경을 엽니다. 첫 빌드는 약 10분입니다.
-3. 터미널에서 사전 점검 명령을 실행합니다.
+### 권장 환경
 
-   ```bash
-   copilot --version
-   uv --version
-   node -v
-   specify --help
-   ```
+* GitHub Codespaces 또는 VS Code Dev Containers
+* Python 3.12
+* Node.js 22
+* uv
+* GitHub Copilot CLI 또는 VS Code Copilot Chat
+* Spec Kit 1.2.5
 
-4. Copilot CLI에 로그인합니다. `copilot`을 실행하고 안내에 따라 `/login`을 진행합니다.
-5. [labs/S0-spec.md](labs/S0-spec.md)부터 순서대로 진행합니다.
+Windows PowerShell 단독 환경보다 제공된 개발 컨테이너를 권장합니다. Bash
+hooks, Node.js, Python 도구 버전이 워크숍 검증 환경과 일치합니다.
 
-> [!IMPORTANT]
-> `main` 브랜치에는 하네스 파일(`.github/copilot-instructions.md`, `AGENTS.md`, `.github/agents`, `.github/skills`, `.github/hooks`, `.mcp.json`)이 의도적으로 없습니다.
-> "하네스 없이 시도"에서 함정을 재현하기 위해서입니다. 직접 만들기 전에 `final` 브랜치를 열어 보지 않는 편이 학습에 좋습니다.
-
-## 막혔거나 늦었을 때
-
-단계마다 정답 상태가 `s0-done` … `s5-done` 브랜치에 있습니다.
-단계 시간의 70%가 지났다면 직전 단계 정답으로 이동해 다음 단계에 합류합니다.
+### 설치
 
 ```bash
-scripts/checkpoint.sh S2          # s2-done 상태로 work/s2 브랜치 생성 (로컬 변경은 자동 stash)
-git diff main..s2-done --stat     # 정답이 main과 어떻게 다른지 파일 단위로 보기
-git show s2-done:.github/hooks/guardrails.json   # 정답 파일 하나만 읽기
+git clone https://github.com/daeungo1/msft-ghcp-dev-workshop.git
+cd msft-ghcp-dev-workshop
+git switch main
+
+uv tool install specify-cli --force \
+  --from git+https://github.com/github/spec-kit.git@v1.2.5
+uv sync --directory backend
+npm --prefix frontend install
 ```
 
-| 브랜치 | 내용 |
-|---|---|
-| `main` | 참가자 진입점. 앱 골격, 요건, 가이드, 템플릿만 포함 |
-| `s0-done` … `s5-done` | 해당 단계를 마친 시점의 정답 앱과 누적 하네스 |
-| `final` | 모든 단계가 끝난 최종 완성본. 회고표 예시, 팀 규칙 3개, marketplace 등록까지 끝난 플러그인 `v1.0.0` 포함. 태그 `v1.0` |
-| `authoring` | 저장소 구축 계획(Plan.md). 참가자는 볼 필요 없음 |
+설치 상태를 확인합니다.
 
-각 `sN-done` 브랜치는 `scripts/verify-step.sh S<N>`을 통과하는 상태입니다.
+```bash
+specify --version
+specify integration status --json
+python scripts/validate-harness.py
+```
+
+## Spec Kit 기본 흐름
+
+Copilot 세션에서 다음 skills를 순서대로 실행합니다.
+
+```text
+/speckit-constitution
+/speckit-specify
+/speckit-clarify
+/speckit-plan
+/speckit-tasks
+/speckit-implement
+/speckit-converge
+```
+
+`speckit-converge`가 남은 작업을 찾으면 `tasks.md`에 추가된 작업을 구현하고
+다시 수렴 검사를 실행합니다.
+
+## 실습 지도
+
+| 단계 | 앱 기능 | 하네스 목표 | 핵심 자산 |
+|---|---|---|---|
+| S0 | 범위 정의 | Spec Kit 1.2.5 SDD 기준선 | constitution, spec, plan, tasks |
+| S1 | 회원과 게시글 | 조사, 테스트, 구현 역할 분리 | skills, custom agents |
+| S2 | 팔로우 | 결정적 경계와 위험 명령 차단 | import-linter, hooks, CI |
+| S3 | 피드 | 최소 권한 컨텍스트 접근 | read-only SQLite MCP |
+| S4 | 신고와 관리자 처리 | 독립 보안 리뷰와 모델 교차 검증 | reviewer agents, CodeQL |
+| S5 | 팀 배포 | extension, workflow, bundle 패키징 | `spec-kit/` component sources |
+| S6 | 완성도 확인 | 명세와 구현 수렴 | verification, converge, human gate |
+
+상세 가이드는 [`labs/`](labs)에서 확인합니다.
+
+## 하네스 계층
+
+| 계층 | 책임 | 실패할 때의 방어선 |
+|---|---|---|
+| Constitution과 specs | 의도, 범위, 수용 기준 | clarify, analyze |
+| Instructions | 저장소와 경로별 지속 규칙 | 리뷰 |
+| Skills | 반복 가능한 작업 절차 | 역할 에이전트 |
+| Agents | 조사, 계획, 테스트, 구현, 리뷰 경계 | 읽기/쓰기 도구 제한 |
+| Hooks | 도구 실행 전후의 빠른 차단 | fixture tests |
+| MCP | 외부 시스템과 실제 데이터 컨텍스트 | 최소 권한, read-only |
+| CI | 모든 기여자에게 동일한 공유 게이트 | PR 차단 |
+| Convergence | 명세와 현재 코드의 차이 | 후속 tasks |
+
+구체적인 관계는
+[`docs/multi-harness-architecture.md`](docs/multi-harness-architecture.md)를
+참고하세요.
+
+## 멀티 모델 원칙
+
+저장소는 특정 모델을 필수로 지정하지 않습니다. 조사에는 긴 컨텍스트와
+출처 추적, 계획에는 제약 통합, 구현에는 코드 정확성, 리뷰에는 독립적
+추론을 우선합니다.
+
+HydraFusion은 현재 공식 GitHub Copilot 제품 또는 공개 저장소 계약으로
+확인되지 않았습니다. 클라이언트에서 제공되면 계획과 리뷰의 선택형 실험
+모델로 사용할 수 있지만 agent frontmatter, workflow, CI에는 고정하지
+않습니다.
+
+자세한 기준은 [`docs/model-routing.md`](docs/model-routing.md)를 참고하세요.
 
 ## 저장소 구조
 
 ```text
-msft-ghcp-dev-workshop/
-├── .devcontainer/      # Python 3.12, uv, Node 22, GitHub CLI, Copilot CLI, spec-kit
-├── backend/            # FastAPI 골격 (의존성과 테스트 설정만)
-├── frontend/           # React + Vite 골격 (의존성만)
-├── requirements/       # 단계별 요건과 수용 기준 (00 비전 ~ 05 패키징)
-├── labs/               # 단계 가이드 S0~S5, 회고
-├── docs/               # concepts.md 개념 정리, after-workshop.md 워크샵 이후
-├── bp-catalog/         # 업계 공통 패턴, 우리 BP, GHCP 기능 매핑
-├── templates/          # 사전 제공 자산 (워크플로, MCP, 플러그인 골격, 스타터, 팀 규칙, 자가진단 카드)
-├── scripts/            # verify-step.sh, checkpoint.sh, seed-db.py, dev.sh
-└── facilitator/        # 강사용 진행표, 사전 준비, 트러블슈팅, 함정 재현 기록
+backend/                    FastAPI, SQLAlchemy, SQLite
+frontend/                   React, TypeScript, Vite
+requirements/               단계별 수용 기준
+specs/001-teamfeed-mvp/     TeamFeed 기능 명세, 계획, 작업
+.specify/                   Spec Kit 1.2.5 관리 파일과 설치 상태
+.github/agents/             역할별 custom agents
+.github/skills/             Spec Kit과 TeamFeed skills
+.github/instructions/       경로별 규칙
+.github/hooks/              Copilot hook 설정
+spec-kit/extensions/        TeamFeed 품질 extension source
+spec-kit/workflows/         사람 승인을 포함한 delivery workflow source
+spec-kit/bundles/           팀 배포 bundle source
+labs/                       S0-S6 실습
+scripts/                    개발, hook, 구조 검증
 ```
 
-## 발표 자료와의 대응
+## 실행과 검증
 
-발표 자료 「Github Copilot 개발자 워크샵」의 3번 Agenda(슬라이드 15~25)와 이 저장소의 대응입니다.
+```bash
+# 하네스 구조
+python scripts/validate-harness.py
 
-| 슬라이드 | 내용 | 이 저장소에서 |
-|---|---|---|
-| 16 | 공식 자산과 업계 패턴에서 우리 팀 BP로 | [bp-catalog/](bp-catalog/README.md) |
-| 17 | 실습 앱 TeamFeed | [requirements/00-vision.md](requirements/00-vision.md) |
-| 18 | 시도, 관찰, 하네스 추가, 재실행 | 위의 6단계 루프, 각 [labs/](labs/) |
-| 19 | 기능이 늘수록 하네스가 쌓임 | 위의 하네스 네 계층 표 |
-| 20 | S0~S2 문제와 하네스 | [S0](labs/S0-spec.md), [S1](labs/S1-member-post.md), [S2](labs/S2-follow.md) |
-| 21 | S3~S5 문제와 하네스 | [S3](labs/S3-feed.md), [S4](labs/S4-report.md), [S5](labs/S5-package.md) |
-| 22, 23 | 업계 트렌드 하네스와 도입 방법 세 가지 | [bp-catalog/](bp-catalog/README.md), [docs/concepts.md](docs/concepts.md) |
-| 24 | 실습 저장소와 사전 준비 | 이 문서의 "시작하기", [facilitator/prerequisites-checklist.md](facilitator/prerequisites-checklist.md) |
-| 25 | 회고와 자가진단 | [labs/99-retro.md](labs/99-retro.md), [templates/self-check-card.md](templates/self-check-card.md) |
-| 26~29 | 워크샵 이후 | [docs/after-workshop.md](docs/after-workshop.md) |
+# 백엔드
+cd backend
+uv run pytest
+uv run lint-imports
 
-## 자주 묻는 질문
+# 프론트엔드
+cd ../frontend
+npm test
+npm run build
 
-### 테스트가 실패하는데 어디부터 봐야 하나요?
+# hooks
+cd ..
+bash scripts/hooks/test_hooks.sh
 
-`scripts/verify-step.sh S<n>`의 ❌ 줄 뒤 화살표(→)가 힌트입니다. 그래도 막히면 `scripts/checkpoint.sh`로 정답에서 합류합니다.
+# 전체 워크숍
+bash scripts/verify-step.sh ALL
+```
 
-### Copilot이 제 프롬프트와 다른 결과를 내요.
+개발 서버는 `scripts/dev.sh`로 실행합니다.
 
-정상입니다. 같은 프롬프트라도 모델과 시점에 따라 결과가 다릅니다. 이 차이가 안내와 강제의 차이를 보여 주는 재료입니다.
+## 로컬 Spec Kit 구성
 
-### Windows에서도 되나요?
+[`spec-kit/README.md`](spec-kit/README.md)의 순서대로 quality extension과
+delivery workflow를 설치한 뒤 multi-harness bundle을 적용합니다.
 
-Codespaces나 Dev Container(WSL2 포함)를 권장합니다. 훅 스크립트는 bash로 작성되어 있습니다.
+```bash
+specify workflow run ./spec-kit/workflows/teamfeed-delivery \
+  --input spec="Build the next TeamFeed capability"
+```
 
-### Copilot CLI와 VS Code 중 무엇을 쓰나요?
+## 브랜치 정책
 
-둘 다 씁니다. 훅(S2)과 플러그인(S5)은 Copilot CLI에서 확인하고, 나머지는 어느 쪽이든 가능합니다. 각 단계 가이드에 명시되어 있습니다.
+* `main-v0.1`: v0.1 완성 상태 보존
+* `s0-done`부터 `s5-done`: v0.1 단계별 체크포인트 보존
+* `final`: v0.1 완성 브랜치 보존
+* `main`: v0.2 기준선
+* 새 v0.2 체크포인트: S0-S6 전체 검증 후 생성
 
-### 발표 자료에는 `ghcp-harness-workshop`, `start` 브랜치라고 적혀 있는데요.
+원격 기록을 force-push하거나 기존 체크포인트를 재작성하지 않습니다.
 
-실제 저장소 이름은 `msft-ghcp-dev-workshop`이고 시작 브랜치는 `main`입니다.
+## 공식 기준
 
-## 사전 준비
+* [GitHub Spec Kit](https://github.com/github/spec-kit)
+* [Spec Kit v1.2.5](https://github.com/github/spec-kit/releases/tag/v1.2.5)
+* [Spec Kit extensions](https://github.github.io/spec-kit/reference/extensions.html)
+* [Spec Kit workflows](https://github.github.io/spec-kit/reference/workflows.html)
+* [Spec Kit bundles](https://github.github.io/spec-kit/reference/bundles.html)
+* [GitHub Copilot agent skills](https://docs.github.com/en/copilot/concepts/customizations/agent-skills)
+* [GitHub Copilot MCP](https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/extend-copilot-chat-with-mcp)
 
-* GitHub 계정과 Copilot Business 또는 Enterprise 라이선스
-* 조직 정책에서 Copilot CLI, MCP 서버, 프리뷰 기능 사용 허용
-* GitHub Codespaces 또는 VS Code + Dev Containers
-* CodeQL 실습은 공개 저장소이거나 GitHub Code Security 라이선스가 필요합니다. 없으면 강사 데모로 대체합니다
+## 라이선스
 
-자세한 내용은 [facilitator/prerequisites-checklist.md](facilitator/prerequisites-checklist.md)를 참고합니다.
-
-## 참고 자료
-
-* [GitHub Docs: Copilot customization cheat sheet](https://docs.github.com/en/copilot/reference/customization-cheat-sheet)
-* [GitHub Docs: Hooks](https://docs.github.com/en/copilot/concepts/agents/hooks)
-* [GitHub Docs: Plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins)
-* [GitHub Docs: Copilot CLI rubber duck](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/rubber-duck)
-* [github/spec-kit](https://github.com/github/spec-kit)
-* [github/awesome-copilot](https://github.com/github/awesome-copilot)
-* [microsoft/hve-core](https://github.com/microsoft/hve-core)
-* [HakjunMIN/ai-native-harness](https://github.com/HakjunMIN/ai-native-harness) (레퍼런스 구현, 워크샵 이후 단계)
+이 저장소는 [MIT License](LICENSE)를 따릅니다.

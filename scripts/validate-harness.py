@@ -46,7 +46,20 @@ COMPONENT_PATHS = tuple(path for path, _, _ in COMPONENT_MANIFESTS) + (
     "spec-kit/README.md",
 )
 
-REQUIRED_PATHS = AGENT_PATHS + COMPONENT_PATHS + (
+LEARNING_PATHS = (
+    "README.md",
+    "docs/multi-harness-architecture.md",
+    "docs/model-routing.md",
+    "labs/S0-spec.md",
+    "labs/S1-member-post.md",
+    "labs/S2-follow.md",
+    "labs/S3-feed.md",
+    "labs/S4-report.md",
+    "labs/S5-package.md",
+    "labs/S6-converge.md",
+)
+
+REQUIRED_PATHS = AGENT_PATHS + COMPONENT_PATHS + LEARNING_PATHS + (
     ".github/copilot-instructions.md",
     ".github/instructions/backend.instructions.md",
     ".github/instructions/frontend.instructions.md",

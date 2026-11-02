@@ -8,10 +8,17 @@
 # 그래서 스크립트 오류는 allow로 처리하고 사유를 stderr에 남깁니다.
 set -uo pipefail
 
+if command -v python >/dev/null 2>&1; then
+  PYTHON_BIN=python
+else
+  PYTHON_BIN=python3
+fi
+export PYTHONUTF8="${PYTHONUTF8:-1}"
+
 HOOK_INPUT="$(cat)"
 export HOOK_INPUT
 
-python3 - <<'PY'
+"${PYTHON_BIN}" - <<'PY'
 import json
 import os
 import re

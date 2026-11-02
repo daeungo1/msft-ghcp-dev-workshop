@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
+# Copyright (c) Microsoft Corporation.
+# SPDX-License-Identifier: MIT
+#
 # Usage: scripts/checkpoint.sh S<n>
-# Moves you to the sN-done answer state on a new branch work/sN, so late participants can join the next step.
+# Moves you to a preserved v0.1 sN-done answer state on a new branch work/sN.
 set -euo pipefail
 
 STEP="${1:-}"

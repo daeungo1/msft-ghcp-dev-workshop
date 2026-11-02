@@ -7,10 +7,17 @@
 # 오프라인 환경에서는 HOOK_UV_RUN="" 로 실행하면 uv 없이 현재 PATH의 도구를 씁니다.
 set -uo pipefail
 
+if command -v python >/dev/null 2>&1; then
+  PYTHON_BIN=python
+else
+  PYTHON_BIN=python3
+fi
+export PYTHONUTF8="${PYTHONUTF8:-1}"
+
 HOOK_INPUT="$(cat)"
 export HOOK_INPUT
 
-python3 - <<'PY'
+"${PYTHON_BIN}" - <<'PY'
 import json
 import os
 import re

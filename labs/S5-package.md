@@ -1,12 +1,12 @@
 ---
-title: S5 패키징 (30분)
-description: 저장소에 쌓은 하네스를 팀 플러그인으로 묶어 다른 저장소에서 한 줄로 설치하고, 내 팀 규칙 1개를 더합니다
+title: S5 멀티 하네스 패키징 (35분)
+description: 하네스를 Spec Kit extension, workflow, bundle과 Copilot plugin으로 패키징합니다
 ---
 
 | 항목 | 내용 |
 |---|---|
-| 시간 | 30분 (패키징 10, 팀 규칙 10, 설치와 확인 8, 확인 2) |
-| 도구 | Copilot CLI (`copilot plugin`) |
+| 시간 | 35분 (Spec Kit 구성 10, 플러그인 10, 팀 규칙 7, 설치와 확인 6, 확인 2) |
+| 도구 | Specify CLI, Copilot CLI (`copilot plugin`) |
 | 시작 상태 | S4 완료 (`s4-done`) |
 | 완료 상태 | `s5-done` 브랜치와 같은 수준 |
 | 통제 방식 | 배포와 재사용 |
@@ -17,6 +17,32 @@ description: 저장소에 쌓은 하네스를 팀 플러그인으로 묶어 다�
 * 하네스를 저장소 밖으로 꺼내면 팀의 BP가 됩니다. 플러그인이 그 배포 단위입니다.
 * 플러그인은 스킬, 커스텀 에이전트, 훅, MCP 설정을 한 번에 설치합니다.
 * 우리 팀만의 규칙 하나를 더하는 일이 "BP를 내 것으로 만드는" 마지막 단계입니다.
+
+## v0.2 연결
+
+v0.2는 두 배포 단위를 구분합니다.
+
+* Spec Kit extension은 명령과 품질 게이트를 제공
+* Spec Kit workflow는 명령과 human gate를 순서화
+* Spec Kit bundle은 승인된 component 버전을 팀 구성으로 고정
+* Copilot plugin은 agents, skills, hooks, MCP를 Copilot CLI에 배포
+
+먼저 저장소에 포함된 로컬 구성 요소를 설치합니다.
+
+```bash
+specify extension add ./spec-kit/extensions/teamfeed-quality --dev
+specify workflow add ./spec-kit/workflows/teamfeed-delivery --dev
+specify bundle install ./spec-kit/bundles/teamfeed-multi-harness --offline
+```
+
+설치 결과를 확인합니다.
+
+```bash
+specify extension list --json
+specify workflow list
+specify bundle list
+python scripts/validate-harness.py
+```
 
 ## 시작 전 확인
 
@@ -38,7 +64,7 @@ mkdir -p ../sandbox && cd ../sandbox && git init -q
 copilot            # 세션에서 /skills list 와 /agent 를 실행해 tdd 스킬과 test-writer 에이전트가 없는지 확인
 ```
 
-## 2. 플러그인 구조 만들기 (10분)
+## 2. Copilot 플러그인 구조 만들기 (10분)
 
 골격과 배치 규칙은 [templates/plugin/README.md](../templates/plugin/README.md)에 있습니다. 이 형식은 `plugin.json`에 `$schema`를 선언하는 **Agent Plugins 1.0**입니다.
 
@@ -139,7 +165,9 @@ scripts/verify-step.sh S5
 ## 정리
 
 * 하네스를 재사용 가능한 자산으로 만드는 것이 팀 BP의 시작입니다.
-* 플러그인 버전은 팀 BP의 버전입니다. 규칙을 더하면 올립니다.
+* Spec Kit bundle은 프로세스 구성을, Copilot plugin은 런타임 사용자화를
+  배포합니다.
+* 두 패키지의 버전은 독립적으로 올리고 변경 근거를 기록합니다.
 
 ## 막히면
 

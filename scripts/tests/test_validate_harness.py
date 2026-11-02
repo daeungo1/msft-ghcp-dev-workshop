@@ -37,6 +37,18 @@ COMPONENT_PATHS = (
     "spec-kit/bundles/teamfeed-multi-harness/bundle.yml",
     "spec-kit/README.md",
 )
+LEARNING_PATHS = (
+    "README.md",
+    "docs/multi-harness-architecture.md",
+    "docs/model-routing.md",
+    "labs/S0-spec.md",
+    "labs/S1-member-post.md",
+    "labs/S2-follow.md",
+    "labs/S3-feed.md",
+    "labs/S4-report.md",
+    "labs/S5-package.md",
+    "labs/S6-converge.md",
+)
 
 
 def write_file(root: Path, relative_path: str, content: str) -> None:
@@ -80,6 +92,8 @@ def write_complete_harness(root: Path) -> None:
         '    - id: "teamfeed-delivery"\n',
     )
     write_file(root, COMPONENT_PATHS[4], "component source guide\n")
+    for path in LEARNING_PATHS:
+        write_file(root, path, "learning path\n")
 
 
 def run_validator(root: Path) -> subprocess.CompletedProcess[str]:
@@ -187,6 +201,17 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("requires.tools must be a list of strings", result.stderr)
+
+    def test_missing_learning_path_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            (root / "labs" / "S6-converge.md").unlink()
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("labs/S6-converge.md", result.stderr)
 
 
 if __name__ == "__main__":

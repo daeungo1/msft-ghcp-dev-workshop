@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
-# Usage: scripts/verify-step.sh S0|S1|S2|S3|S4|S5|ALL|--check-main
+# Copyright (c) Microsoft Corporation.
+# SPDX-License-Identifier: MIT
+#
+# Usage: scripts/verify-step.sh S0|S1|S2|S3|S4|S5|S6|ALL|--check-main
 # 단계 완료 여부를 자동으로 확인합니다. 항목마다 ✅/❌ 와 힌트를 출력하고, 하나라도 실패하면 종료 코드 1을 반환합니다.
-# ALL은 S0~S5 검사를 누적 실행합니다 (final 브랜치, 태그 v1.0 기준).
+# ALL은 S0~S6 검사를 누적 실행합니다 (main v0.2 기준).
 # 오프라인 환경에서는 VERIFY_UV_RUN="" 로 실행하면 `uv run` 없이 현재 PATH의 python 도구를 사용합니다.
-set -uo pipefail
+set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
 UVR="${VERIFY_UV_RUN-uv run}"
+if command -v python >/dev/null 2>&1; then
+  PYTHON_BIN=python
+else
+  PYTHON_BIN=python3
+fi
+export PYTHONUTF8="${PYTHONUTF8:-1}"
 PASS=0
 FAIL=0
 
@@ -26,8 +35,8 @@ check() {
 exists() { [ -e "$1" ]; }
 absent() { [ ! -e "$1" ]; }
 contains() { grep -Eq "$2" "$1"; }
-json_valid() { python3 -c "import json,sys; json.load(open(sys.argv[1]))" "$1"; }
-json_has() { python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if eval(sys.argv[2]) else 1)" "$1" "$2"; }
+json_valid() { "${PYTHON_BIN}" -c "import json,sys; json.load(open(sys.argv[1]))" "$1"; }
+json_has() { "${PYTHON_BIN}" -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if eval(sys.argv[2]) else 1)" "$1" "$2"; }
 count_ge() { [ "$1" -ge "$2" ]; }
 
 backend_tests() { (cd backend && $UVR pytest -q "$@"); }
@@ -36,6 +45,7 @@ import_contracts() { (cd backend && $UVR lint-imports); }
 mcp_server_tests() {
   if [ -n "$UVR" ]; then uv run --with pytest pytest -q templates/mcp/sqlite-ro-server; else pytest -q templates/mcp/sqlite-ro-server; fi
 }
+harness_validation() { "${PYTHON_BIN}" scripts/validate-harness.py; }
 
 # S1: posts 테스트 커밋이 posts 구현 커밋보다 먼저(또는 같은 시각)여야 합니다.
 tests_before_impl() {
@@ -47,7 +57,7 @@ tests_before_impl() {
 
 # 훅 스크립트에 fixture를 넣어 결정(permissionDecision)을 확인합니다.
 hook_decision() {
-  scripts/hooks/pre_tool_guard.sh < "$1" 2>/dev/null | python3 -c "
+  scripts/hooks/pre_tool_guard.sh < "$1" 2>/dev/null | "${PYTHON_BIN}" -c "
 import json, sys
 print(json.load(sys.stdin).get('permissionDecision', 'allow'))"
 }
@@ -64,11 +74,14 @@ no_string_built_sql() {
 }
 
 plugin_count() { find "$1" -name "$2" 2>/dev/null | wc -l; }
+archive_branch_exists() { git show-ref --verify --quiet refs/heads/main-v0.1; }
+agents_are_model_neutral() { ! grep -RqsE '^model:' .github/agents; }
 
 check_main() {
-  for f in .github/copilot-instructions.md AGENTS.md .github/agents .github/skills .github/hooks .github/instructions .github/workflows .mcp.json .vscode/mcp.json Plan.md; do
-    check "main has no ${f}" "하네스 파일은 sN-done 브랜치에만 있어야 합니다" absent "$f"
-  done
+  check "v0.1 archive branch exists" "git branch main-v0.1 final" archive_branch_exists
+  check "v0.2 harness validates" "python scripts/validate-harness.py" harness_validation
+  check "Spec Kit version is pinned to 1.2.5" ".specify/init-options.json 을 확인하세요" \
+    json_has .specify/init-options.json 'd.get("speckit_version") == "1.2.5"'
 }
 
 check_s0() {
@@ -79,6 +92,10 @@ check_s0() {
     count_ge "$(grep -cE '^###? ' .specify/memory/constitution.md 2>/dev/null || echo 0)" 6
   check ".github/copilot-instructions.md exists" "커스텀 인스트럭션을 작성하세요" exists .github/copilot-instructions.md
   check "AGENTS.md includes test command" "AGENTS.md 에 'uv run pytest' 를 적으세요" contains AGENTS.md 'pytest'
+  check "Spec Kit Copilot manifest exists" "Spec Kit 1.2.5 Copilot integration을 설치하세요" \
+    exists .specify/integrations/copilot.manifest.json
+  check "speckit-converge skill exists" "Spec Kit 1.2.5 integration을 갱신하세요" \
+    exists .github/skills/speckit-converge/SKILL.md
 }
 
 check_s1() {
@@ -87,6 +104,8 @@ check_s1() {
   check "tdd skill exists" ".github/skills/tdd/SKILL.md 를 만드세요" exists .github/skills/tdd/SKILL.md
   check "test-writer agent exists" ".github/agents/test-writer.agent.md 를 만드세요" exists .github/agents/test-writer.agent.md
   check "implementer agent exists" ".github/agents/implementer.agent.md 를 만드세요" exists .github/agents/implementer.agent.md
+  check "researcher agent exists" ".github/agents/researcher.agent.md 를 만드세요" exists .github/agents/researcher.agent.md
+  check "planner agent exists" ".github/agents/planner.agent.md 를 만드세요" exists .github/agents/planner.agent.md
   check "posts tests committed before implementation" "테스트를 먼저 커밋하세요 (test-writer → implementer)" tests_before_impl
 }
 
@@ -129,6 +148,25 @@ check_s5() {
   check "plugin has hooks.json (version 1)" "com.github.copilot/hooks/hooks.json 을 만드세요" \
     json_has "${P}/com.github.copilot/hooks/hooks.json" 'd.get("version") == 1 and "preToolUse" in d.get("hooks",{})'
   check "plugin has mcp.json" "${P}/mcp.json 을 만드세요" json_valid "${P}/mcp.json"
+  check "TeamFeed quality extension source exists" "spec-kit/extensions/teamfeed-quality 를 만드세요" \
+    exists spec-kit/extensions/teamfeed-quality/extension.yml
+  check "TeamFeed delivery workflow source exists" "spec-kit/workflows/teamfeed-delivery 를 만드세요" \
+    exists spec-kit/workflows/teamfeed-delivery/workflow.yml
+  check "TeamFeed multi-harness bundle source exists" "spec-kit/bundles/teamfeed-multi-harness 를 만드세요" \
+    exists spec-kit/bundles/teamfeed-multi-harness/bundle.yml
+  check "quality verification skill is installed" "teamfeed-quality extension을 --dev로 설치하세요" \
+    exists .github/skills/speckit-teamfeed-quality-verify/SKILL.md
+}
+
+check_s6() {
+  check "multi-harness structure passes" "python scripts/validate-harness.py" harness_validation
+  check "convergence reviewer exists" ".github/agents/convergence-reviewer.agent.md 를 만드세요" \
+    exists .github/agents/convergence-reviewer.agent.md
+  check "agents do not require a model" ".agent.md 의 model 고정을 제거하세요" agents_are_model_neutral
+  check "S6 convergence lab exists" "labs/S6-converge.md 를 추가하세요" exists labs/S6-converge.md
+  check "model routing guide exists" "docs/model-routing.md 를 추가하세요" exists docs/model-routing.md
+  check "installed delivery workflow exists" "teamfeed-delivery workflow를 --dev로 설치하세요" \
+    exists .specify/workflows/teamfeed-delivery/workflow.yml
 }
 
 case "${1:-}" in
@@ -139,6 +177,7 @@ case "${1:-}" in
   S3) check_s3 ;;
   S4) check_s4 ;;
   S5) check_s5 ;;
+  S6) check_s6 ;;
   ALL)
     check_s0
     check_s1
@@ -146,9 +185,10 @@ case "${1:-}" in
     check_s3
     check_s4
     check_s5
+    check_s6
     ;;
   *)
-    echo "Usage: $0 S0|S1|S2|S3|S4|S5|ALL|--check-main"
+    echo "Usage: $0 S0|S1|S2|S3|S4|S5|S6|ALL|--check-main"
     exit 2
     ;;
 esac

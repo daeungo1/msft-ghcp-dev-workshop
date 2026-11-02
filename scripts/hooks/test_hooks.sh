@@ -4,12 +4,19 @@
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
+if command -v python >/dev/null 2>&1; then
+  PYTHON_BIN=python
+else
+  PYTHON_BIN=python3
+fi
+export PYTHONUTF8="${PYTHONUTF8:-1}"
+
 PASS=0
 FAIL=0
 
 expect() {
   local fixture="$1" want="$2" got
-  got=$(scripts/hooks/pre_tool_guard.sh < "scripts/hooks/fixtures/${fixture}" | python3 -c "
+  got=$(scripts/hooks/pre_tool_guard.sh < "scripts/hooks/fixtures/${fixture}" | "${PYTHON_BIN}" -c "
 import json, sys
 print(json.load(sys.stdin).get('permissionDecision', 'allow'))")
   if [ "$got" = "$want" ]; then

@@ -18,6 +18,19 @@ description: 안내만으로는 새는 패키지 경계를 import-linter와 훅,
 * 훅은 에이전트가 도구를 실행하기 직전과 직후에 끼어들어 규칙 위반을 거부하거나 피드백합니다. 에이전트가 우회할 수 없는 위치입니다.
 * 같은 규칙을 세 겹으로 겹칩니다: 실행 전 차단(preToolUse), 편집 직후 검사(postToolUse), PR 게이트(CI).
 
+## v0.2 연결
+
+규칙을 여러 파일에 복사하지 않고 책임에 따라 배치합니다.
+
+* Instructions는 지속 정책
+* Skills는 반복 절차
+* Agents는 역할과 도구 경계
+* Hooks는 빠른 로컬 차단
+* CI는 공유 저장소의 최종 결정적 게이트
+
+[`docs/multi-harness-architecture.md`](../docs/multi-harness-architecture.md)의
+경계를 기준으로 새 규칙의 위치를 결정합니다.
+
 ## 시작 전 확인
 
 ```bash

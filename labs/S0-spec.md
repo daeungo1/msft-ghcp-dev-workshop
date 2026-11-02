@@ -17,6 +17,18 @@ description: 앱의 원칙과 범위를 먼저 정해 이후 모든 요청의 �
 * 코드를 쓰기 전에 원칙(constitution)과 명세(spec, plan, tasks)를 먼저 두면 이후 모든 요청이 같은 틀에서 시작합니다.
 * 인스트럭션과 AGENTS.md는 모든 요청에 자동으로 붙는 맥락입니다. 다만 안내일 뿐이라는 점을 S2에서 확인합니다.
 
+## v0.2 연결
+
+v0.2는 Spec Kit 1.2.5를 고정하고 Copilot skills layout을 사용합니다.
+초기화 후 `.github/skills/speckit-*`와 `.specify/integrations/`가 생성됐는지
+확인합니다. `speckit-converge`는 마지막 S6에서 사용하므로 S0부터 설치
+상태에 포함되어야 합니다.
+
+```bash
+specify --version
+specify integration status --json
+```
+
 ## 시작 전 확인
 
 * Codespaces 또는 Dev Container가 열려 있고 사전 점검 명령이 통과합니다 ([README](../README.md#시작하기)).
@@ -71,6 +83,7 @@ specify init --here --force --integration copilot
 | 2 | `/speckit-specify` + [00-vision.md](../requirements/00-vision.md) 내용 | `specs/<번호>-<이름>/spec.md` |
 | 3 | `/speckit-plan` | `specs/<번호>-<이름>/plan.md` |
 | 4 | `/speckit-tasks` | `specs/<번호>-<이름>/tasks.md` |
+| 5 | `/speckit-converge` | 구현 후 남은 작업을 `tasks.md`에 append |
 
 constitution에는 다음 여섯 가지를 반드시 담습니다. 각 원칙에는 "무엇으로 검증하는가"를 한 줄 적습니다.
 

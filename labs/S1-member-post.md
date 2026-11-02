@@ -17,6 +17,16 @@ description: 테스트 없이 완료를 보고하는 에이전트에게 테스�
 * 같은 모델이라도 "테스트를 쓰는 역할"과 "구현하는 역할"을 나누면, 테스트를 구현에 맞춰 고치는 일이 줄어듭니다.
 * 스킬은 필요할 때 불러오는 절차이고, 커스텀 에이전트는 역할과 도구 범위를 가진 전문가입니다.
 
+## v0.2 연결
+
+v0.2는 `researcher`, `planner`, `test-writer`, `implementer`를 분리합니다.
+모델 이름은 agent 파일에 고정하지 않습니다. 역할에 필요한 역량을 기준으로
+런타임에서 모델을 선택하고, 같은 테스트 계약으로 결과를 검증합니다.
+
+```bash
+python scripts/validate-harness.py
+```
+
 ## 시작 전 확인
 
 ```bash
@@ -57,6 +67,8 @@ git stash push -u -m "s1-no-harness"
 | `test-writer` 에이전트 | `.github/agents/test-writer.agent.md` | 요건의 수용 기준을 `backend/tests/<패키지>/`의 실패하는 테스트로 옮김. 구현 코드는 쓰지 않음 |
 | `python-tests` 인스트럭션 | `.github/instructions/python-tests.instructions.md` | `applyTo: backend/tests/**`. 테스트 파일을 다룰 때만 붙는 규칙(픽스처 사용, 테스트 이름, 헤더 `X-Member-Id`). 직접 5줄 이내로 작성 |
 | `implementer` 에이전트 | `.github/agents/implementer.agent.md` | 이미 커밋된 실패 테스트를 통과시키는 최소 구현. 테스트 파일은 수정하지 않음 |
+| `researcher` 에이전트 | `.github/agents/researcher.agent.md` | 저장소와 공식 자료에서 근거를 수집하고 가정을 분리 |
+| `planner` 에이전트 | `.github/agents/planner.agent.md` | 명세와 근거를 테스트 가능한 작업으로 분해 |
 
 ```bash
 mkdir -p .github/skills/tdd .github/agents
