@@ -22,7 +22,7 @@ Review every manifest and shell instruction before installation. From the
 repository root, install the payloads first:
 
 ```bash
-specify extension add ./spec-kit/extensions/teamfeed-quality --dev
+specify extension add ./spec-kit/extensions/teamfeed-quality --dev --force
 specify workflow add ./spec-kit/workflows/teamfeed-delivery --dev
 ```
 
@@ -37,7 +37,7 @@ specify bundle install ./spec-kit/bundles/teamfeed-multi-harness --offline
 Run the workflow with:
 
 ```bash
-specify workflow run ./spec-kit/workflows/teamfeed-delivery \
+specify workflow run teamfeed-delivery \
   --input spec="Describe the TeamFeed capability"
 ```
 

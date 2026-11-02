@@ -91,7 +91,16 @@ def write_complete_harness(root: Path) -> None:
         '    - id: "teamfeed-quality"\n  workflows:\n'
         '    - id: "teamfeed-delivery"\n',
     )
-    write_file(root, COMPONENT_PATHS[4], "component source guide\n")
+    write_file(
+        root,
+        COMPONENT_PATHS[4],
+        "specify extension add ./spec-kit/extensions/teamfeed-quality "
+        "--dev --force\n"
+        "specify workflow add ./spec-kit/workflows/teamfeed-delivery --dev\n"
+        "specify bundle install "
+        "./spec-kit/bundles/teamfeed-multi-harness --offline\n"
+        "specify workflow run teamfeed-delivery\n",
+    )
     for path in LEARNING_PATHS:
         write_file(root, path, "learning path\n")
 
@@ -212,6 +221,38 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("labs/S6-converge.md", result.stderr)
+
+    def test_non_idempotent_extension_install_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                COMPONENT_PATHS[4],
+                "specify extension add "
+                "./spec-kit/extensions/teamfeed-quality --dev\n"
+                "specify workflow run teamfeed-delivery\n",
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("extension install must be idempotent", result.stderr)
+
+    def test_workflow_directory_run_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                "README.md",
+                "specify workflow run ./spec-kit/workflows/teamfeed-delivery\n",
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("workflow run must use an installed ID", result.stderr)
 
 
 if __name__ == "__main__":

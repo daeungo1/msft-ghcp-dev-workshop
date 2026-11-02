@@ -198,7 +198,7 @@ bash scripts/verify-step.sh ALL
 delivery workflow를 설치한 뒤 multi-harness bundle을 적용합니다.
 
 ```bash
-specify workflow run ./spec-kit/workflows/teamfeed-delivery \
+specify workflow run teamfeed-delivery \
   --input spec="Build the next TeamFeed capability"
 ```
 

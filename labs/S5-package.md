@@ -30,7 +30,7 @@ v0.2는 두 배포 단위를 구분합니다.
 먼저 저장소에 포함된 로컬 구성 요소를 설치합니다.
 
 ```bash
-specify extension add ./spec-kit/extensions/teamfeed-quality --dev
+specify extension add ./spec-kit/extensions/teamfeed-quality --dev --force
 specify workflow add ./spec-kit/workflows/teamfeed-delivery --dev
 specify bundle install ./spec-kit/bundles/teamfeed-multi-harness --offline
 ```

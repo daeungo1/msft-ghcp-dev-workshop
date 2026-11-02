@@ -28,12 +28,30 @@ print(json.load(sys.stdin).get('permissionDecision', 'allow'))")
   fi
 }
 
+expect_post_error_visible() {
+  local got
+  got=$(HOOK_UV_RUN=definitely-missing-hook-runner \
+    scripts/hooks/post_edit_check.sh \
+    < "scripts/hooks/fixtures/allowed-edit.json" \
+    | "${PYTHON_BIN}" -c "
+import json, sys
+print(json.load(sys.stdin).get('additionalContext', ''))")
+  if [[ "${got}" == *"definitely-missing-hook-runner"* ]]; then
+    echo "✅ post-edit missing runner → visible failure"
+    PASS=$((PASS + 1))
+  else
+    echo "❌ post-edit missing runner: expected visible failure, got ${got:-<no output>}"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
 expect forbidden-edit.json deny
 expect allowed-edit.json allow
 expect dangerous-bash.json deny
 expect force-push.json deny
 expect safe-bash.json allow
 expect outside-repo-edit.json deny
+expect_post_error_visible
 
 echo "----"
 echo "passed: ${PASS}, failed: ${FAIL}"

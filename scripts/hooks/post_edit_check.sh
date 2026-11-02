@@ -50,8 +50,10 @@ def as_dict(value):
 def run(cmd, cwd):
     try:
         done = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=TIMEOUT)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return 0, f"(skipped: {exc})"
+    except subprocess.TimeoutExpired as exc:
+        return 124, f"gate timed out after {exc.timeout} seconds: {' '.join(cmd)}"
+    except OSError as exc:
+        return 127, f"gate command unavailable: {' '.join(cmd)}: {exc}"
     return done.returncode, (done.stdout + done.stderr).strip()
 
 

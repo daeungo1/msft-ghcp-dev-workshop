@@ -66,7 +66,7 @@ Copilot 세션에서 실행합니다.
 전체 과정을 새 기능에 반복할 때는 로컬 workflow를 사용합니다.
 
 ```bash
-specify workflow run ./spec-kit/workflows/teamfeed-delivery \
+specify workflow run teamfeed-delivery \
   --input spec="Add the next TeamFeed capability"
 ```
 
@@ -92,4 +92,3 @@ bash scripts/verify-step.sh S6
 * 모델을 바꿔도 spec, tests, boundaries, convergence 계약은 유지됩니다.
 * extension, workflow, bundle은 팀의 검증 방법을 다른 저장소에 재사용하게
   합니다.
-

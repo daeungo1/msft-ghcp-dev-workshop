@@ -209,6 +209,40 @@ def validate_components(root: Path) -> list[str]:
     return errors
 
 
+def validate_documented_commands(root: Path) -> list[str]:
+    """Validate that copyable Spec Kit commands are repeatable and executable."""
+    errors: list[str] = []
+    component_guide = root / "spec-kit" / "README.md"
+    if component_guide.is_file():
+        for line in component_guide.read_text(encoding="utf-8").splitlines():
+            if (
+                "specify extension add "
+                "./spec-kit/extensions/teamfeed-quality" in line
+                and "--force" not in line
+            ):
+                errors.append(
+                    "spec-kit/README.md: extension install must be idempotent "
+                    "with --force",
+                )
+
+    invalid_run = re.compile(
+        r"specify workflow run "
+        r"\./spec-kit/workflows/teamfeed-delivery(?:\s|\\|$)",
+    )
+    for relative_path in (
+        "README.md",
+        "spec-kit/README.md",
+        "labs/S6-converge.md",
+    ):
+        path = root / relative_path
+        if path.is_file() and invalid_run.search(path.read_text(encoding="utf-8")):
+            errors.append(
+                f"{relative_path}: workflow run must use an installed ID "
+                "or workflow.yml path",
+            )
+    return errors
+
+
 def run(root: Path) -> int:
     """Validate required harness files and report actionable failures."""
     missing_paths = find_missing_paths(root)
@@ -218,6 +252,7 @@ def run(root: Path) -> int:
     ]
     errors.extend(validate_agents(root))
     errors.extend(validate_components(root))
+    errors.extend(validate_documented_commands(root))
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
