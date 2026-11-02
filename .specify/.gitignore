@@ -12,3 +12,7 @@ extensions/*/local-config.yml
 # Execution consent is stored separately in the user's local trust registry.
 integrations/packages/
 integrations/packages.json
+
+# Downloaded catalog data and workflow installation mutexes are machine-local.
+extensions/.cache/
+.workflow-install.lock
