@@ -9,6 +9,7 @@ __pycache__/
 node_modules/
 dist/
 coverage/
+*.tsbuildinfo
 
 # Machine-local Spec Kit state
 .specify/extensions/.cache/
