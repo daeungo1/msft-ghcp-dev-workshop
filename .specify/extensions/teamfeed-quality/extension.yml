@@ -1,0 +1,24 @@
+schema_version: "1.0"
+
+extension:
+  id: "teamfeed-quality"
+  name: "TeamFeed Quality Gates"
+  version: "1.0.0"
+  description: "Runs TeamFeed harness, application, boundary, and hook verification."
+  author: "TeamFeed Workshop"
+  repository: "https://github.com/daeungo1/msft-ghcp-dev-workshop"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=1.2.5"
+
+provides:
+  commands:
+    - name: "speckit.teamfeed-quality.verify"
+      file: "commands/teamfeed.verify.md"
+      description: "Run every TeamFeed v0.2 quality gate and report exact failures."
+
+tags:
+  - "quality"
+  - "testing"
+  - "workshop"

@@ -8,6 +8,14 @@
       "source": "bundled",
       "installed_at": "2026-11-02T06:57:46.583863+00:00",
       "updated_at": "2026-11-02T06:57:46.583883+00:00"
+    },
+    "teamfeed-delivery": {
+      "name": "TeamFeed Evidence-Driven Delivery",
+      "version": "1.0.0",
+      "description": "Runs specification, planning, implementation, verification, and convergence behind human gates.",
+      "source": "spec-kit\\workflows\\teamfeed-delivery",
+      "installed_at": "2026-11-02T07:31:41.444284+00:00",
+      "updated_at": "2026-11-02T07:31:41.444323+00:00"
     }
   }
 }

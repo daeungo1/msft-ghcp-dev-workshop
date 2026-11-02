@@ -30,6 +30,13 @@ OTHER_REQUIRED_PATHS = (
     ".github/skills/evidence-research/SKILL.md",
     ".github/skills/convergence-check/SKILL.md",
 )
+COMPONENT_PATHS = (
+    "spec-kit/workflows/teamfeed-delivery/workflow.yml",
+    "spec-kit/extensions/teamfeed-quality/extension.yml",
+    "spec-kit/extensions/teamfeed-quality/commands/teamfeed.verify.md",
+    "spec-kit/bundles/teamfeed-multi-harness/bundle.yml",
+    "spec-kit/README.md",
+)
 
 
 def write_file(root: Path, relative_path: str, content: str) -> None:
@@ -47,6 +54,32 @@ def write_complete_harness(root: Path) -> None:
         )
     for path in OTHER_REQUIRED_PATHS:
         write_file(root, path, "required content\n")
+    write_file(
+        root,
+        COMPONENT_PATHS[0],
+        'schema_version: "1.0"\nworkflow:\n  id: "teamfeed-delivery"\n'
+        '  version: "1.0.0"\nsteps:\n  - command: speckit.specify\n'
+        "  - command: speckit.plan\n  - command: speckit.tasks\n"
+        "  - command: speckit.implement\n"
+        "  - command: speckit.teamfeed-quality.verify\n"
+        "  - command: speckit.converge\n",
+    )
+    write_file(
+        root,
+        COMPONENT_PATHS[1],
+        'schema_version: "1.0"\nextension:\n  id: "teamfeed-quality"\n'
+        '  version: "1.0.0"\n',
+    )
+    write_file(root, COMPONENT_PATHS[2], "---\ndescription: Verify\n---\n")
+    write_file(
+        root,
+        COMPONENT_PATHS[3],
+        'schema_version: "1.0"\nbundle:\n  id: "teamfeed-multi-harness"\n'
+        '  version: "1.0.0"\nprovides:\n  extensions:\n'
+        '    - id: "teamfeed-quality"\n  workflows:\n'
+        '    - id: "teamfeed-delivery"\n',
+    )
+    write_file(root, COMPONENT_PATHS[4], "component source guide\n")
 
 
 def run_validator(root: Path) -> subprocess.CompletedProcess[str]:
@@ -107,6 +140,53 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0)
         self.assertIn("Harness validation passed", result.stdout)
+
+    def test_missing_component_source_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            (root / COMPONENT_PATHS[0]).unlink()
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(COMPONENT_PATHS[0], result.stderr)
+
+    def test_invalid_component_version_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                COMPONENT_PATHS[1],
+                'schema_version: "1.0"\nextension:\n'
+                '  id: "teamfeed-quality"\n  version: "latest"\n',
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("semantic version", result.stderr)
+
+    def test_bundle_tool_objects_return_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                COMPONENT_PATHS[3],
+                'schema_version: "1.0"\nbundle:\n'
+                '  id: "teamfeed-multi-harness"\n  version: "1.0.0"\n'
+                "requires:\n  tools:\n    - name: git\n      required: true\n"
+                "provides:\n  extensions:\n"
+                '    - id: "teamfeed-quality"\n  workflows:\n'
+                '    - id: "teamfeed-delivery"\n',
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("requires.tools must be a list of strings", result.stderr)
 
 
 if __name__ == "__main__":

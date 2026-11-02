@@ -1,0 +1,31 @@
+schema_version: "1.0"
+
+bundle:
+  id: "teamfeed-multi-harness"
+  name: "TeamFeed Multi-Harness"
+  version: "1.0.0"
+  role: "developer"
+  description: "TeamFeed delivery workflow and repository quality gates."
+  author: "TeamFeed Workshop"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=1.2.5"
+  tools:
+    - "git"
+    - "python"
+  mcp: []
+
+provides:
+  extensions:
+    - id: "teamfeed-quality"
+      version: "1.0.0"
+  workflows:
+    - id: "teamfeed-delivery"
+      version: "1.0.0"
+
+tags:
+  - "copilot"
+  - "multi-agent"
+  - "quality"
+  - "workshop"

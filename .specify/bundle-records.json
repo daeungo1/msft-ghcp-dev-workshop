@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-11-02T07:33:07Z",
+  "bundles": [
+    {
+      "bundle_id": "teamfeed-multi-harness",
+      "version": "1.0.0",
+      "installed_at": "2026-11-02T07:33:07Z",
+      "contributed_components": [],
+      "required_components": [
+        {
+          "kind": "extensions",
+          "id": "teamfeed-quality",
+          "version": "1.0.0"
+        },
+        {
+          "kind": "workflows",
+          "id": "teamfeed-delivery",
+          "version": "1.0.0"
+        }
+      ],
+      "installed_versions": {
+        "extensions:teamfeed-quality": "1.0.0",
+        "workflows:teamfeed-delivery": "1.0.0"
+      }
+    }
+  ]
+}
