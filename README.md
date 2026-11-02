@@ -32,6 +32,8 @@ v0.2는 Spec Kit 1.2.5의 공식 Copilot integration을 사용합니다. 명세�
 
 ## 전체 흐름
 
+![S0에서 Spec Kit 기준선을 만들고 S6에서 수렴을 검증하는 워크숍 흐름](docs/images/workshop-workflow.svg)
+
 ```text
 요청
   |
@@ -119,6 +121,8 @@ Copilot 세션에서 다음 skills를 순서대로 실행합니다.
 
 ## 하네스 계층
 
+![TeamFeed 앱과 Spec Kit, Copilot 하네스 계층](docs/images/teamfeed-architecture.svg)
+
 | 계층 | 책임 | 실패할 때의 방어선 |
 |---|---|---|
 | Constitution과 specs | 의도, 범위, 수용 기준 | clarify, analyze |
@@ -203,6 +207,8 @@ specify workflow run teamfeed-delivery \
 ```
 
 ## 브랜치 정책
+
+![v0.1 보존 브랜치와 v0.2 main 관계](docs/images/branch-map.svg)
 
 * `main-v0.1`: v0.1 완성 상태 보존
 * `s0-done`부터 `s5-done`: v0.1 단계별 체크포인트 보존

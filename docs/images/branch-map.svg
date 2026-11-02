@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="750" viewBox="0 0 1120 750" role="img" aria-labelledby="title desc">
+  <title id="title">TeamFeed 실습 브랜치와 체크포인트 지도</title>
+  <desc id="desc">main은 참가자 출발점입니다. s0-done부터 s5-done까지 각 단계의 누적 정답 상태를 제공합니다. 예를 들어 S2가 끝나지 않아 S3에 합류하려면 checkpoint.sh S2로 work/s2를 만듭니다. final은 확장 완성본이고 authoring은 강사용입니다. 화살표는 학습 순서이지 실제 Git 부모 관계가 아닙니다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#475569"/></marker>
+    <style>
+      text { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; fill: #172554; }
+      .heading { font-size: 26px; font-weight: 700; }
+      .label { font-size: 20px; font-weight: 700; }
+      .body { font-size: 17px; }
+      .small { font-size: 15px; fill: #475569; }
+      .line { fill: none; stroke: #475569; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1120" height="750" rx="16" fill="#f8fafc"/>
+  <text x="36" y="48" class="heading">지금 단계의 직전 완료 상태에서 합류하세요</text>
+  <text x="36" y="79" class="body">화살표는 학습 순서입니다. 실제 Git 커밋의 부모 관계를 나타내는 그래프가 아닙니다.</text>
+  <rect x="36" y="110" width="1048" height="76" rx="12" fill="#172554"/>
+  <text x="58" y="142" style="fill:#ffffff;font-size:21px;font-weight:700">main · 처음 시작하는 곳</text>
+  <text x="58" y="169" style="fill:#dbeafe;font-size:17px">앱 골격 + 요건 + 가이드 + 템플릿 / 완성 하네스 없음</text>
+  <path d="M196 186V220" class="line"/>
+  <rect x="36" y="229" width="320" height="100" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="56" y="264" class="label">s0-done</text>
+  <text x="56" y="300" class="body">원칙·명세 준비 완료 → S1</text>
+  <rect x="400" y="229" width="320" height="100" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="420" y="264" class="label">s1-done</text>
+  <text x="420" y="300" class="body">회원·글 + TDD → S2</text>
+  <rect x="764" y="229" width="320" height="100" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
+  <text x="784" y="264" class="label">s2-done</text>
+  <text x="784" y="300" class="body">팔로우 + 경계·훅·CI → S3</text>
+  <path d="M356 279H391" class="line"/>
+  <path d="M720 279H755" class="line"/>
+  <path d="M924 329V359H196V381" class="line"/>
+  <rect x="36" y="390" width="320" height="100" rx="12" fill="#dcfce7" stroke="#86efac"/>
+  <text x="56" y="425" class="label">s3-done</text>
+  <text x="56" y="461" class="body">피드 + 읽기 전용 MCP → S4</text>
+  <rect x="400" y="390" width="320" height="100" rx="12" fill="#dcfce7" stroke="#86efac"/>
+  <text x="420" y="425" class="label">s4-done</text>
+  <text x="420" y="461" class="body">신고 + 독립 리뷰 → S5</text>
+  <rect x="764" y="390" width="320" height="100" rx="12" fill="#dcfce7" stroke="#86efac"/>
+  <text x="784" y="425" class="label">s5-done</text>
+  <text x="784" y="461" class="body">팀 플러그인 0.2.0 → 회고</text>
+  <path d="M356 440H391" class="line"/>
+  <path d="M720 440H755" class="line"/>
+  <rect x="36" y="516" width="1048" height="91" rx="12" fill="#fff7ed" stroke="#fdba74"/>
+  <text x="56" y="547" class="label">합류 예: S3 시간이 되었는데 S2가 끝나지 않았다면</text>
+  <text x="56" y="581" class="body">bash scripts/checkpoint.sh S2  →  work/s2 생성  →  S2 검증  →  labs/S3-feed.md</text>
+  <rect x="36" y="636" width="506" height="85" rx="12" fill="#ede9fe" stroke="#c4b5fd"/>
+  <text x="56" y="670" class="label">final · 회고·데모용 확장 완성본</text>
+  <text x="56" y="701" class="small">추가 팀 규칙 + marketplace + 플러그인 1.0.0</text>
+  <rect x="578" y="636" width="506" height="85" rx="12" fill="#e2e8f0"/>
+  <text x="598" y="670" class="label">authoring · 강사용 구성 계획</text>
+  <text x="598" y="701" class="small">참가자 구현 경로와 별도 / 태그 v1.0은 고정 스냅샷</text>
+</svg>

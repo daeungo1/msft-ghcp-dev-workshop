@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="810" viewBox="0 0 1120 810" role="img" aria-labelledby="title desc">
+  <title id="title">TeamFeed 앱과 Copilot 하네스 아키텍처</title>
+  <desc id="desc">브라우저의 React 화면은 Vite 프록시로 FastAPI에 요청합니다. routes, service, repository를 거쳐 SQLite를 사용하고 다른 도메인은 공개 api 모듈로 접근합니다. Copilot에는 명세, 역할 분리, 훅, 자동 검사와 리뷰가 연결됩니다. SQLite MCP는 DB를 읽기 전용으로 조회하며 앱 요청 경로와 분리됩니다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#475569"/></marker>
+    <style>
+      text { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; fill: #172554; }
+      .heading { font-size: 26px; font-weight: 700; }
+      .label { font-size: 19px; font-weight: 700; }
+      .body { font-size: 17px; }
+      .small { font-size: 15px; fill: #475569; }
+      .line { fill: none; stroke: #475569; stroke-width: 2; marker-end: url(#arrow); }
+      .tool { fill: none; stroke: #047857; stroke-width: 2; stroke-dasharray: 6 4; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1120" height="810" rx="16" fill="#f8fafc"/>
+  <text x="36" y="48" class="heading">앱의 데이터 경로와 에이전트의 제어 경로를 분리합니다</text>
+  <text x="36" y="79" class="body">최종 목표 구조입니다. 실제 패키지와 하네스는 S0~S5에서 순서대로 추가됩니다.</text>
+  <rect x="36" y="106" width="654" height="610" rx="14" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="58" y="142" class="label">앱 런타임 · S1~S4</text>
+  <rect x="58" y="167" width="610" height="65" rx="10" fill="#ffffff" stroke="#93c5fd"/>
+  <text x="78" y="195" class="label">브라우저 · React + TypeScript</text>
+  <text x="78" y="219" class="small">Vite :5173 / 회원 선택 · 글쓰기 · 피드 · 신고 관리</text>
+  <path d="M363 232V267" class="line"/>
+  <text x="381" y="255" class="small">/api 요청 → Vite 프록시 → :8000</text>
+  <rect x="58" y="276" width="610" height="56" rx="10" fill="#dbeafe"/>
+  <text x="78" y="310" class="label">FastAPI · routes.py (HTTP / 입력·응답)</text>
+  <path d="M363 332V361" class="line"/>
+  <rect x="58" y="370" width="610" height="56" rx="10" fill="#dbeafe"/>
+  <text x="78" y="404" class="label">service.py · 업무 규칙 / 서버 인가</text>
+  <path d="M363 426V455" class="line"/>
+  <rect x="58" y="464" width="610" height="56" rx="10" fill="#dbeafe"/>
+  <text x="78" y="498" class="label">repository.py · SQLAlchemy / DB 접근</text>
+  <path d="M363 520V549" class="line"/>
+  <rect x="58" y="558" width="610" height="62" rx="10" fill="#172554"/>
+  <text x="78" y="585" style="fill:#ffffff;font-size:19px;font-weight:700">SQLite · backend/teamfeed.db</text>
+  <text x="78" y="608" style="fill:#dbeafe;font-size:15px">members / posts / follows / reports</text>
+  <text x="58" y="655" class="body">도메인: members / posts / follows / feed / reports</text>
+  <text x="58" y="682" class="small">다른 도메인 접근은 api.py 공개 함수 경유 · 내부 repository 직접 import 금지</text>
+  <rect x="718" y="106" width="366" height="610" rx="14" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="740" y="142" class="label">Copilot 하네스 · S0~S5</text>
+  <rect x="740" y="167" width="322" height="79" rx="10" fill="#dcfce7"/>
+  <text x="758" y="195" class="label">Context · 명세와 팀 규칙</text>
+  <text x="758" y="224" class="small">constitution / spec·plan·tasks / skills</text>
+  <path d="M901 246V269" class="line"/>
+  <rect x="740" y="278" width="322" height="83" rx="10" fill="#ffffff" stroke="#86efac"/>
+  <text x="758" y="308" class="label">Copilot CLI / VS Code</text>
+  <text x="758" y="337" class="small">test-writer → implementer → reviewer</text>
+  <rect x="740" y="388" width="322" height="97" rx="10" fill="#dcfce7"/>
+  <text x="758" y="418" class="label">Control + Feedback</text>
+  <text x="758" y="447" class="small">pre/postToolUse · import-linter · CI</text>
+  <text x="758" y="472" class="small">pytest / Vitest / CodeQL / AI 리뷰</text>
+  <path d="M901 361V379" class="line"/>
+  <rect x="740" y="530" width="322" height="90" rx="10" fill="#dcfce7"/>
+  <text x="758" y="559" class="label">Tools · SQLite 읽기 전용 MCP</text>
+  <text x="758" y="586" class="small">list_tables / describe_table / query</text>
+  <text x="758" y="607" class="small">별도 GitHub MCP: 저장소·이슈 연결</text>
+  <path d="M1068 320H1074V510H901V522" class="tool"/>
+  <path d="M740 589H677" class="tool"/>
+  <text x="740" y="655" class="body">S5 · 팀 플러그인으로 묶기</text>
+  <text x="740" y="682" class="small">스킬 + 에이전트 + 훅 + MCP 공유</text>
+  <text x="36" y="755" class="body">실선: 앱 요청 또는 작업 흐름 / 점선: 에이전트의 읽기 전용 DB 도구 연결</text>
+  <text x="36" y="784" class="small">X-Member-Id는 실습용입니다. 화면에서 ADMIN 탭을 숨겨도 서버 인가 검사는 반드시 필요합니다.</text>
+</svg>
