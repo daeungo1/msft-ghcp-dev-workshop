@@ -22,13 +22,13 @@
 
   <rect width="1200" height="590" rx="22" fill="#f8fafc"/>
   <rect x="28" y="24" width="1144" height="104" rx="18" fill="url(#headerGradient)"/>
-  <text x="58" y="68" class="title" style="fill:#ffffff">요구사항을 재사용 가능한 팀 하네스로 바꿉니다</text>
-  <text x="58" y="101" class="subtitle">Spec Kit 1.2.5 + 역할별 Copilot 에이전트 + 결정적 품질 게이트 + 설치 가능한 plugin</text>
+  <text x="58" y="68" class="title" style="fill:#ffffff">요구사항을 재사용 가능한 team harness로 바꿉니다</text>
+  <text x="58" y="101" class="subtitle">Spec Kit 1.2.5 + role-based agents + deterministic quality gates + installable plugin</text>
 
   <rect x="38" y="174" width="248" height="252" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
   <circle cx="76" cy="214" r="22" fill="#2563eb"/>
   <text x="70" y="221" class="step" style="fill:#ffffff">1</text>
-  <text x="108" y="221" class="step">의도 고정</text>
+  <text x="108" y="221" class="step">Spec baseline</text>
   <text x="60" y="266" class="body">constitution</text>
   <text x="60" y="296" class="body">spec + clarify</text>
   <text x="60" y="326" class="body">plan + tasks</text>
@@ -40,7 +40,7 @@
   <rect x="334" y="174" width="248" height="252" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
   <circle cx="372" cy="214" r="22" fill="#7c3aed"/>
   <text x="366" y="221" class="step" style="fill:#ffffff">2</text>
-  <text x="404" y="221" class="step">역할 분리</text>
+  <text x="404" y="221" class="step">Role separation</text>
   <text x="356" y="266" class="body">researcher + planner</text>
   <text x="356" y="296" class="body">test-writer + implementer</text>
   <text x="356" y="326" class="body">security + convergence review</text>
@@ -52,19 +52,19 @@
   <rect x="630" y="174" width="248" height="252" rx="18" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/>
   <circle cx="668" cy="214" r="22" fill="#059669"/>
   <text x="662" y="221" class="step" style="fill:#ffffff">3</text>
-  <text x="700" y="221" class="step">실패 차단</text>
+  <text x="700" y="221" class="step">Guardrails</text>
   <text x="652" y="266" class="body">instructions + skills</text>
   <text x="652" y="296" class="body">hooks + read-only MCP</text>
   <text x="652" y="326" class="body">tests + boundaries + CI</text>
   <rect x="652" y="358" width="204" height="38" rx="10" fill="#d1fae5"/>
-  <text x="674" y="383" class="tag" fill="#065f46">확률적 안내 + 결정적 검사</text>
+  <text x="674" y="383" class="tag" fill="#065f46">Guidance + deterministic checks</text>
 
   <path d="M878 300H918" class="arrow"/>
 
   <rect x="926" y="174" width="236" height="252" rx="18" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
   <circle cx="964" cy="214" r="22" fill="#ea580c"/>
   <text x="958" y="221" class="step" style="fill:#ffffff">4</text>
-  <text x="996" y="221" class="step">수렴과 플러그인</text>
+  <text x="996" y="221" class="step">Converge + Plugin</text>
   <text x="948" y="266" class="body">verify + converge</text>
   <text x="948" y="296" class="body">human approval gate</text>
   <text x="948" y="326" class="body">ai-msft-harness</text>
@@ -72,6 +72,6 @@
   <text x="970" y="383" class="tag" fill="#9a3412">VS Code와 CLI에 설치</text>
 
   <rect x="38" y="468" width="1124" height="84" rx="16" fill="#e2e8f0"/>
-  <text x="66" y="501" class="step">완료의 기준</text>
-  <text x="66" y="531" class="body">모델의 완료 선언이 아니라 반복 가능한 테스트, 경계 검사, 독립 리뷰, 명세 대비 수렴 결과</text>
+  <text x="66" y="501" class="step">Definition of Done</text>
+  <text x="66" y="531" class="body">모델의 완료 선언이 아니라 repeatable tests, boundary checks, independent review, convergence result</text>
 </svg>

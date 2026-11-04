@@ -12,8 +12,8 @@
   "plugins": [
     {
       "name": "ai-msft-harness",
-      "description": "역할별 에이전트, TDD, 근거 조사, 가드레일 훅, 수렴 검증, 읽기 전용 SQLite MCP",
-      "version": "1.0.0",
+      "description": "Node.js 22+와 Python 3.12+ runtime policy, Clean Architecture, module/service incremental refactoring, 역할별 에이전트, TDD, hooks, convergence",
+      "version": "1.1.0",
       "source": "./plugins/ai-msft-harness",
       "category": "Developer Tools"
     }

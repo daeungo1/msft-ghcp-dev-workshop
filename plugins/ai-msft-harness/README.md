@@ -25,10 +25,24 @@ verify → converge → reusable plugin
 
 | 유형 | 구성 |
 |---|---|
-| Skills | spec-driven-delivery, evidence-research, tdd, convergence-check, pr-description |
+| Skills | spec-driven-delivery, team-application-standards, evidence-research, tdd, convergence-check, pr-description |
 | Agents | researcher, planner, test-writer, implementer, security-reviewer, convergence-reviewer |
 | Hooks | 파괴적 명령 차단, 프로젝트별 post-edit 검증 연결 |
 | MCP | 선택형 read-only SQLite 스키마 및 조회 도구 |
+
+### 팀 기본 개발 패턴
+
+`team-application-standards` skill은 다음 값을 구체적인 기본 계약으로
+제공합니다.
+
+* `Node.js >=22`, 신규 서비스는 승인된 최신 supported LTS 우선
+* `Python >=3.12`, 신규 서비스는 승인된 latest bugfix-supported version 우선
+* Business module/service 기준 분리
+* `Adapters → Application Use Cases → Core` dependency direction
+* Ports를 통한 DB, queue, external API 추상화
+* One module/service or one use case 단위 incremental refactoring
+* Legacy modernization의 Strangler Fig approach
+* Python import-linter와 TypeScript dependency boundary automation
 
 ### VS Code에 로컬 설치
 

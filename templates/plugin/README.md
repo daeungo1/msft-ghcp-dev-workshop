@@ -14,6 +14,7 @@ plugins/ai-msft-harness/
 ├── README.md                         # 설치, 공유, 프로젝트별 맞춤 방법
 ├── skills/
 │   ├── spec-driven-delivery/SKILL.md
+│   ├── team-application-standards/SKILL.md
 │   ├── evidence-research/SKILL.md
 │   ├── tdd/SKILL.md
 │   ├── convergence-check/SKILL.md

@@ -22,7 +22,7 @@
 
   <rect x="40" y="128" width="1120" height="112" rx="18" fill="#172554"/>
   <text x="66" y="164" class="heading" style="fill:#ffffff">main · TeamFeed Multi-Harness Workshop v0.2</text>
-  <text x="66" y="194" class="body" style="fill:#dbeafe">Spec Kit 1.2.5 · 역할 에이전트 · hooks · MCP · CI · extension · workflow · bundle · S6 converge</text>
+  <text x="66" y="194" class="body" style="fill:#dbeafe">Spec Kit 1.2.5 · role-based agents · hooks · MCP · CI · extension · workflow · bundle · S6 converge</text>
   <rect x="914" y="158" width="214" height="44" rx="12" fill="#2563eb"/>
   <text x="945" y="186" class="label" style="fill:#ffffff">현재 개발 기준선</text>
 

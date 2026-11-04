@@ -77,6 +77,14 @@ no_string_built_sql() {
 }
 
 plugin_count() { find "$1" -name "$2" 2>/dev/null | wc -l; }
+team_standards_contract() {
+  local skill=plugins/ai-msft-harness/skills/team-application-standards/SKILL.md
+  [ -f "$skill" ] &&
+    grep -Fq 'Node.js >=22' "$skill" &&
+    grep -Fq 'Python >=3.12' "$skill" &&
+    grep -Fq 'Application Use Cases' "$skill" &&
+    grep -Fq 'incremental refactoring' "$skill"
+}
 marketplace_matches_plugin() {
   "${PYTHON_BIN}" - plugins/ai-msft-harness/plugin.json .github/plugin/marketplace.json <<'PY'
 import json
@@ -91,7 +99,7 @@ matches = [
 ]
 valid = (
     len(matches) == 1
-    and plugin.get("version") == "1.0.0"
+    and plugin.get("version") == "1.1.0"
     and matches[0].get("version") == plugin.get("version")
     and matches[0].get("source") == "./plugins/ai-msft-harness"
 )
@@ -166,12 +174,14 @@ check_s5() {
   check "plugin.json is valid JSON" "${P}/plugin.json 을 고치세요" json_valid "${P}/plugin.json"
   check "plugin.json has \$schema/name/version/description" "필수 필드를 추가하세요" \
     json_has "${P}/plugin.json" 'all(k in d for k in ("$schema","name","version","description"))'
-  check "plugin version is 1.0.0" "plugin.json version 을 1.0.0 으로 지정하세요" \
-    json_has "${P}/plugin.json" 'd.get("version") == "1.0.0"'
+  check "plugin version is 1.1.0" "plugin.json version 을 1.1.0 으로 지정하세요" \
+    json_has "${P}/plugin.json" 'd.get("version") == "1.1.0"'
   check "plugin name is ai-msft-harness" "plugin.json 의 name 을 ai-msft-harness 로 지정하세요" \
     json_has "${P}/plugin.json" 'd.get("name") == "ai-msft-harness"'
-  check "plugin has >= 5 skills" "Spec Kit delivery, research, TDD, convergence, PR 스킬을 넣으세요" \
-    count_ge "$(plugin_count "${P}/skills" SKILL.md)" 5
+  check "plugin has >= 6 skills" "delivery, team standards, research, TDD, convergence, PR 스킬을 넣으세요" \
+    count_ge "$(plugin_count "${P}/skills" SKILL.md)" 6
+  check "team application standards contract exists" "runtime floor, Clean Architecture, incremental refactoring 계약을 추가하세요" \
+    team_standards_contract
   check "plugin has 6 agents" "com.github.copilot/agents 에 역할 에이전트 6개를 넣으세요" \
     count_ge "$(plugin_count "${P}/com.github.copilot/agents" '*.agent.md')" 6
   check "plugin has hooks.json (version 1)" "com.github.copilot/hooks/hooks.json 을 만드세요" \

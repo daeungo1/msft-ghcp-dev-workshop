@@ -58,6 +58,7 @@ PLUGIN_PATHS = (
     ".github/plugin/marketplace.json",
     "plugins/ai-msft-harness/mcp.json",
     "plugins/ai-msft-harness/skills/spec-driven-delivery/SKILL.md",
+    "plugins/ai-msft-harness/skills/team-application-standards/SKILL.md",
     "plugins/ai-msft-harness/skills/evidence-research/SKILL.md",
     "plugins/ai-msft-harness/skills/tdd/SKILL.md",
     "plugins/ai-msft-harness/skills/convergence-check/SKILL.md",
@@ -75,6 +76,7 @@ PLUGIN_PATHS = (
     "templates/plugin/pre_tool_guard.py",
     "templates/plugin/post_edit_check.py",
     "templates/plugin/skills/spec-driven-delivery/SKILL.md",
+    "templates/plugin/skills/team-application-standards/SKILL.md",
     "templates/plugin/skills/pr-description/SKILL.md",
 )
 
@@ -163,6 +165,28 @@ def write_complete_harness(root: Path) -> None:
     )
     for path in PLUGIN_PATHS[3:]:
         write_file(root, path, "plugin component\n")
+    team_standards = (
+        "Node.js >=22\n"
+        "Active LTS\n"
+        "Maintenance LTS\n"
+        "Python >=3.12\n"
+        "Core\n"
+        "Application Use Cases\n"
+        "Ports\n"
+        "Adapters\n"
+        "module/service\n"
+        "incremental refactoring\n"
+    )
+    write_file(
+        root,
+        "plugins/ai-msft-harness/skills/team-application-standards/SKILL.md",
+        team_standards,
+    )
+    write_file(
+        root,
+        "templates/plugin/skills/team-application-standards/SKILL.md",
+        team_standards,
+    )
     write_file(
         root,
         "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
@@ -436,6 +460,22 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("quality skill must use repository validation scripts", result.stderr)
+
+    def test_generic_team_standards_skill_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                "plugins/ai-msft-harness/skills/"
+                "team-application-standards/SKILL.md",
+                "Use clean code and supported runtimes.\n",
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("team standards skill must define concrete runtime", result.stderr)
 
 
 if __name__ == "__main__":

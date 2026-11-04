@@ -66,6 +66,7 @@ PLUGIN_PATHS = (
     ".github/plugin/marketplace.json",
     "plugins/ai-msft-harness/mcp.json",
     "plugins/ai-msft-harness/skills/spec-driven-delivery/SKILL.md",
+    "plugins/ai-msft-harness/skills/team-application-standards/SKILL.md",
     "plugins/ai-msft-harness/skills/evidence-research/SKILL.md",
     "plugins/ai-msft-harness/skills/tdd/SKILL.md",
     "plugins/ai-msft-harness/skills/convergence-check/SKILL.md",
@@ -83,6 +84,7 @@ PLUGIN_PATHS = (
     "templates/plugin/pre_tool_guard.py",
     "templates/plugin/post_edit_check.py",
     "templates/plugin/skills/spec-driven-delivery/SKILL.md",
+    "templates/plugin/skills/team-application-standards/SKILL.md",
     "templates/plugin/skills/pr-description/SKILL.md",
 )
 
@@ -377,6 +379,52 @@ def validate_final_plugin(root: Path) -> list[str]:
             errors.append(
                 f"template hook scripts must match final plugin: {script_name}"
             )
+
+    team_standards_path = (
+        root
+        / "plugins"
+        / "ai-msft-harness"
+        / "skills"
+        / "team-application-standards"
+        / "SKILL.md"
+    )
+    if team_standards_path.is_file():
+        standards = team_standards_path.read_text(encoding="utf-8")
+        required_terms = (
+            "Node.js >=22",
+            "Active LTS",
+            "Maintenance LTS",
+            "Python >=3.12",
+            "Core",
+            "Application Use Cases",
+            "Ports",
+            "Adapters",
+            "module/service",
+            "incremental refactoring",
+        )
+        if any(term not in standards for term in required_terms):
+            errors.append(
+                "team standards skill must define concrete runtime, "
+                "architecture, and refactoring contracts"
+            )
+
+    template_standards_path = (
+        root
+        / "templates"
+        / "plugin"
+        / "skills"
+        / "team-application-standards"
+        / "SKILL.md"
+    )
+    if (
+        team_standards_path.is_file()
+        and template_standards_path.is_file()
+        and team_standards_path.read_bytes()
+        != template_standards_path.read_bytes()
+    ):
+        errors.append(
+            "template team standards skill must match final plugin skill"
+        )
     return errors
 
 
