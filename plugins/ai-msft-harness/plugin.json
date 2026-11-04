@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ai-msft-harness",
+  "version": "1.0.0",
+  "description": "Spec-driven application development harness with role agents, TDD, guardrails, convergence, and optional read-only SQLite context",
+  "author": {
+    "name": "AI MSFT Harness Workshop",
+    "url": "https://github.com/daeungo1/msft-ghcp-dev-workshop"
+  },
+  "homepage": "https://github.com/daeungo1/msft-ghcp-dev-workshop",
+  "repository": "https://github.com/daeungo1/msft-ghcp-dev-workshop",
+  "license": "MIT",
+  "keywords": [
+    "spec-kit",
+    "application-development",
+    "tdd",
+    "multi-agent",
+    "guardrails",
+    "mcp",
+    "convergence"
+  ]
+}

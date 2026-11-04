@@ -1,6 +1,6 @@
-"""sqlite-ro: read-only SQLite MCP server for the TeamFeed workshop (S3).
+"""sqlite-ro: optional read-only SQLite MCP server for application projects.
 
-Run: TEAMFEED_DB=backend/teamfeed.db uv run --with mcp python templates/mcp/sqlite-ro-server/server.py
+Run: AI_MSFT_HARNESS_DB=/path/to/app.db uv run --with mcp python server.py
 """
 
 import os
@@ -18,15 +18,15 @@ mcp = FastMCP("sqlite-ro")
 
 
 def _db_path() -> str:
-    db = os.environ.get("TEAMFEED_DB")
+    db = os.environ.get("AI_MSFT_HARNESS_DB")
     if not db:
-        raise RuntimeError("TEAMFEED_DB environment variable is not set")
+        raise RuntimeError("AI_MSFT_HARNESS_DB environment variable is not set")
     return db
 
 
 @mcp.tool()
 def list_tables() -> list[str]:
-    """List user tables in the TeamFeed database."""
+    """List user tables in the configured SQLite database."""
     with connect_read_only(_db_path()) as conn:
         rows = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"

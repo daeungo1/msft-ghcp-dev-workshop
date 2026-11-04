@@ -1,15 +1,21 @@
 {
-  "name": "teamfeed-marketplace",
-  "owner": { "name": "daeungo1" },
+  "name": "ai-msft-harness-marketplace",
+  "owner": {
+    "name": "daeungo1"
+  },
+  "interface": {
+    "displayName": "AI MSFT Harness"
+  },
   "metadata": {
-    "description": "TeamFeed 워크샵에서 만든 팀 하네스 플러그인 목록"
+    "description": "Spec Kit 기반 애플리케이션 개발 하네스와 워크숍 플러그인"
   },
   "plugins": [
     {
-      "name": "teamfeed-harness",
-      "description": "TDD 스킬, 역할 분리 에이전트, 가드레일 훅, 읽기 전용 DB MCP, 팀 규칙",
+      "name": "ai-msft-harness",
+      "description": "역할별 에이전트, TDD, 근거 조사, 가드레일 훅, 수렴 검증, 읽기 전용 SQLite MCP",
       "version": "1.0.0",
-      "source": "./plugins/teamfeed-harness"
+      "source": "./plugins/ai-msft-harness",
+      "category": "Developer Tools"
     }
   ]
 }

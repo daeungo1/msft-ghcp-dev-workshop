@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -59,7 +60,33 @@ LEARNING_PATHS = (
     "labs/S6-converge.md",
 )
 
-REQUIRED_PATHS = AGENT_PATHS + COMPONENT_PATHS + LEARNING_PATHS + (
+PLUGIN_PATHS = (
+    "plugins/ai-msft-harness/plugin.json",
+    "plugins/ai-msft-harness/README.md",
+    ".github/plugin/marketplace.json",
+    "plugins/ai-msft-harness/mcp.json",
+    "plugins/ai-msft-harness/skills/spec-driven-delivery/SKILL.md",
+    "plugins/ai-msft-harness/skills/evidence-research/SKILL.md",
+    "plugins/ai-msft-harness/skills/tdd/SKILL.md",
+    "plugins/ai-msft-harness/skills/convergence-check/SKILL.md",
+    "plugins/ai-msft-harness/skills/pr-description/SKILL.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/researcher.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/planner.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/test-writer.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/implementer.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/security-reviewer.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/convergence-reviewer.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
+    "plugins/ai-msft-harness/com.github.copilot/hooks/pre_tool_guard.py",
+    "plugins/ai-msft-harness/com.github.copilot/hooks/post_edit_check.py",
+    "templates/plugin/hooks.json",
+    "templates/plugin/pre_tool_guard.py",
+    "templates/plugin/post_edit_check.py",
+    "templates/plugin/skills/spec-driven-delivery/SKILL.md",
+    "templates/plugin/skills/pr-description/SKILL.md",
+)
+
+REQUIRED_PATHS = AGENT_PATHS + COMPONENT_PATHS + LEARNING_PATHS + PLUGIN_PATHS + (
     ".github/copilot-instructions.md",
     ".github/instructions/backend.instructions.md",
     ".github/instructions/frontend.instructions.md",
@@ -240,6 +267,116 @@ def validate_documented_commands(root: Path) -> list[str]:
                 f"{relative_path}: workflow run must use an installed ID "
                 "or workflow.yml path",
             )
+    for relative_path in (
+        ".github/skills/speckit-teamfeed-quality-verify/SKILL.md",
+        ".specify/extensions/teamfeed-quality/.specify-dev/extension-skills/"
+        "speckit-teamfeed-quality-verify/SKILL.md",
+    ):
+        path = root / relative_path
+        if not path.is_file():
+            continue
+        content = path.read_text(encoding="utf-8")
+        if (
+            "python scripts/validate-harness.py" not in content
+            or "bash scripts/hooks/test_hooks.sh" not in content
+            or ".specify/extensions/teamfeed-quality/scripts/" in content
+        ):
+            errors.append(
+                f"{relative_path}: quality skill must use repository validation scripts"
+            )
+    return errors
+
+
+def validate_final_plugin(root: Path) -> list[str]:
+    """Validate the distributable plugin and marketplace catalog agree."""
+    errors: list[str] = []
+    plugin_path = root / "plugins" / "ai-msft-harness" / "plugin.json"
+    marketplace_path = root / ".github" / "plugin" / "marketplace.json"
+    if not plugin_path.is_file() or not marketplace_path.is_file():
+        return errors
+
+    try:
+        plugin = json.loads(plugin_path.read_text(encoding="utf-8"))
+        marketplace = json.loads(marketplace_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [f"plugin or marketplace JSON is invalid: {exc}"]
+
+    if plugin.get("$schema") != (
+        "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+    ):
+        errors.append("ai-msft-harness plugin must use Agent Plugins 1.0 schema")
+    if plugin.get("name") != "ai-msft-harness":
+        errors.append("plugin name must be ai-msft-harness")
+    plugin_version = str(plugin.get("version", ""))
+    if not SEMANTIC_VERSION_PATTERN.fullmatch(plugin_version):
+        errors.append("ai-msft-harness version must be a semantic version")
+
+    if marketplace.get("name") != "ai-msft-harness-marketplace":
+        errors.append("marketplace name must be ai-msft-harness-marketplace")
+    entries = [
+        item
+        for item in marketplace.get("plugins", [])
+        if item.get("name") == "ai-msft-harness"
+    ]
+    if len(entries) != 1:
+        errors.append("marketplace must contain one ai-msft-harness entry")
+        return errors
+
+    entry = entries[0]
+    if str(entry.get("version", "")) != plugin_version:
+        errors.append("marketplace version must match plugin version")
+    if entry.get("source") != "./plugins/ai-msft-harness":
+        errors.append("marketplace source must be ./plugins/ai-msft-harness")
+
+    hooks_path = (
+        root
+        / "plugins"
+        / "ai-msft-harness"
+        / "com.github.copilot"
+        / "hooks"
+        / "hooks.json"
+    )
+    template_hooks_path = root / "templates" / "plugin" / "hooks.json"
+    if hooks_path.is_file():
+        try:
+            hook_config = json.loads(hooks_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            errors.append(f"plugin hooks.json is invalid: {exc}")
+        else:
+            events = hook_config.get("hooks", {})
+            for event_name in ("preToolUse", "postToolUse"):
+                hooks = events.get(event_name, [])
+                if not hooks:
+                    errors.append(f"plugin hooks must define {event_name}")
+                    continue
+                for hook in hooks:
+                    if not hook.get("bash") or not hook.get("powershell"):
+                        errors.append(
+                            f"{event_name} hooks must define bash and powershell"
+                        )
+                    if ".py" not in str(hook.get("bash", "")) or ".py" not in str(
+                        hook.get("powershell", "")
+                    ):
+                        errors.append(
+                            f"{event_name} hooks must reference portable Python scripts"
+                        )
+
+    if hooks_path.is_file() and template_hooks_path.is_file():
+        plugin_hooks = json.loads(hooks_path.read_text(encoding="utf-8"))
+        template_hooks = json.loads(template_hooks_path.read_text(encoding="utf-8"))
+        if plugin_hooks != template_hooks:
+            errors.append("template hooks.json must match final plugin hooks.json")
+    for script_name in ("pre_tool_guard.py", "post_edit_check.py"):
+        plugin_script = hooks_path.parent / script_name
+        template_script = root / "templates" / "plugin" / script_name
+        if (
+            plugin_script.is_file()
+            and template_script.is_file()
+            and plugin_script.read_bytes() != template_script.read_bytes()
+        ):
+            errors.append(
+                f"template hook scripts must match final plugin: {script_name}"
+            )
     return errors
 
 
@@ -253,6 +390,7 @@ def run(root: Path) -> int:
     errors.extend(validate_agents(root))
     errors.extend(validate_components(root))
     errors.extend(validate_documented_commands(root))
+    errors.extend(validate_final_plugin(root))
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)

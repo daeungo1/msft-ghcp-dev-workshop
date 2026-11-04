@@ -12,7 +12,7 @@ description: 이 워크샵의 하네스를 고객 저장소 맞춤 AI-native SDL
 |---|---|---|
 | 1 SDLC 진단 | 우리 팀 병목과 새는 지점을 진단 | [templates/self-check-card.md](../templates/self-check-card.md) 결과 |
 | 2 하네스 설계 | 새는 지점마다 안내로 둘지 강제로 올릴지 결정 | [templates/team-rule-template.md](../templates/team-rule-template.md), [bp-catalog](../bp-catalog/README.md) |
-| 3 PoC (2주 안팎) | 실제 저장소 하나에 하네스를 적용하고 지표 측정 | `plugins/teamfeed-harness/`를 설치하고 규칙 1개씩 교체 |
+| 3 PoC (2주 안팎) | 실제 저장소 하나에 하네스를 적용하고 지표 측정 | `plugins/ai-msft-harness/`를 설치하고 규칙 1개씩 교체 |
 | 4 확산 | 검증된 하네스를 사내 marketplace로 배포 | `.github/plugin/marketplace.json` 형식 (final 브랜치 참고) |
 
 ## PoC 범위 정하기

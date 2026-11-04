@@ -51,7 +51,7 @@ specify --help
 | 항목 | 확인 방법 | 안 되면 |
 |---|---|---|
 | CLI에서 훅 동작 | `scripts/hooks/test_hooks.sh` 통과 후 CLI 세션에서 위험 명령 요청 | 훅 JSON 필드 이름(`toolName`, `toolArgs`)을 CLI 로그와 대조 |
-| 플러그인 설치 | 빈 sandbox 저장소에 `copilot plugin install ./plugins/teamfeed-harness` | `plugin.json`의 `$schema`와 필드 확인 |
+| 플러그인 설치 | 빈 sandbox 저장소에 `copilot plugin install ./plugins/ai-msft-harness` | `plugin.json`의 `$schema`와 필드 확인 |
 | 플러그인 훅 경로 | 설치한 플러그인의 훅이 위험 명령을 거부하는지 확인 | 스크립트 경로가 풀리지 않으면 `.github/hooks`를 복사하는 방식으로 대체 |
 | MCP 환경 변수 | `TEAMFEED_DB`를 설정한 셸에서 `sqlite-ro`가 연결되는지 | 절대 경로로 설정 |
 | CodeQL | 템플릿에서 만든 저장소에서 워크플로 1회 실행 | 강사 데모 PR 화면으로 대체 |

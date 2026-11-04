@@ -9,22 +9,29 @@ Copilot CLI는 `plugin.json`에 `$schema`를 선언하면 Agent Plugins 1.0 형�
 ## 만들어야 하는 구조
 
 ```text
-plugins/teamfeed-harness/
-├── plugin.json                       # templates/plugin/plugin.json 복사 후 version 0.2.0
+plugins/ai-msft-harness/
+├── plugin.json                       # Agent Plugins 1.0 manifest
+├── README.md                         # 설치, 공유, 프로젝트별 맞춤 방법
 ├── skills/
-│   ├── tdd/SKILL.md                  # .github/skills/tdd 에서 복사
-│   └── <내-팀-규칙>/SKILL.md          # S5에서 새로 작성
+│   ├── spec-driven-delivery/SKILL.md
+│   ├── evidence-research/SKILL.md
+│   ├── tdd/SKILL.md
+│   ├── convergence-check/SKILL.md
+│   └── pr-description/SKILL.md
 ├── mcp.json                          # templates/plugin/mcp.json 복사
 ├── mcp/sqlite-ro-server/             # templates/mcp/sqlite-ro-server 복사 (server.py, guard.py)
 └── com.github.copilot/
     ├── agents/
-    │   ├── test-writer.agent.md      # .github/agents 에서 복사
+    │   ├── researcher.agent.md
+    │   ├── planner.agent.md
+    │   ├── test-writer.agent.md
     │   ├── implementer.agent.md
-    │   └── security-reviewer.agent.md
+    │   ├── security-reviewer.agent.md
+    │   └── convergence-reviewer.agent.md
     └── hooks/
         ├── hooks.json                # templates/plugin/hooks.json 복사
-        ├── pre_tool_guard.sh         # scripts/hooks 에서 복사
-        └── post_edit_check.sh
+        ├── pre_tool_guard.py          # 이식 가능한 pre-tool 정책
+        └── post_edit_check.py         # 프로젝트별 검증 연결
 ```
 
 ## 파일별 메모
@@ -32,13 +39,13 @@ plugins/teamfeed-harness/
 | 파일 | 메모 |
 |---|---|
 | `plugin.json` | 허용 필드는 `$schema`, `name`, `version`, `description`, `author`, `homepage`, `repository`, `license`, `keywords`, `extensions` 뿐입니다. 그 밖의 필드는 무시됩니다 |
-| `mcp.json` | stdio 서버의 `type`은 `stdio`입니다. `${PLUGIN_ROOT}`와 `${PLUGIN_DATA}`는 CLI가 확장합니다. `TEAMFEED_DB`는 플러그인이 알 수 없으니 사용자 셸 환경 변수로 지정합니다 |
-| `hooks.json` | 훅 스크립트 경로는 `${PLUGIN_ROOT}` 기준입니다. 경로를 찾지 못하면 `{}`를 출력해 작업을 막지 않습니다 |
+| `mcp.json` | stdio 서버의 `type`은 `stdio`입니다. `${PLUGIN_ROOT}`와 `${PLUGIN_DATA}`는 런타임이 확장합니다. SQLite를 쓰려면 `AI_MSFT_HARNESS_DB`를 지정합니다 |
+| `hooks.json` | 훅 스크립트 경로는 `${PLUGIN_ROOT}` 기준입니다. 프로젝트별 검사는 `.ai-msft-harness/post-edit.py`가 담당합니다 |
 
 ## 설치와 확인
 
 ```bash
-copilot plugin install ./plugins/teamfeed-harness   # 로컬 설치 (수정 후에는 다시 실행해 캐시 갱신)
+copilot plugin install ./plugins/ai-msft-harness   # 로컬 설치 (수정 후에는 다시 실행해 캐시 갱신)
 copilot plugin list
 ```
 

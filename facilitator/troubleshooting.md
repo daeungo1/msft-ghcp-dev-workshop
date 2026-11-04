@@ -13,6 +13,6 @@ description: 워크샵 중 자주 발생하는 문제와 해결 방법
 | 포트 접속 불가 | Ports 탭에서 8000, 5173 포워딩 확인 |
 | Copilot CLI 실행 거부 | 조직의 Copilot CLI 정책 허용 여부 |
 | CodeQL 결과가 늦음 | 강사 화면의 데모 PR 결과로 설명 |
-| 플러그인 수정이 반영되지 않음 | `copilot plugin install ./plugins/teamfeed-harness`를 다시 실행해 캐시 갱신 |
+| 플러그인 수정이 반영되지 않음 | `copilot plugin install ./plugins/ai-msft-harness`를 다시 실행해 캐시 갱신 |
 | `verify-step.sh`가 `uv`를 못 찾음 | `uv` 설치 확인, 설치할 수 없으면 `VERIFY_UV_RUN=""`로 현재 Python 환경 사용 |
 | 진행이 너무 뒤처짐 | `scripts/checkpoint.sh S<n-1>`로 직전 정답에서 합류 |

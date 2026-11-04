@@ -1,9 +1,9 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "teamfeed-harness",
+  "name": "ai-msft-harness",
   "version": "0.1.0",
-  "description": "TeamFeed team harness: TDD skill, role-separated agents, guardrail hooks, read-only DB MCP",
+  "description": "Spec-driven application harness with role agents, TDD, guardrails, convergence, and optional read-only SQLite context",
   "author": { "name": "<your team>" },
   "license": "MIT",
-  "keywords": ["harness", "tdd", "guardrails", "mcp"]
+  "keywords": ["spec-kit", "harness", "tdd", "multi-agent", "guardrails", "mcp"]
 }

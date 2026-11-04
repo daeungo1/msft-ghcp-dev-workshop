@@ -1,0 +1,20 @@
+---
+name: evidence-research
+description: "Use when: researching a technical decision from repository evidence and current official sources before implementation."
+---
+
+# Evidence Research
+
+## 절차
+
+1. 구현 결정을 바꿀 조사 질문만 추출합니다.
+2. 저장소 코드와 설정을 먼저 확인합니다.
+3. 최신 정보가 필요한 항목은 공식 문서와 공식 저장소에서 확인합니다.
+4. 각 결론에 파일 경로, 명령 출력, URL 중 하나를 붙입니다.
+5. 사실, 추론, 미확인 가정을 분리해 계획 담당자에게 전달합니다.
+
+## 완료 기준
+
+* 구현 결정마다 근거가 있습니다.
+* 버전과 공개 지원 여부가 확인됐습니다.
+* 확인되지 않은 가정이 명시됐습니다.

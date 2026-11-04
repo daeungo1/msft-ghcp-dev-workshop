@@ -53,7 +53,8 @@ scripts/checkpoint.sh S4      # S4를 건너뛰었다면 정답 상태에서 시
 
 ## 추가 요건
 
-[requirements/05-package.md](../requirements/05-package.md): 플러그인 구조 만들기, 다른 저장소에 설치, 팀 규칙 1개 추가, 버전 0.2.0.
+[requirements/05-package.md](../requirements/05-package.md): `ai-msft-harness`
+구조 만들기, VS Code와 다른 저장소에 설치, 팀 규칙 추가, marketplace 등록.
 
 ## 1. 하네스 없이 시도 (건너뜀)
 
@@ -69,20 +70,24 @@ copilot            # 세션에서 /skills list 와 /agent 를 실행해 tdd 스�
 골격과 배치 규칙은 [templates/plugin/README.md](../templates/plugin/README.md)에 있습니다. 이 형식은 `plugin.json`에 `$schema`를 선언하는 **Agent Plugins 1.0**입니다.
 
 ```bash
-P=plugins/teamfeed-harness
+P=plugins/ai-msft-harness
 mkdir -p $P/skills $P/mcp $P/com.github.copilot/agents $P/com.github.copilot/hooks
 
 cp templates/plugin/plugin.json $P/plugin.json
 cp templates/plugin/mcp.json $P/mcp.json
 cp templates/plugin/hooks.json $P/com.github.copilot/hooks/hooks.json
 
-cp -r .github/skills/tdd $P/skills/tdd
+cp -r .github/skills/tdd .github/skills/evidence-research \
+  .github/skills/convergence-check $P/skills/
+cp -r templates/plugin/skills/* $P/skills/
 cp .github/agents/*.agent.md $P/com.github.copilot/agents/
-cp scripts/hooks/pre_tool_guard.sh scripts/hooks/post_edit_check.sh $P/com.github.copilot/hooks/
+cp templates/plugin/pre_tool_guard.py templates/plugin/post_edit_check.py \
+  $P/com.github.copilot/hooks/
 cp -r templates/mcp/sqlite-ro-server $P/mcp/sqlite-ro-server
 ```
 
-`plugins/teamfeed-harness/plugin.json`의 `author`를 우리 팀 이름으로 바꿉니다. 이 시점의 버전은 `0.1.0`입니다.
+`plugins/ai-msft-harness/plugin.json`의 `author`를 우리 팀 이름으로 바꾸고,
+완성 버전을 `1.0.0`으로 지정합니다.
 
 ## 3. 내 팀 규칙 1개 추가 (10분)
 
@@ -94,10 +99,12 @@ cp -r templates/mcp/sqlite-ro-server $P/mcp/sqlite-ro-server
 
 | 결정 | 만들 것 | 위치 |
 |---|---|---|
-| 안내로 충분 | 스킬 | `plugins/teamfeed-harness/skills/<규칙-이름>/SKILL.md` |
-| 강제가 필요 | 훅 규칙 추가 | `com.github.copilot/hooks/pre_tool_guard.sh`의 규칙 목록 |
+| 안내로 충분 | 스킬 | `plugins/ai-msft-harness/skills/<규칙-이름>/SKILL.md` |
+| 강제가 필요 | 훅 규칙 추가 | `com.github.copilot/hooks/pre_tool_guard.py`의 규칙 목록 |
+| 프로젝트마다 명령이 다름 | 프로젝트 검증 스크립트 | `.ai-msft-harness/post-edit.py` |
 
-4. `plugin.json`의 `version`을 `0.2.0`으로 올립니다.
+4. `plugin.json`과 `.github/plugin/marketplace.json`의 버전을 함께
+   `1.0.0`으로 올립니다.
 
 > [!TIP]
 > 규칙이 떠오르지 않으면 `bp-catalog`의 우리 BP 칸이나 [자가진단 카드](../templates/self-check-card.md)에서 가장 자주 새는 칸을 고르세요.
@@ -105,7 +112,7 @@ cp -r templates/mcp/sqlite-ro-server $P/mcp/sqlite-ro-server
 ## 4. 설치와 확인 (8분)
 
 ```bash
-copilot plugin install ./plugins/teamfeed-harness   # 수정 후에는 다시 실행해 캐시를 갱신합니다
+copilot plugin install ./plugins/ai-msft-harness   # 수정 후에는 다시 실행해 캐시를 갱신합니다
 copilot plugin list
 ```
 
@@ -113,7 +120,7 @@ sandbox 저장소에서 확인합니다.
 
 ```bash
 cd ../sandbox
-export TEAMFEED_DB=/workspaces/<저장소-이름>/backend/teamfeed.db   # sqlite-ro MCP 서버가 읽을 DB 경로
+export AI_MSFT_HARNESS_DB=/workspaces/<저장소-이름>/backend/teamfeed.db
 copilot
 ```
 
@@ -121,7 +128,7 @@ copilot
 
 | 명령 | 기대하는 결과 |
 |---|---|
-| `/plugin list` | `teamfeed-harness` 0.2.0 |
+| `/plugin list` | `ai-msft-harness` |
 | `/skills list` | `tdd`와 내 팀 규칙 |
 | `/agent` | `test-writer`, `implementer`, `security-reviewer` |
 | `rm -rf /tmp/x 를 실행해줘` | 플러그인 훅이 거부합니다 |
@@ -130,7 +137,7 @@ copilot
 > 플러그인 훅은 설치 환경에 따라 스크립트 경로가 풀리지 않을 수 있습니다. 그 경우 훅은 조용히 건너뛰도록 만들어져 있습니다.
 > 훅이 거부하지 않으면 스킬, 에이전트, MCP 확인까지만 하고 강사에게 알려 주세요.
 
-설치한 플러그인을 지우려면 `copilot plugin uninstall teamfeed-harness`를 실행합니다.
+설치한 플러그인을 지우려면 `copilot plugin uninstall ai-msft-harness`를 실행합니다.
 
 > [!NOTE]
 > 로컬 경로 직접 설치는 실습용으로 가장 빠르지만 CLI가 `deprecated` 경고를 출력합니다. 앞으로는 `plugin@marketplace` 방식만 지원될 예정이므로, 팀 배포는 아래 marketplace 방식을 기준으로 합니다.
@@ -141,10 +148,15 @@ copilot
 
 ```bash
 copilot plugin marketplace add OWNER/REPO
-copilot plugin install teamfeed-harness@<marketplace-이름>
+copilot plugin install ai-msft-harness@ai-msft-harness-marketplace
 ```
 
-`final` 브랜치의 `.github/plugin/marketplace.json`이 예시입니다. `final`에서 `copilot plugin marketplace add .`로 저장소를 로컬 marketplace로 등록한 뒤 `copilot plugin install teamfeed-harness@teamfeed-marketplace`로 설치해 볼 수 있습니다 (사용 후 `copilot plugin marketplace remove teamfeed-marketplace`). 조직 정책(허용할 marketplace 지정)은 이 실습의 범위 밖입니다.
+현재 `main`의 `.github/plugin/marketplace.json`이 완성 예시입니다. 저장소
+루트에서 `copilot plugin marketplace add .`로 로컬 marketplace를 등록한
+뒤 `copilot plugin install ai-msft-harness@ai-msft-harness-marketplace`로
+설치할 수 있습니다. 원격에 push한 뒤에는 다른 사용자가
+`copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop`로 같은
+marketplace를 추가할 수 있습니다.
 
 ## 5. 완료 확인 (2분)
 
@@ -156,9 +168,9 @@ scripts/verify-step.sh S5
 | 확인 항목 | 안 되면 |
 |---|---|
 | `plugin.json` 유효하고 `$schema`, `name`, `version`, `description` 포함 | 템플릿 복사 후 필드 확인 |
-| 버전이 `0.1.0`이 아님 | `0.2.0`으로 변경 |
-| `skills/` 아래 `SKILL.md` 2개 이상 | `tdd`와 내 팀 규칙 |
-| `com.github.copilot/agents/` 에이전트 3개 | 2번 복사 명령 확인 |
+| plugin과 marketplace 버전이 일치 | 둘 다 `1.0.0`으로 변경 |
+| `skills/` 아래 `SKILL.md` 5개 이상 | delivery, research, TDD, convergence, PR |
+| `com.github.copilot/agents/` 에이전트 6개 | 조사, 계획, 테스트, 구현, 보안, 수렴 |
 | `com.github.copilot/hooks/hooks.json` 유효, `version` 1 | 템플릿 복사 |
 | 루트 `mcp.json` 유효 | 템플릿 복사 |
 
@@ -171,7 +183,7 @@ scripts/verify-step.sh S5
 
 ## 막히면
 
-* 설치가 안 되면 `copilot plugin install ./plugins/teamfeed-harness`를 저장소 루트에서 다시 실행하고, 오류 메시지의 첫 줄을 확인합니다.
+* 설치가 안 되면 `copilot plugin install ./plugins/ai-msft-harness`를 저장소 루트에서 다시 실행하고, 오류 메시지의 첫 줄을 확인합니다.
 * 목록에 보이지 않으면 `plugin.json`의 JSON 오류와 `$schema` 문자열을 확인합니다.
 * 시간이 부족하면 `scripts/checkpoint.sh S5`로 정답 상태에서 설치 확인만 합니다.
 
@@ -179,8 +191,8 @@ scripts/verify-step.sh S5
 
 ```bash
 git diff s4-done..s5-done --stat
-git show s5-done:plugins/teamfeed-harness/plugin.json
-git ls-tree -r --name-only s5-done plugins/teamfeed-harness
+git show main:plugins/ai-msft-harness/plugin.json
+git ls-tree -r --name-only main plugins/ai-msft-harness
 ```
 
 ## 업계 공통 패턴

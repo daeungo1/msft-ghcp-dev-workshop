@@ -1,7 +1,7 @@
 ---
 title: Capability-Based Model Routing
 description: TeamFeed v0.2에서 역할 역량, 비용, 독립성에 따라 모델을 선택하는 기준
-ms.date: 2026-11-02
+ms.date: 2026-11-04
 ms.topic: concept
 ---
 
@@ -29,27 +29,14 @@ ms.topic: concept
 * 고추론 모델은 설계 trade-off, 보안 검토, 최종 수렴 판단에 우선합니다.
 * 모델 변경 후에도 동일한 테스트와 품질 게이트를 실행합니다.
 
-## Fusion and ensemble models
+## 참고: fusion 모델
 
-Fusion 또는 ensemble 모델은 여러 추론 경로를 결합할 수 있지만 저장소가
-그 내부 동작을 검증할 수는 없습니다. 다음 조건에서 선택형으로 사용합니다.
-
-* 클라이언트가 해당 모델 ID를 공식적으로 노출
-* 조직 정책과 비용 한도에서 허용
-* 실패와 fallback이 사용자에게 표시
-* 같은 repository tests와 convergence gate를 통과
-
-2026-11-02 조사에서는 "GitHub Copilot HydraFusion"을 공식 GitHub 또는
-Microsoft 제품 계약으로 확인하지 못했습니다. 공개 검색의 HydraFusion은
-동명의 센서 융합 연구 프로젝트를 가리킵니다.
-
-따라서 HydraFusion이 현재 클라이언트에서 선택 가능하더라도 다음 위치에는
+Fusion 또는 ensemble 모델은 여러 추론 경로를 결합하는 접근의 참고 사례로만
+다룹니다. 저장소의 agent, workflow, CI, 수용 기준에는 특정 fusion 모델을
 고정하지 않습니다.
 
-* `.agent.md`의 필수 `model` frontmatter
-* Spec Kit workflow와 bundle manifest
-* CI와 acceptance criteria
-* 테스트 기대값
+HydraFusion 역시 이 문서에서 비공식 참고 사례일 뿐이며 TeamFeed의 필수
+기술, 공식 GitHub Copilot 지원 계약, 권장 기본 모델을 의미하지 않습니다.
 
 ## Failure handling
 
@@ -61,4 +48,3 @@ Microsoft 제품 계약으로 확인하지 못했습니다. 공개 검색의 Hyd
 4. 모든 검증 명령을 다시 실행합니다.
 
 모델 fallback은 품질 게이트 fallback이 아닙니다.
-

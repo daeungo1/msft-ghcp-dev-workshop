@@ -18,12 +18,12 @@ unreported rather than presenting a partial run as success.
 
 ## Gates
 
-1. Run `python .specify/extensions/teamfeed-quality/scripts/validate-harness.py`.
+1. Run `python scripts/validate-harness.py`.
 2. Run `cd backend && uv run pytest`.
 3. Run `cd backend && uv run lint-imports`.
 4. Run `cd frontend && npm test`.
 5. Run `cd frontend && npm run build`.
-6. Run `bash .specify/extensions/teamfeed-quality/scripts/hooks/test_hooks.sh`.
+6. Run `bash scripts/hooks/test_hooks.sh`.
 
 ## Completion report
 

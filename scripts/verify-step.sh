@@ -46,6 +46,9 @@ mcp_server_tests() {
   if [ -n "$UVR" ]; then uv run --with pytest pytest -q templates/mcp/sqlite-ro-server; else pytest -q templates/mcp/sqlite-ro-server; fi
 }
 harness_validation() { "${PYTHON_BIN}" scripts/validate-harness.py; }
+plugin_hook_tests() {
+  "${PYTHON_BIN}" -m unittest plugins/ai-msft-harness/tests/test_hooks.py
+}
 
 # S1: posts 테스트 커밋이 posts 구현 커밋보다 먼저(또는 같은 시각)여야 합니다.
 tests_before_impl() {
@@ -74,6 +77,27 @@ no_string_built_sql() {
 }
 
 plugin_count() { find "$1" -name "$2" 2>/dev/null | wc -l; }
+marketplace_matches_plugin() {
+  "${PYTHON_BIN}" - plugins/ai-msft-harness/plugin.json .github/plugin/marketplace.json <<'PY'
+import json
+import sys
+
+plugin = json.load(open(sys.argv[1], encoding="utf-8"))
+marketplace = json.load(open(sys.argv[2], encoding="utf-8"))
+matches = [
+    item
+    for item in marketplace.get("plugins", [])
+    if item.get("name") == plugin.get("name")
+]
+valid = (
+    len(matches) == 1
+    and plugin.get("version") == "1.0.0"
+    and matches[0].get("version") == plugin.get("version")
+    and matches[0].get("source") == "./plugins/ai-msft-harness"
+)
+raise SystemExit(0 if valid else 1)
+PY
+}
 archive_branch_exists() { git show-ref --verify --quiet refs/heads/main-v0.1; }
 agents_are_model_neutral() { ! grep -RqsE '^model:' .github/agents; }
 
@@ -138,16 +162,25 @@ check_s4() {
 }
 
 check_s5() {
-  local P=plugins/teamfeed-harness
+  local P=plugins/ai-msft-harness
   check "plugin.json is valid JSON" "${P}/plugin.json 을 고치세요" json_valid "${P}/plugin.json"
   check "plugin.json has \$schema/name/version/description" "필수 필드를 추가하세요" \
     json_has "${P}/plugin.json" 'all(k in d for k in ("$schema","name","version","description"))'
-  check "plugin version bumped from 0.1.0" "version 을 0.2.0 으로 올리세요" json_has "${P}/plugin.json" 'd.get("version") != "0.1.0"'
-  check "plugin has >= 2 skills" "tdd 와 내 팀 규칙 스킬을 넣으세요" count_ge "$(plugin_count "${P}/skills" SKILL.md)" 2
-  check "plugin has 3 agents" "com.github.copilot/agents 에 3개를 넣으세요" count_ge "$(plugin_count "${P}/com.github.copilot/agents" '*.agent.md')" 3
+  check "plugin version is 1.0.0" "plugin.json version 을 1.0.0 으로 지정하세요" \
+    json_has "${P}/plugin.json" 'd.get("version") == "1.0.0"'
+  check "plugin name is ai-msft-harness" "plugin.json 의 name 을 ai-msft-harness 로 지정하세요" \
+    json_has "${P}/plugin.json" 'd.get("name") == "ai-msft-harness"'
+  check "plugin has >= 5 skills" "Spec Kit delivery, research, TDD, convergence, PR 스킬을 넣으세요" \
+    count_ge "$(plugin_count "${P}/skills" SKILL.md)" 5
+  check "plugin has 6 agents" "com.github.copilot/agents 에 역할 에이전트 6개를 넣으세요" \
+    count_ge "$(plugin_count "${P}/com.github.copilot/agents" '*.agent.md')" 6
   check "plugin has hooks.json (version 1)" "com.github.copilot/hooks/hooks.json 을 만드세요" \
     json_has "${P}/com.github.copilot/hooks/hooks.json" 'd.get("version") == 1 and "preToolUse" in d.get("hooks",{})'
+  check "plugin hooks pass behavior tests" "Windows/Unix hook 명령과 권한 결정을 고치세요" \
+    plugin_hook_tests
   check "plugin has mcp.json" "${P}/mcp.json 을 만드세요" json_valid "${P}/mcp.json"
+  check "marketplace matches plugin name/version/source" ".github/plugin/marketplace.json 을 plugin.json 과 맞추세요" \
+    marketplace_matches_plugin
   check "TeamFeed quality extension source exists" "spec-kit/extensions/teamfeed-quality 를 만드세요" \
     exists spec-kit/extensions/teamfeed-quality/extension.yml
   check "TeamFeed delivery workflow source exists" "spec-kit/workflows/teamfeed-delivery 를 만드세요" \

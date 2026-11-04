@@ -22,7 +22,7 @@ description: final 브랜치에 쌓인 하네스 구조, 단계별 자산, 막�
 ├─ scripts/hooks/                    # 훅 본체와 테스트 (S2)
 ├─ backend/pyproject.toml            # 강제: import-linter 계약 (S2~S4)
 ├─ .vscode/mcp.json, .mcp.json       # 도구: 읽기 전용 SQLite MCP (S3)
-├─ plugins/teamfeed-harness/         # 배포: 위 자산을 묶은 플러그인 (S5)
+├─ plugins/ai-msft-harness/          # 배포: 위 자산을 묶은 플러그인 (S5)
 └─ .github/plugin/marketplace.json   # 배포: 플러그인 마켓플레이스 (S5)
 ```
 
@@ -35,7 +35,7 @@ description: final 브랜치에 쌓인 하네스 구조, 단계별 자산, 막�
 | S2 | import-linter 계약, `guardrails.json` 훅, CI | 강제 |
 | S3 | 읽기 전용 SQLite MCP, 피드 계약 | 도구 범위 제한 |
 | S4 | `security-reviewer` 에이전트, `security` 인스트럭션, CodeQL | 독립 리뷰 |
-| S5 | `teamfeed-harness` 플러그인, 팀 규칙 스킬 | 재사용 |
+| S5 | `ai-msft-harness` 플러그인, 팀 규칙 스킬 | 재사용 |
 
 ## 막은 함정 요약
 
@@ -53,7 +53,7 @@ description: final 브랜치에 쌓인 하네스 구조, 단계별 자산, 막�
 
 ```bash
 copilot plugin marketplace add .
-copilot plugin install teamfeed-harness@teamfeed-marketplace
+copilot plugin install ai-msft-harness@ai-msft-harness-marketplace
 copilot plugin list
 ```
 

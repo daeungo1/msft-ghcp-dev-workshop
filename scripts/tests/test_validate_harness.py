@@ -29,6 +29,9 @@ OTHER_REQUIRED_PATHS = (
     ".github/skills/tdd/SKILL.md",
     ".github/skills/evidence-research/SKILL.md",
     ".github/skills/convergence-check/SKILL.md",
+    ".github/skills/speckit-teamfeed-quality-verify/SKILL.md",
+    ".specify/extensions/teamfeed-quality/.specify-dev/extension-skills/"
+    "speckit-teamfeed-quality-verify/SKILL.md",
 )
 COMPONENT_PATHS = (
     "spec-kit/workflows/teamfeed-delivery/workflow.yml",
@@ -49,6 +52,31 @@ LEARNING_PATHS = (
     "labs/S5-package.md",
     "labs/S6-converge.md",
 )
+PLUGIN_PATHS = (
+    "plugins/ai-msft-harness/plugin.json",
+    "plugins/ai-msft-harness/README.md",
+    ".github/plugin/marketplace.json",
+    "plugins/ai-msft-harness/mcp.json",
+    "plugins/ai-msft-harness/skills/spec-driven-delivery/SKILL.md",
+    "plugins/ai-msft-harness/skills/evidence-research/SKILL.md",
+    "plugins/ai-msft-harness/skills/tdd/SKILL.md",
+    "plugins/ai-msft-harness/skills/convergence-check/SKILL.md",
+    "plugins/ai-msft-harness/skills/pr-description/SKILL.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/researcher.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/planner.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/test-writer.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/implementer.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/security-reviewer.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/agents/convergence-reviewer.agent.md",
+    "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
+    "plugins/ai-msft-harness/com.github.copilot/hooks/pre_tool_guard.py",
+    "plugins/ai-msft-harness/com.github.copilot/hooks/post_edit_check.py",
+    "templates/plugin/hooks.json",
+    "templates/plugin/pre_tool_guard.py",
+    "templates/plugin/post_edit_check.py",
+    "templates/plugin/skills/spec-driven-delivery/SKILL.md",
+    "templates/plugin/skills/pr-description/SKILL.md",
+)
 
 
 def write_file(root: Path, relative_path: str, content: str) -> None:
@@ -66,6 +94,21 @@ def write_complete_harness(root: Path) -> None:
         )
     for path in OTHER_REQUIRED_PATHS:
         write_file(root, path, "required content\n")
+    quality_skill = (
+        "python scripts/validate-harness.py\n"
+        "bash scripts/hooks/test_hooks.sh\n"
+    )
+    write_file(
+        root,
+        ".github/skills/speckit-teamfeed-quality-verify/SKILL.md",
+        quality_skill,
+    )
+    write_file(
+        root,
+        ".specify/extensions/teamfeed-quality/.specify-dev/extension-skills/"
+        "speckit-teamfeed-quality-verify/SKILL.md",
+        quality_skill,
+    )
     write_file(
         root,
         COMPONENT_PATHS[0],
@@ -103,6 +146,54 @@ def write_complete_harness(root: Path) -> None:
     )
     for path in LEARNING_PATHS:
         write_file(root, path, "learning path\n")
+    write_file(
+        root,
+        PLUGIN_PATHS[0],
+        '{"$schema":"https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",'
+        '"name":"ai-msft-harness","version":"1.0.0",'
+        '"description":"Application development harness"}\n',
+    )
+    write_file(root, PLUGIN_PATHS[1], "ai-msft-harness plugin guide\n")
+    write_file(
+        root,
+        PLUGIN_PATHS[2],
+        '{"name":"ai-msft-harness-marketplace","plugins":['
+        '{"name":"ai-msft-harness","version":"1.0.0",'
+        '"source":"./plugins/ai-msft-harness"}]}\n',
+    )
+    for path in PLUGIN_PATHS[3:]:
+        write_file(root, path, "plugin component\n")
+    write_file(
+        root,
+        "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
+        '{"version":1,"hooks":{"preToolUse":[{"type":"command",'
+        '"bash":"python3 \\"${PLUGIN_ROOT}/com.github.copilot/hooks/'
+        'pre_tool_guard.py\\"","powershell":"python \\"$env:PLUGIN_ROOT'
+        '\\\\com.github.copilot\\\\hooks\\\\pre_tool_guard.py\\""}],'
+        '"postToolUse":[{"type":"command",'
+        '"bash":"python3 \\"${PLUGIN_ROOT}/com.github.copilot/hooks/'
+        'post_edit_check.py\\"","powershell":"python \\"$env:PLUGIN_ROOT'
+        '\\\\com.github.copilot\\\\hooks\\\\post_edit_check.py\\""}]}}\n',
+    )
+    write_file(
+        root,
+        "templates/plugin/hooks.json",
+        (root / "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json")
+        .read_text(encoding="utf-8"),
+    )
+    for script_name in ("pre_tool_guard.py", "post_edit_check.py"):
+        write_file(
+            root,
+            f"templates/plugin/{script_name}",
+            (
+                root
+                / "plugins"
+                / "ai-msft-harness"
+                / "com.github.copilot"
+                / "hooks"
+                / script_name
+            ).read_text(encoding="utf-8"),
+        )
 
 
 def run_validator(root: Path) -> subprocess.CompletedProcess[str]:
@@ -253,6 +344,98 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("workflow run must use an installed ID", result.stderr)
+
+    def test_missing_final_plugin_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            (root / "plugins" / "ai-msft-harness" / "plugin.json").unlink()
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("plugins/ai-msft-harness/plugin.json", result.stderr)
+
+    def test_marketplace_plugin_version_mismatch_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                ".github/plugin/marketplace.json",
+                '{"name":"ai-msft-harness-marketplace","plugins":['
+                '{"name":"ai-msft-harness","version":"2.0.0",'
+                '"source":"./plugins/ai-msft-harness"}]}\n',
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("marketplace version must match plugin version", result.stderr)
+
+    def test_plugin_hook_without_powershell_command_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
+                '{"version":1,"hooks":{"preToolUse":['
+                '{"bash":"python3 pre_tool_guard.py"}],'
+                '"postToolUse":[{"bash":"python3 post_edit_check.py"}]}}\n',
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("must define bash and powershell", result.stderr)
+
+    def test_stale_plugin_hook_template_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                "templates/plugin/hooks.json",
+                '{"version":1,"hooks":{"preToolUse":['
+                '{"bash":"bash pre_tool_guard.sh"}]}}\n',
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("template hooks.json must match", result.stderr)
+
+    def test_stale_plugin_hook_script_template_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                "templates/plugin/pre_tool_guard.py",
+                "stale policy\n",
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("template hook scripts must match", result.stderr)
+
+    def test_quality_skill_with_missing_extension_scripts_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                ".github/skills/speckit-teamfeed-quality-verify/SKILL.md",
+                "python .specify/extensions/teamfeed-quality/scripts/"
+                "validate-harness.py\n",
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("quality skill must use repository validation scripts", result.stderr)
 
 
 if __name__ == "__main__":

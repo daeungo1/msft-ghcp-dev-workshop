@@ -54,7 +54,7 @@ description: 180분 핸즈온의 단계별 시간, 강사 시연 스크립트, �
 ### S5
 
 1. 빈 `sandbox` 저장소에서 `/skills list`가 비어 있음을 보여 줍니다.
-2. `copilot plugin install ./plugins/teamfeed-harness` 후 같은 명령에 `tdd`가 나타나는 것을 보여 줍니다.
+2. `copilot plugin install ./plugins/ai-msft-harness` 후 같은 명령에 `tdd`가 나타나는 것을 보여 줍니다.
 3. `final`의 `.github/plugin/marketplace.json`으로 marketplace 등록 흐름을 설명합니다.
 
 ## 늦은 참가자 기준
