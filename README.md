@@ -24,11 +24,21 @@ reference application입니다. 회원, 게시글, 팔로우, 피드, 신고 기
 
 ![Spec Kit 개발 단계에서 재사용 가능한 ai-msft-harness까지 이어지는 워크숍 개요](docs/images/workshop-overview.svg)
 
-이 워크숍의 벤치마크는
-[`obra/superpowers`](https://github.com/obra/superpowers)입니다. Superpowers가
-검증된 개발 절차를 설치 가능한 skills와 hooks로 제공하듯, 이 워크숍은
-각 팀이 자신의 애플리케이션 개발 패턴을 `ai-msft-harness`로 만드는 과정을
-Spec Kit 단계에 맞춰 설명합니다.
+완성된 하네스는 이 저장소에만 머물지 않습니다. 다른 사용자도 GitHub
+Copilot의 marketplace에서 `ai-msft-harness`를 설치해 같은 skills, agents,
+hooks, MCP를 사용할 수 있습니다.
+
+```powershell
+copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
+copilot plugin install ai-msft-harness@ai-msft-harness-marketplace
+```
+
+VS Code에서는 **Chat: Manage Plugin Marketplaces**에서
+`daeungo1/msft-ghcp-dev-workshop`를 추가한 뒤 **Customize → Plugins**에서
+`ai-msft-harness`를 설치합니다.
+
+이 워크숍은 각 팀이 자신의 애플리케이션 개발 패턴을 설치 가능한 plugin으로
+만드는 과정을 Spec Kit 단계에 맞춰 설명합니다.
 
 ### 이 워크숍에서 만드는 것
 
