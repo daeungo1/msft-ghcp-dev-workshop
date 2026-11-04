@@ -49,6 +49,8 @@ COMPONENT_PATHS = tuple(path for path, _, _ in COMPONENT_MANIFESTS) + (
 
 LEARNING_PATHS = (
     "README.md",
+    "docs/images/plugin-installation.svg",
+    "docs/images/integration-wrapper-pattern.svg",
     "docs/multi-harness-architecture.md",
     "docs/model-routing.md",
     "labs/S0-spec.md",
@@ -286,6 +288,36 @@ def validate_documented_commands(root: Path) -> list[str]:
             errors.append(
                 f"{relative_path}: quality skill must use repository validation scripts"
             )
+    readme_path = root / "README.md"
+    if readme_path.is_file():
+        readme = readme_path.read_text(encoding="utf-8")
+        required_installation_content = (
+            "docs/images/plugin-installation.svg",
+            "copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop",
+            "copilot plugin install ai-msft-harness@ai-msft-harness-marketplace",
+            "daeungo1/msft-ghcp-dev-workshop:plugins/ai-msft-harness",
+            "copilot plugin marketplace update ai-msft-harness-marketplace",
+            "copilot plugin update ai-msft-harness@ai-msft-harness-marketplace",
+            "copilot plugin uninstall ai-msft-harness@ai-msft-harness-marketplace",
+        )
+        if any(item not in readme for item in required_installation_content):
+            errors.append(
+                "README must document marketplace, direct, update, and "
+                "uninstall plugin flows"
+            )
+        required_integration_content = (
+            "docs/images/integration-wrapper-pattern.svg",
+            "hy2219/simplified-sdlc",
+            "Resource Registry",
+            "HTTP Adapter",
+            "MCP Adapter",
+            "Database Adapter",
+        )
+        if any(item not in readme for item in required_integration_content):
+            errors.append(
+                "README must document the manifest-driven integration "
+                "wrapper pattern"
+            )
     return errors
 
 
@@ -401,6 +433,13 @@ def validate_final_plugin(root: Path) -> list[str]:
             "Adapters",
             "module/service",
             "incremental refactoring",
+            "Resource Registry",
+            "HTTP Adapter",
+            "MCP Adapter",
+            "Database Adapter",
+            "resource manifest",
+            "inputSchema",
+            "outputSchema",
         )
         if any(term not in standards for term in required_terms):
             errors.append(

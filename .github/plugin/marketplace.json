@@ -12,8 +12,8 @@
   "plugins": [
     {
       "name": "ai-msft-harness",
-      "description": "Node.js 22+와 Python 3.12+ runtime policy, Clean Architecture, module/service incremental refactoring, 역할별 에이전트, TDD, hooks, convergence",
-      "version": "1.1.0",
+      "description": "Runtime policy, Clean Architecture, module/service incremental refactoring, manifest-driven MCP/API wrappers, role-based agents, TDD, hooks, convergence",
+      "version": "1.2.0",
       "source": "./plugins/ai-msft-harness",
       "category": "Developer Tools"
     }

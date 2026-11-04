@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="650" viewBox="0 0 1240 650" role="img" aria-labelledby="title desc">
+  <title id="title">Manifest-driven integration wrapper pattern</title>
+  <desc id="desc">Application use cases call one integration port. A validated resource registry and adapter router connect only approved HTTP, MCP, and database operations.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0 0L9 4.5L0 9Z" fill="#64748b"/>
+    </marker>
+    <style>
+      text { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; fill: #0f172a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #475569; }
+      .section { font-size: 20px; font-weight: 700; }
+      .label { font-size: 16px; font-weight: 700; }
+      .body { font-size: 14px; fill: #475569; }
+      .line { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
+      .dashed { fill: none; stroke: #059669; stroke-width: 2.5; stroke-dasharray: 7 5; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1240" height="650" rx="22" fill="#f8fafc"/>
+  <text x="40" y="54" class="title">External systems는 manifest-driven wrappers로 연결합니다</text>
+  <text x="40" y="86" class="subtitle">Application code는 protocol detail 대신 Integration Port와 validated contract에 의존합니다</text>
+
+  <rect x="40" y="136" width="250" height="294" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+  <text x="64" y="172" class="section">Application</text>
+  <rect x="64" y="202" width="202" height="76" rx="12" fill="#ffffff" stroke="#bfdbfe"/>
+  <text x="84" y="232" class="label">Application Use Case</text>
+  <text x="84" y="257" class="body">business workflow orchestration</text>
+  <path d="M165 278V314" class="line"/>
+  <rect x="64" y="322" width="202" height="76" rx="12" fill="#dbeafe"/>
+  <text x="84" y="352" class="label">Integration Port</text>
+  <text x="84" y="377" class="body">stable typed interface</text>
+
+  <path d="M290 283H340" class="line"/>
+
+  <rect x="348" y="136" width="276" height="294" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+  <text x="372" y="172" class="section">Resource Catalog</text>
+  <rect x="372" y="202" width="228" height="92" rx="12" fill="#ede9fe"/>
+  <text x="392" y="232" class="label">resource.json manifests</text>
+  <text x="392" y="257" class="body">type · operation · schema</text>
+  <text x="392" y="279" class="body">audience · scope · urlEnv</text>
+  <path d="M486 294V326" class="line"/>
+  <rect x="372" y="334" width="228" height="72" rx="12" fill="#ffffff" stroke="#c4b5fd"/>
+  <text x="392" y="363" class="label">Resource Registry</text>
+  <text x="392" y="387" class="body">discover · validate · deduplicate</text>
+
+  <path d="M624 283H674" class="line"/>
+
+  <rect x="682" y="136" width="234" height="294" rx="18" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/>
+  <text x="706" y="172" class="section">Adapter Router</text>
+  <rect x="706" y="202" width="186" height="56" rx="12" fill="#d1fae5"/>
+  <text x="728" y="237" class="label">HTTP Adapter</text>
+  <rect x="706" y="278" width="186" height="56" rx="12" fill="#d1fae5"/>
+  <text x="728" y="313" class="label">MCP Adapter</text>
+  <rect x="706" y="354" width="186" height="56" rx="12" fill="#d1fae5"/>
+  <text x="728" y="389" class="label">Database Adapter</text>
+
+  <path d="M916 230H966" class="line"/>
+  <path d="M916 306H966" class="line"/>
+  <path d="M916 382H966" class="line"/>
+
+  <rect x="974" y="136" width="226" height="294" rx="18" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+  <text x="998" y="172" class="section">External Resources</text>
+  <rect x="998" y="202" width="178" height="56" rx="12" fill="#ffedd5"/>
+  <text x="1020" y="237" class="label">HTTP APIs</text>
+  <rect x="998" y="278" width="178" height="56" rx="12" fill="#ffedd5"/>
+  <text x="1020" y="313" class="label">Remote MCPs</text>
+  <rect x="998" y="354" width="178" height="56" rx="12" fill="#ffedd5"/>
+  <text x="1020" y="389" class="label">Approved DB Views</text>
+
+  <rect x="40" y="472" width="1160" height="136" rx="16" fill="#e2e8f0"/>
+  <text x="64" y="506" class="section">Contract and security gates</text>
+  <text x="64" y="540" class="body">Input/output JSON Schema · duplicate ID/tool rejection · explicit timeout · result size limit</text>
+  <text x="64" y="568" class="body">Secrets from environment or secret store · resource-specific audience/scope · least-privilege credentials</text>
+  <text x="64" y="596" class="body">HTTPS origin protection · MCP tool allowlist · read-only View · parameter binding · write rejection</text>
+
+  <path d="M486 430V464" class="dashed"/>
+</svg>

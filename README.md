@@ -22,20 +22,94 @@ reference application입니다. 회원, 게시글, 팔로우, 피드, 신고 기
 > 패키지로 제공합니다. VS Code에서는 **Chat: Install Plugin from Source**,
 > CLI에서는 `copilot plugin install ./plugins/ai-msft-harness`로 설치합니다.
 
-![Spec Kit 개발 단계에서 재사용 가능한 ai-msft-harness까지 이어지는 워크숍 개요](docs/images/workshop-overview.svg)
+## Install ai-msft-harness
 
-완성된 harness는 이 저장소에만 머물지 않습니다. 다른 사용자도 GitHub
-Copilot의 marketplace에서 `ai-msft-harness`를 설치해 같은 skills, agents,
-hooks, MCP를 사용할 수 있습니다.
+![GitHub repository에서 marketplace 또는 direct source를 통해 VS Code와 Copilot CLI에 ai-msft-harness를 설치하는 흐름](docs/images/plugin-installation.svg)
+
+### Prerequisites
+
+* GitHub에 로그인된 VS Code와 GitHub Copilot
+* GitHub Copilot CLI 사용 시 `copilot --version`이 동작하는 환경
+* Private repository에서 설치할 경우 해당 repository의 read access
+* Optional SQLite MCP를 사용할 경우 `uv`와 Python 3.12+
+
+> [!WARNING]
+> Plugin은 agents, skills, hooks, MCP server를 설치합니다. 설치 전에
+> [`plugin.json`](plugins/ai-msft-harness/plugin.json), [hooks](plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json),
+> [MCP configuration](plugins/ai-msft-harness/mcp.json)을 검토하세요.
+
+### Option A: Marketplace install (recommended)
+
+다른 사용자와 팀에 배포할 때 사용하는 권장 경로입니다.
 
 ```powershell
 copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
+copilot plugin marketplace browse ai-msft-harness-marketplace
 copilot plugin install ai-msft-harness@ai-msft-harness-marketplace
 ```
 
-VS Code에서는 **Chat: Manage Plugin Marketplaces**에서
-`daeungo1/msft-ghcp-dev-workshop`를 추가한 뒤 **Customize → Plugins**에서
-`ai-msft-harness`를 설치합니다.
+### Option B: Direct GitHub install
+
+Marketplace를 등록하지 않고 repository subdirectory에서 바로 설치합니다.
+
+```powershell
+copilot plugin install `
+  daeungo1/msft-ghcp-dev-workshop:plugins/ai-msft-harness
+```
+
+### Option C: Local development install
+
+이 repository를 clone해 plugin을 수정하거나 테스트할 때 사용합니다.
+
+```powershell
+git clone https://github.com/daeungo1/msft-ghcp-dev-workshop.git
+cd msft-ghcp-dev-workshop
+copilot plugin marketplace add .
+copilot plugin install ai-msft-harness@ai-msft-harness-marketplace
+```
+
+Local marketplace plugin은 workspace source를 live로 읽으므로 변경 후 새
+Copilot session을 시작하면 최신 파일이 반영됩니다.
+
+### Install from VS Code
+
+Marketplace install:
+
+1. Command Palette에서 **Chat: Manage Plugin Marketplaces** 실행
+2. **Add Marketplace...** 선택
+3. `daeungo1/msft-ghcp-dev-workshop` 입력
+4. Chat 또는 Agents 창에서 **Customize → Browse** 열기
+5. `ai-msft-harness` 검색 후 **Install** 선택
+
+Local source install:
+
+1. Command Palette에서 **Chat: Install Plugin from Source** 실행
+2. `<repository>/plugins/ai-msft-harness` 선택
+3. **Agent Customizations → Plugins**에서 enabled 상태 확인
+
+### Verify the installation
+
+```powershell
+copilot plugin list
+copilot skill list
+copilot mcp list
+```
+
+정상 설치 기준:
+
+* Plugin: `ai-msft-harness` version `1.2.0`, enabled
+* Skills: 6개
+* Agents: 6개 (VS Code **Agent Customizations → Agents**에서 확인)
+* Hooks: cross-platform PreToolUse/PostToolUse
+* MCP: `sqlite-ro` (optional)
+
+SQLite MCP를 사용할 때만 DB 경로를 지정합니다.
+
+```powershell
+$env:AI_MSFT_HARNESS_DB = "C:\absolute\path\application.db"
+```
+
+![Spec Kit 개발 단계에서 재사용 가능한 ai-msft-harness까지 이어지는 워크숍 개요](docs/images/workshop-overview.svg)
 
 이 워크숍은 각 팀이 자신의 애플리케이션 개발 패턴을 설치 가능한 plugin으로
 만드는 과정을 Spec Kit 단계에 맞춰 설명합니다.
@@ -56,9 +130,11 @@ VS Code에서는 **Chat: Manage Plugin Marketplaces**에서
 
 | 지금 필요한 것 | 이동할 곳 |
 |---|---|
-| 바로 환경을 준비하고 싶음 | [빠른 시작](#빠른-시작) |
+| Plugin을 설치하고 싶음 | [Install ai-msft-harness](#install-ai-msft-harness) |
+| Workshop 환경을 준비하고 싶음 | [빠른 시작](#빠른-시작) |
 | 전체 실습 순서를 보고 싶음 | [S0-S6 학습 흐름](#s0-s6-학습-흐름) |
 | Harness layer를 이해하고 싶음 | [Multi-layer harness architecture](#multi-layer-harness-architecture) |
+| MCP/API wrapper 구조가 궁금함 | [Integration wrapper pattern](#integration-wrapper-pattern) |
 | Spec Kit 명령 순서가 궁금함 | [Spec Kit 실행 흐름](#spec-kit-실행-흐름) |
 | 전체 검증 명령이 필요함 | [실행과 검증](#실행과-검증) |
 | 과거 v0.1 브랜치를 찾고 있음 | [버전과 브랜치](#버전과-브랜치) |
@@ -122,6 +198,36 @@ Harness는 하나의 거대한 prompt가 아닙니다. 각 layer는 서로 다�
 
 더 자세한 책임 경계는
 [Multi-Harness Architecture](docs/multi-harness-architecture.md)를 참고하세요.
+
+## Integration wrapper pattern
+
+![Application Use Case에서 resource manifest와 registry를 거쳐 HTTP, MCP, Database adapter를 호출하는 integration wrapper 구조](docs/images/integration-wrapper-pattern.svg)
+
+여러 MCP, HTTP API, database를 application code에 직접 연결하지 않습니다.
+Application Use Case는 하나의 Integration Port만 사용하고, Resource Registry가
+manifest를 검증한 뒤 protocol별 adapter로 routing합니다.
+
+| Component | Responsibility |
+|---|---|
+| Resource manifest | Resource ID, protocol type, environment variable, operation, input/output schema, audience/scope 선언 |
+| Resource Registry | Manifest discovery, duplicate detection, schema validation, deterministic registration |
+| Adapter Router | Validated resource type에 맞는 adapter 선택 |
+| HTTP Adapter | Origin protection, timeout, auth header, request/response schema validation |
+| MCP Adapter | Allowed remote tool만 호출하고 `structuredContent`와 output schema 검증 |
+| Database Adapter | Approved View/columns와 parameterized filters만 허용, write와 arbitrary SQL 거부 |
+
+Security defaults:
+
+* URL, password, client secret, token은 manifest에 저장하지 않음
+* Connection 정보는 environment variable 또는 secret store에서 주입
+* Resource별 audience/scope와 least-privilege credential 분리
+* Invalid manifest는 skip하지 않고 build 또는 startup을 실패시킴
+* 새 integration은 먼저 manifest로 표현하고, 새 protocol일 때만 adapter를 추가
+
+이 구조는 비개발자 대상 reference repository인
+[`hy2219/simplified-sdlc`](https://github.com/hy2219/simplified-sdlc)의
+manifest-driven MCP resource catalog를 참고해 Clean Architecture Ports/Adapters
+규칙에 맞게 반영했습니다.
 
 ## Spec Kit 실행 흐름
 
@@ -271,43 +377,34 @@ scripts/                    개발, hook, 구조 검증
 `/speckit-teamfeed-quality-verify` skill로 제공합니다. 로컬 Spec Kit 구성
 설치 방법은 [Spec Kit Components](spec-kit/README.md)를 참고하세요.
 
-## 플러그인 설치와 공유
+## Plugin management and distribution
 
-### 현재 VS Code에 설치
+### Update
 
-Command Palette에서 **Chat: Install Plugin from Source**를 실행한 뒤
-[`plugins/ai-msft-harness/`](plugins/ai-msft-harness/)의 절대 경로를
-입력합니다. 설치 결과는 **Agent Customizations → Plugins**에서 확인합니다.
-
-Copilot CLI 설치도 같은 사용자 plugin 저장소를 사용합니다.
-
-```bash
-copilot plugin install ./plugins/ai-msft-harness
-copilot plugin list
+```powershell
+copilot plugin marketplace update ai-msft-harness-marketplace
+copilot plugin update ai-msft-harness@ai-msft-harness-marketplace
 ```
 
-### 다른 사용자에게 공유
+### Disable or uninstall
 
-현재 저장소는 marketplace catalog까지 포함합니다.
-
-```bash
-copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
-copilot plugin marketplace browse ai-msft-harness-marketplace
-copilot plugin install ai-msft-harness@ai-msft-harness-marketplace
+```powershell
+copilot plugin disable ai-msft-harness@ai-msft-harness-marketplace
+copilot plugin enable ai-msft-harness@ai-msft-harness-marketplace
+copilot plugin uninstall ai-msft-harness@ai-msft-harness-marketplace
 ```
 
-직접 설치도 가능합니다.
+### Publish a new version
 
-```bash
-copilot plugin install \
-  daeungo1/msft-ghcp-dev-workshop:plugins/ai-msft-harness
-```
+1. [`plugin.json`](plugins/ai-msft-harness/plugin.json)의 semantic version 변경
+2. [`marketplace.json`](.github/plugin/marketplace.json)의 version을 동일하게 변경
+3. Plugin tests와 `scripts/verify-step.sh S5` 실행
+4. Default branch에 commit/push
+5. Marketplace catalog update와 plugin update로 설치 검증
 
-> [!NOTE]
-> 다른 사용자가 설치하려면 [`marketplace.json`](.github/plugin/marketplace.json)과
-> plugin 폴더가 원격 기본 브랜치에 push되어 있어야 합니다. 공개 저장소는
-> 누구나 추가할 수 있고, 비공개 저장소는 사용자가 해당 저장소의 읽기
-> 권한과 GitHub 로그인을 가져야 합니다.
+Public repository는 누구나 marketplace로 추가할 수 있습니다. Private
+repository는 설치 사용자가 GitHub에 로그인되어 있고 repository read
+access를 가져야 합니다.
 
 ## 버전과 브랜치
 

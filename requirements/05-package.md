@@ -18,7 +18,7 @@ S0~S4에서 만든 하네스는 이 저장소 안에만 있습니다.
    설치해 로드되는지 확인합니다.
 4. `templates/team-rule-template.md`로 내 팀 규칙 1개를 skill, hook 또는
    프로젝트별 `.ai-msft-harness/post-edit.py`로 추가합니다.
-5. `.github/plugin/marketplace.json`에 플러그인을 등록하고 버전을 `1.1.0`으로
+5. `.github/plugin/marketplace.json`에 플러그인을 등록하고 버전을 `1.2.0`으로
    맞춥니다.
 
 ## 수용 기준

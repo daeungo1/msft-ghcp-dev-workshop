@@ -87,7 +87,7 @@ cp -r templates/mcp/sqlite-ro-server $P/mcp/sqlite-ro-server
 ```
 
 `plugins/ai-msft-harness/plugin.json`의 `author`를 우리 팀 이름으로 바꾸고,
-완성 버전을 `1.1.0`으로 지정합니다.
+완성 버전을 `1.2.0`으로 지정합니다.
 
 ## 3. 내 팀 규칙 1개 추가 (10분)
 
@@ -104,7 +104,7 @@ cp -r templates/mcp/sqlite-ro-server $P/mcp/sqlite-ro-server
 | 프로젝트마다 명령이 다름 | 프로젝트 검증 스크립트 | `.ai-msft-harness/post-edit.py` |
 
 4. `plugin.json`과 `.github/plugin/marketplace.json`의 버전을 함께
-   `1.1.0`으로 올립니다.
+   `1.2.0`으로 올립니다.
 
 > [!TIP]
 > 규칙이 떠오르지 않으면 `bp-catalog`의 우리 BP 칸이나 [자가진단 카드](../templates/self-check-card.md)에서 가장 자주 새는 칸을 고르세요.
@@ -168,7 +168,7 @@ scripts/verify-step.sh S5
 | 확인 항목 | 안 되면 |
 |---|---|
 | `plugin.json` 유효하고 `$schema`, `name`, `version`, `description` 포함 | 템플릿 복사 후 필드 확인 |
-| plugin과 marketplace 버전이 일치 | 둘 다 `1.1.0`으로 변경 |
+| plugin과 marketplace 버전이 일치 | 둘 다 `1.2.0`으로 변경 |
 | `skills/` 아래 `SKILL.md` 6개 이상 | delivery, team standards, research, TDD, convergence, PR |
 | `com.github.copilot/agents/` 에이전트 6개 | 조사, 계획, 테스트, 구현, 보안, 수렴 |
 | `com.github.copilot/hooks/hooks.json` 유효, `version` 1 | 템플릿 복사 |

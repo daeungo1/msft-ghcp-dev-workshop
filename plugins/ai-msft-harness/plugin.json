@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ai-msft-harness",
-  "version": "1.1.0",
-  "description": "Spec-driven application development harness with Node.js 22+ and Python 3.12+ runtime policy, Clean Architecture, incremental refactoring, role agents, TDD, guardrails, and convergence",
+  "version": "1.2.0",
+  "description": "Spec-driven application development harness with runtime policy, Clean Architecture, incremental refactoring, manifest-driven MCP/API wrappers, role agents, TDD, guardrails, and convergence",
   "author": {
     "name": "AI MSFT Harness Workshop",
     "url": "https://github.com/daeungo1/msft-ghcp-dev-workshop"
@@ -16,6 +16,8 @@
     "clean-architecture",
     "runtime-policy",
     "incremental-refactoring",
+    "integration-adapters",
+    "resource-registry",
     "tdd",
     "multi-agent",
     "guardrails",

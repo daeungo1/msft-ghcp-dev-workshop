@@ -42,6 +42,8 @@ COMPONENT_PATHS = (
 )
 LEARNING_PATHS = (
     "README.md",
+    "docs/images/plugin-installation.svg",
+    "docs/images/integration-wrapper-pattern.svg",
     "docs/multi-harness-architecture.md",
     "docs/model-routing.md",
     "labs/S0-spec.md",
@@ -150,6 +152,24 @@ def write_complete_harness(root: Path) -> None:
         write_file(root, path, "learning path\n")
     write_file(
         root,
+        "README.md",
+        "docs/images/plugin-installation.svg\n"
+        "copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop\n"
+        "copilot plugin install ai-msft-harness@ai-msft-harness-marketplace\n"
+        "copilot plugin install "
+        "daeungo1/msft-ghcp-dev-workshop:plugins/ai-msft-harness\n"
+        "copilot plugin marketplace update ai-msft-harness-marketplace\n"
+        "copilot plugin update ai-msft-harness@ai-msft-harness-marketplace\n"
+        "copilot plugin uninstall ai-msft-harness@ai-msft-harness-marketplace\n"
+        "docs/images/integration-wrapper-pattern.svg\n"
+        "hy2219/simplified-sdlc\n"
+        "Resource Registry\n"
+        "HTTP Adapter\n"
+        "MCP Adapter\n"
+        "Database Adapter\n",
+    )
+    write_file(
+        root,
         PLUGIN_PATHS[0],
         '{"$schema":"https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",'
         '"name":"ai-msft-harness","version":"1.0.0",'
@@ -176,6 +196,13 @@ def write_complete_harness(root: Path) -> None:
         "Adapters\n"
         "module/service\n"
         "incremental refactoring\n"
+        "Resource Registry\n"
+        "HTTP Adapter\n"
+        "MCP Adapter\n"
+        "Database Adapter\n"
+        "resource manifest\n"
+        "inputSchema\n"
+        "outputSchema\n"
     )
     write_file(
         root,
@@ -460,6 +487,30 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("quality skill must use repository validation scripts", result.stderr)
+
+    def test_readme_without_installation_guide_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(root, "README.md", "workshop overview only\n")
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("README must document marketplace", result.stderr)
+
+    def test_readme_without_integration_wrapper_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            readme = (root / "README.md").read_text(encoding="utf-8")
+            readme = readme.replace("Resource Registry\n", "")
+            write_file(root, "README.md", readme)
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("manifest-driven integration wrapper", result.stderr)
 
     def test_generic_team_standards_skill_returns_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
