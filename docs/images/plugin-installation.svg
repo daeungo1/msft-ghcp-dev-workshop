@@ -35,7 +35,7 @@
   <text x="80" y="358" class="label">Marketplace catalog</text>
   <text x="80" y="382" class="body">.github/plugin/marketplace.json</text>
   <rect x="62" y="420" width="222" height="58" rx="12" fill="#dbeafe"/>
-  <text x="80" y="454" class="label">Agent Plugin 1.2.0</text>
+  <text x="80" y="454" class="label">Agent Plugin 1.2.1</text>
 
   <path d="M308 335H346" class="line"/>
 

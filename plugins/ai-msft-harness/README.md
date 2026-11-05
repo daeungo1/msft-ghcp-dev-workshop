@@ -42,7 +42,7 @@ verify → converge → reusable plugin
 * Ports를 통한 DB, queue, external API 추상화
 * One module/service or one use case 단위 incremental refactoring
 * Legacy modernization의 Strangler Fig approach
-* Manifest-driven resource registry와 HTTP/MCP/Database adapters
+* 여러 external resources를 위한 optional registry/adapter architecture shape
 * Python import-linter와 TypeScript dependency boundary automation
 
 ### VS Code에 로컬 설치

@@ -181,16 +181,22 @@ router가 legacy와 new module을 함께 지원하고, use case 단위로 traffi
 이동합니다. Big-bang rewrite는 사용자가 명시적으로 요구하고 rollback과
 behavior parity evidence가 있을 때만 선택합니다.
 
-## 6. Manifest-driven Integration Wrappers
+## 6. Optional Integration Wrapper Shape
 
-여러 MCP, HTTP API, database를 application code에 직접 연결하지 않습니다.
-Integration Port 뒤에 resource catalog와 protocol adapter를 두고, resource별
-manifest를 registry가 발견하고 검증하도록 구성합니다.
+이 구조는 **여러 MCP/API/database를 하나의 catalog로 제공해야 할 때만**
+선택합니다. 단일 external system은 해당 module의 port와 adapter로 직접
+연결하며 registry를 추가하지 않습니다.
+
+이 skill은 wrapper 구현을 제공하거나 특정 manifest schema를 강제하지
+않습니다. 다음 responsibility shape만 참고해 프로젝트 규모와 보안 요구에
+맞게 설계합니다.
 
 ```text
 Application Use Case
         ↓
 Integration Port
+        ↓
+Resource Descriptor
         ↓
 Resource Registry
         ↓
@@ -200,145 +206,26 @@ Adapter Router
 └── Database Adapter
 ```
 
-### Directory example
+Minimal rules:
 
-```text
-src/integrations/
-├── core/
-│   ├── resource-definition.ts
-│   └── integration-result.ts
-├── registry/
-│   ├── discover-resources.ts
-│   └── validate-resource.ts
-├── adapters/
-│   ├── http-adapter.ts
-│   ├── mcp-adapter.ts
-│   └── database-adapter.ts
-└── resources/
-    ├── product-api/resource.json
-    ├── inventory-mcp/resource.json
-    └── customer-db/resource.json
-```
+* Resource descriptor에는 `id`, protocol type, connection environment key,
+  operation, input/output contract만 둠
+* Registry는 descriptor validation과 duplicate detection만 담당
+* HTTP, MCP, Database protocol detail은 각각 adapter에 격리
+* URL과 secret은 descriptor에 넣지 않고 environment 또는 secret store에서 주입
+* Remote MCP tool은 allowlist로 제한하고 database adapter는 read-only와
+  parameter binding을 기본값으로 사용
+* Invalid descriptor를 조용히 skip하지 않고 startup 또는 build를 실패시킴
 
-Python 프로젝트는 같은 책임을 `.py` module로 표현합니다. Directory와
-language가 달라도 resource manifest, registry, adapter boundary는 유지합니다.
+도입 전 확인:
 
-### Resource manifest contract
+1. External resource가 3개 이상이거나 비개발자도 catalog를 확장해야 하는가?
+2. Resource별 input/output contract와 authorization boundary가 필요한가?
+3. Registry와 protocol adapter의 운영 비용보다 중복 wrapper 감소 효과가 큰가?
 
-각 resource manifest는 최소한 다음을 선언합니다.
+세 질문 중 하나라도 아니면 module-local port와 adapter를 사용합니다.
 
-* Stable resource `id`와 protocol `type`
-* Connection address를 읽을 environment variable name
-* Exposed operation/tool name과 description
-* Input and output JSON Schema
-* Authorization audience와 scope
-* HTTP method/path, remote MCP tool, 또는 approved DB view/columns
-* Timeout, result mapping, maximum result size
-
-```json
-{
-  "version": 1,
-  "id": "inventory-api",
-  "type": "http",
-  "connection": {
-    "urlEnv": "INVENTORY_API_URL"
-  },
-  "tools": [
-    {
-      "name": "get_inventory",
-      "authorization": {
-        "audience": "inventory-api",
-        "scope": "inventory:read"
-      },
-      "operation": {
-        "method": "GET",
-        "path": "/inventory"
-      },
-      "inputSchema": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["productId"],
-        "properties": {
-          "productId": {
-            "type": "string"
-          }
-        }
-      },
-      "outputSchema": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["quantity"],
-        "properties": {
-          "quantity": {
-            "type": "integer"
-          }
-        }
-      }
-    }
-  ]
-}
-```
-
-### Registry rules
-
-* Build 또는 startup 시 `resources/*/resource.json`을 자동 발견
-* Directory name과 resource `id` 일치 검증
-* Duplicate resource id, tool name, route를 거부
-* Unknown protocol type과 unsupported schema keyword를 거부
-* Invalid manifest 하나를 조용히 skip하지 않고 build/startup 실패
-* Validated manifest만 compiled registry 또는 immutable in-memory registry로 제공
-* Runtime file watch보다 explicit rebuild/restart를 기본값으로 사용
-
-### Adapter rules
-
-HTTP Adapter:
-
-* Base URL은 environment variable에서만 읽음
-* Allowed protocol은 HTTPS, local development에서만 explicit HTTP
-* Manifest path가 configured origin을 변경하지 못하게 검증
-* GET query는 scalar만 허용하고 POST body는 validated JSON만 전달
-* Redirect, timeout, response size, output schema를 검증
-
-MCP Adapter:
-
-* Remote tool name은 manifest allowlist에서만 선택
-* `structuredContent`와 declared output schema를 검증
-* Remote error와 invalid response를 stable integration error로 변환
-* Remote MCP가 제공하는 모든 tool을 자동 노출하지 않음
-
-Database Adapter:
-
-* Default는 read-only
-* Approved View와 columns만 manifest에 선언
-* Table name과 column name은 validated allowlist에서만 생성
-* Filter value는 binding parameter로 전달
-* Arbitrary SQL과 write operation을 노출하지 않음
-* Resource별 least-privilege DB role과 connection pool을 분리
-
-### Security and secrets
-
-* URL, password, client secret, token을 manifest와 source code에 저장하지 않음
-* Connection과 secret은 environment variable 또는 secret store에서 주입
-* Resource별 audience와 scope를 검증하고 downstream token을 분리
-* Application session, MCP client credential, resource credential을 재사용하지 않음
-* Logs에는 secret, token, full connection string, sensitive payload를 기록하지 않음
-
-### Wrapper tests
-
-| Target | Required test |
-|---|---|
-| Manifest | schema validation, duplicate id/name, unsupported type |
-| Registry | discovery, deterministic order, missing environment |
-| HTTP Adapter | origin protection, timeout, schema, auth header |
-| MCP Adapter | allowed tool, structured result, remote error |
-| Database Adapter | approved view, parameter binding, write rejection |
-| End-to-end | one resource per protocol through the public Integration Port |
-
-새 integration을 추가할 때 adapter source를 수정하기 전에 manifest만으로 표현할
-수 있는지 확인합니다. 새 protocol인 경우에만 adapter implementation과
-contract tests를 추가합니다.
-
-Reference pattern:
+Shape reference:
 https://github.com/hy2219/simplified-sdlc
 
 ## 7. Contract and data rules
@@ -378,9 +265,11 @@ Project post-edit 및 CI에 다음 검사를 연결합니다.
 * formatter and lint
 * unit, integration, contract, acceptance tests
 * module dependency boundary rules
-* resource manifest and integration adapter contract tests
 * public API and schema compatibility
 * secret and dependency vulnerability scanning
+
+Optional multi-resource shape를 채택한 경우에만 descriptor/registry validation과
+protocol adapter contract tests를 추가합니다.
 
 Python은 import-linter, TypeScript는 dependency-cruiser 또는 ESLint boundary
 rules를 기본 후보로 사용합니다. 도구가 다르더라도 dependency direction
@@ -398,8 +287,10 @@ contract는 동일해야 합니다.
 * one task에서 여러 service의 migration과 behavior change를 동시에 수행
 * architecture boundary test 없이 directory만 재배치
 * old path caller가 남아 있는데 legacy code 제거
-* external API URL, token, password를 resource manifest에 저장
-* manifest schema validation 없이 MCP/API tool을 자동 노출
+Optional multi-resource shape를 채택한 경우 다음도 거부합니다.
+
+* external API URL, token, password를 resource descriptor에 저장
+* descriptor validation 없이 MCP/API tool을 자동 노출
 * database adapter가 arbitrary SQL 또는 write operation을 허용
 
 ## 11. Completion evidence
@@ -412,7 +303,8 @@ contract는 동일해야 합니다.
 4. dependency boundary 검사 결과
 5. layer별 test 명령과 통과 수
 6. legacy path caller count 또는 남은 migration task
-7. resource manifests와 adapter contract test 결과
+7. Optional multi-resource shape를 채택한 경우에만 descriptors, registry,
+   adapter contract test 결과
 
 ## Official references
 
@@ -426,5 +318,5 @@ contract는 동일해야 합니다.
   https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures
 * Azure Strangler Fig pattern:
   https://learn.microsoft.com/azure/architecture/patterns/strangler-fig
-* Reference implementation for a manifest-driven MCP resource catalog:
+* Shape reference for a manifest-driven MCP resource catalog:
   https://github.com/hy2219/simplified-sdlc

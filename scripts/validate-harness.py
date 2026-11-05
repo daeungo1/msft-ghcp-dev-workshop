@@ -433,13 +433,16 @@ def validate_final_plugin(root: Path) -> list[str]:
             "Adapters",
             "module/service",
             "incremental refactoring",
+            "Optional Integration Wrapper Shape",
+            "Resource descriptor",
             "Resource Registry",
             "HTTP Adapter",
             "MCP Adapter",
             "Database Adapter",
-            "resource manifest",
-            "inputSchema",
-            "outputSchema",
+            "module-local port",
+            "read-only",
+            "parameter binding",
+            "Optional multi-resource shape를 채택한 경우",
         )
         if any(term not in standards for term in required_terms):
             errors.append(

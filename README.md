@@ -97,7 +97,7 @@ copilot mcp list
 
 정상 설치 기준:
 
-* Plugin: `ai-msft-harness` version `1.2.0`, enabled
+* Plugin: `ai-msft-harness` version `1.2.1`, enabled
 * Skills: 6개
 * Agents: 6개 (VS Code **Agent Customizations → Agents**에서 확인)
 * Hooks: cross-platform PreToolUse/PostToolUse
@@ -199,35 +199,36 @@ Harness는 하나의 거대한 prompt가 아닙니다. 각 layer는 서로 다�
 더 자세한 책임 경계는
 [Multi-Harness Architecture](docs/multi-harness-architecture.md)를 참고하세요.
 
-## Integration wrapper pattern
+## Optional integration wrapper pattern
 
-![Application Use Case에서 resource manifest와 registry를 거쳐 HTTP, MCP, Database adapter를 호출하는 integration wrapper 구조](docs/images/integration-wrapper-pattern.svg)
+![여러 external resource가 필요한 경우 참고할 수 있는 Integration Port, Resource Registry, protocol adapter 구조](docs/images/integration-wrapper-pattern.svg)
 
-여러 MCP, HTTP API, database를 application code에 직접 연결하지 않습니다.
-Application Use Case는 하나의 Integration Port만 사용하고, Resource Registry가
-manifest를 검증한 뒤 protocol별 adapter로 routing합니다.
+이 구조는 `ai-msft-harness`가 제공하는 runtime component가 아닙니다.
+여러 MCP, HTTP API, database를 하나의 catalog로 관리해야 할 때 참고할 수
+있는 optional architecture shape입니다. 단일 integration은 module-local
+port와 adapter로 연결합니다.
 
 | Component | Responsibility |
 |---|---|
-| Resource manifest | Resource ID, protocol type, environment variable, operation, input/output schema, audience/scope 선언 |
-| Resource Registry | Manifest discovery, duplicate detection, schema validation, deterministic registration |
+| Resource descriptor | Resource ID, protocol type, connection key, operation, input/output contract 선언 |
+| Resource Registry | Descriptor validation과 duplicate detection |
 | Adapter Router | Validated resource type에 맞는 adapter 선택 |
-| HTTP Adapter | Origin protection, timeout, auth header, request/response schema validation |
-| MCP Adapter | Allowed remote tool만 호출하고 `structuredContent`와 output schema 검증 |
-| Database Adapter | Approved View/columns와 parameterized filters만 허용, write와 arbitrary SQL 거부 |
+| HTTP Adapter | Origin, timeout, request/response contract 보호 |
+| MCP Adapter | Allowed remote tool과 structured result 검증 |
+| Database Adapter | Read-only access와 parameter binding 기본값 |
 
-Security defaults:
+적용할 때 유지할 최소 constraints:
 
-* URL, password, client secret, token은 manifest에 저장하지 않음
+* URL, password, client secret, token은 descriptor에 저장하지 않음
 * Connection 정보는 environment variable 또는 secret store에서 주입
-* Resource별 audience/scope와 least-privilege credential 분리
-* Invalid manifest는 skip하지 않고 build 또는 startup을 실패시킴
-* 새 integration은 먼저 manifest로 표현하고, 새 protocol일 때만 adapter를 추가
+* Remote MCP tool은 allowlist로 제한
+* Database adapter는 read-only와 parameterized query를 기본값으로 사용
+* Invalid descriptor를 조용히 skip하지 않음
 
-이 구조는 비개발자 대상 reference repository인
+형상은 비개발자 대상 reference repository인
 [`hy2219/simplified-sdlc`](https://github.com/hy2219/simplified-sdlc)의
-manifest-driven MCP resource catalog를 참고해 Clean Architecture Ports/Adapters
-규칙에 맞게 반영했습니다.
+resource catalog와 adapters 책임 분리를 참고했습니다. 해당 repository의
+구현이나 schema를 plugin에 포함하거나 그대로 요구하지 않습니다.
 
 ## Spec Kit 실행 흐름
 

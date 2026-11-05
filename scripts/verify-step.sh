@@ -99,7 +99,7 @@ matches = [
 ]
 valid = (
     len(matches) == 1
-    and plugin.get("version") == "1.2.0"
+    and plugin.get("version") == "1.2.1"
     and matches[0].get("version") == plugin.get("version")
     and matches[0].get("source") == "./plugins/ai-msft-harness"
 )
@@ -174,8 +174,8 @@ check_s5() {
   check "plugin.json is valid JSON" "${P}/plugin.json 을 고치세요" json_valid "${P}/plugin.json"
   check "plugin.json has \$schema/name/version/description" "필수 필드를 추가하세요" \
     json_has "${P}/plugin.json" 'all(k in d for k in ("$schema","name","version","description"))'
-  check "plugin version is 1.2.0" "plugin.json version 을 1.2.0 으로 지정하세요" \
-    json_has "${P}/plugin.json" 'd.get("version") == "1.2.0"'
+  check "plugin version is 1.2.1" "plugin.json version 을 1.2.1 으로 지정하세요" \
+    json_has "${P}/plugin.json" 'd.get("version") == "1.2.1"'
   check "plugin name is ai-msft-harness" "plugin.json 의 name 을 ai-msft-harness 로 지정하세요" \
     json_has "${P}/plugin.json" 'd.get("name") == "ai-msft-harness"'
   check "plugin has >= 6 skills" "delivery, team standards, research, TDD, convergence, PR 스킬을 넣으세요" \

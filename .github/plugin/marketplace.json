@@ -12,8 +12,8 @@
   "plugins": [
     {
       "name": "ai-msft-harness",
-      "description": "Runtime policy, Clean Architecture, module/service incremental refactoring, manifest-driven MCP/API wrappers, role-based agents, TDD, hooks, convergence",
-      "version": "1.2.0",
+      "description": "Runtime policy, Clean Architecture, module/service incremental refactoring, optional integration wrapper guidance, role-based agents, TDD, hooks, convergence",
+      "version": "1.2.1",
       "source": "./plugins/ai-msft-harness",
       "category": "Developer Tools"
     }

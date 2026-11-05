@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1240" height="650" viewBox="0 0 1240 650" role="img" aria-labelledby="title desc">
-  <title id="title">Manifest-driven integration wrapper pattern</title>
-  <desc id="desc">Application use cases call one integration port. A validated resource registry and adapter router connect only approved HTTP, MCP, and database operations.</desc>
+  <title id="title">Optional integration wrapper architecture shape</title>
+  <desc id="desc">Reference shape only. The plugin ships no resource registry or protocol adapter implementation. When a project has several external resources, application use cases can call one integration port backed by a small project-owned registry and adapters.</desc>
   <defs>
     <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
       <path d="M0 0L9 4.5L0 9Z" fill="#64748b"/>
@@ -12,14 +12,16 @@
       .section { font-size: 20px; font-weight: 700; }
       .label { font-size: 16px; font-weight: 700; }
       .body { font-size: 14px; fill: #475569; }
+      .note { font-size: 14px; font-weight: 700; fill: #9a3412; }
       .line { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
       .dashed { fill: none; stroke: #059669; stroke-width: 2.5; stroke-dasharray: 7 5; marker-end: url(#arrow); }
     </style>
   </defs>
 
   <rect width="1240" height="650" rx="22" fill="#f8fafc"/>
-  <text x="40" y="54" class="title">External systems는 manifest-driven wrappers로 연결합니다</text>
-  <text x="40" y="86" class="subtitle">Application code는 protocol detail 대신 Integration Port와 validated contract에 의존합니다</text>
+  <text x="40" y="54" class="title">여러 external resources가 있을 때 참고하는 optional wrapper shape</text>
+  <text x="40" y="86" class="subtitle">단일 integration에는 registry를 추가하지 않고 module-local port와 adapter를 사용합니다</text>
+  <text x="40" y="112" class="note">Reference shape only · plugin은 registry 또는 adapter implementation을 제공하지 않습니다</text>
 
   <rect x="40" y="136" width="250" height="294" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
   <text x="64" y="172" class="section">Application</text>
@@ -36,9 +38,9 @@
   <rect x="348" y="136" width="276" height="294" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
   <text x="372" y="172" class="section">Resource Catalog</text>
   <rect x="372" y="202" width="228" height="92" rx="12" fill="#ede9fe"/>
-  <text x="392" y="232" class="label">resource.json manifests</text>
-  <text x="392" y="257" class="body">type · operation · schema</text>
-  <text x="392" y="279" class="body">audience · scope · urlEnv</text>
+  <text x="392" y="232" class="label">Resource descriptors</text>
+  <text x="392" y="257" class="body">id · type · operation</text>
+  <text x="392" y="279" class="body">connection key · I/O contract</text>
   <path d="M486 294V326" class="line"/>
   <rect x="372" y="334" width="228" height="72" rx="12" fill="#ffffff" stroke="#c4b5fd"/>
   <text x="392" y="363" class="label">Resource Registry</text>
@@ -69,10 +71,10 @@
   <text x="1020" y="389" class="label">Approved DB Views</text>
 
   <rect x="40" y="472" width="1160" height="136" rx="16" fill="#e2e8f0"/>
-  <text x="64" y="506" class="section">Contract and security gates</text>
-  <text x="64" y="540" class="body">Input/output JSON Schema · duplicate ID/tool rejection · explicit timeout · result size limit</text>
-  <text x="64" y="568" class="body">Secrets from environment or secret store · resource-specific audience/scope · least-privilege credentials</text>
-  <text x="64" y="596" class="body">HTTPS origin protection · MCP tool allowlist · read-only View · parameter binding · write rejection</text>
+  <text x="64" y="506" class="section">Minimum constraints when adopted</text>
+  <text x="64" y="540" class="body">Descriptor validation · duplicate rejection · explicit timeout · input/output contract</text>
+  <text x="64" y="568" class="body">Secrets from environment or secret store · least-privilege credentials</text>
+  <text x="64" y="596" class="body">MCP tool allowlist · read-only database access · parameter binding</text>
 
   <path d="M486 430V464" class="dashed"/>
 </svg>

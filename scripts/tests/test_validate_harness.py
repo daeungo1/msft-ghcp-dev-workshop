@@ -196,13 +196,16 @@ def write_complete_harness(root: Path) -> None:
         "Adapters\n"
         "module/service\n"
         "incremental refactoring\n"
+        "Optional Integration Wrapper Shape\n"
+        "Resource descriptor\n"
         "Resource Registry\n"
         "HTTP Adapter\n"
         "MCP Adapter\n"
         "Database Adapter\n"
-        "resource manifest\n"
-        "inputSchema\n"
-        "outputSchema\n"
+        "module-local port\n"
+        "read-only\n"
+        "parameter binding\n"
+        "Optional multi-resource shape를 채택한 경우\n"
     )
     write_file(
         root,
