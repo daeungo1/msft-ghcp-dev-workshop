@@ -65,15 +65,23 @@ update, team policy release, project change를 서로 독립적으로 관리합�
 ## Quick install
 
 다른 사용자와 팀에 배포할 때는 marketplace install을 권장합니다.
+아래 명령은 VS Code의 **Terminal → New Terminal**에서 한 줄씩 실행합니다.
+Chat 입력창이나 **Install Plugin from Source** 창에 입력하지 않습니다.
 
 ```powershell
+copilot --version
 copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
+copilot plugin marketplace browse ai-sw-factory-msft-ko-marketplace
 copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
+
+`Marketplace ... already registered`가 표시되면 이미 등록된 상태입니다.
+다음 `browse`와 `install` 명령을 계속 실행하면 됩니다.
 
 설치 결과를 확인합니다.
 
 ```powershell
+copilot plugin marketplace list
 copilot plugin list
 copilot skill list
 copilot mcp list
@@ -90,6 +98,7 @@ copilot mcp list
 VS Code에서는 **Chat: Manage Plugin Marketplaces**에서
 `daeungo1/msft-ghcp-dev-workshop`를 추가한 뒤
 **Customize → Browse**에서 `ai-sw-factory-msft-ko`를 설치합니다.
+설치 후 보이지 않으면 **Developer: Reload Window**를 실행합니다.
 전체 설치 방식은 [Installation details](#installation-details)를 참고하세요.
 
 ## What you get
@@ -333,13 +342,25 @@ copilot mcp list
 
 #### Marketplace install — recommended
 
+VS Code terminal에서 실행합니다.
+
 ```powershell
 copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
 copilot plugin marketplace browse ai-sw-factory-msft-ko-marketplace
 copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
+Marketplace가 이미 등록됐다는 메시지는 오류가 아닙니다. 다시 설치하거나
+최신 version을 받을 때는 다음 명령을 사용합니다.
+
+```powershell
+copilot plugin marketplace update ai-sw-factory-msft-ko-marketplace
+copilot plugin update ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
+```
+
 #### Direct GitHub install
+
+Copilot CLI만 지원하는 repository subdirectory 설치 방식입니다.
 
 ```powershell
 copilot plugin install `
@@ -360,13 +381,25 @@ session을 시작하면 최신 파일이 반영됩니다.
 
 #### VS Code install
 
-1. **Chat: Manage Plugin Marketplaces** 실행
-2. **Add Marketplace...**에서 `daeungo1/msft-ghcp-dev-workshop` 입력
-3. Chat 또는 Agents 창에서 **Customize → Browse** 열기
-4. `ai-sw-factory-msft-ko` 검색 후 **Install** 선택
+Marketplace 설치:
 
-Local source는 **Chat: Install Plugin from Source**에서
-`plugins/ai-sw-factory-msft-ko`를 선택합니다.
+1. **Chat: Open Customizations** 실행
+2. **Browse → Configure Marketplaces → Add Marketplace** 선택
+3. `https://github.com/daeungo1/msft-ghcp-dev-workshop` 입력
+4. Browse로 돌아가 `ai-sw-factory-msft-ko-marketplace` 선택
+5. `ai-sw-factory-msft-ko`를 열고 **Install** 선택
+
+Local source 설치:
+
+1. Repository를 clone
+2. **Chat: Install Plugin from Source** 실행
+3. `<repository>\plugins\ai-sw-factory-msft-ko` folder 선택
+
+> [!IMPORTANT]
+> **Install Plugin from Source**에 marketplace repository root나
+> `daeungo1/msft-ghcp-dev-workshop`를 입력하지 마세요. 이 plugin의
+> `plugin.json`은 repository root가 아니라
+> `plugins/ai-sw-factory-msft-ko`에 있습니다.
 
 #### Optional SQLite MCP
 
