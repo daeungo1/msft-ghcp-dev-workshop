@@ -46,6 +46,7 @@ mcp_server_tests() {
   if [ -n "$UVR" ]; then uv run --with pytest pytest -q templates/mcp/sqlite-ro-server; else pytest -q templates/mcp/sqlite-ro-server; fi
 }
 harness_validation() { "${PYTHON_BIN}" scripts/validate-harness.py; }
+marketplace_validation() { "${PYTHON_BIN}" scripts/validate-marketplace.py; }
 plugin_hook_tests() {
   "${PYTHON_BIN}" -m unittest plugins/ai-sw-factory-msft-ko/tests/test_hooks.py
 }
@@ -178,6 +179,8 @@ check_s5() {
     json_has "${P}/plugin.json" 'd.get("version") == "2.0.0"'
   check "plugin name is ai-sw-factory-msft-ko" "plugin.json 의 name 을 ai-sw-factory-msft-ko 로 지정하세요" \
     json_has "${P}/plugin.json" 'd.get("name") == "ai-sw-factory-msft-ko"'
+  check "marketplace package validation passes" "python scripts/validate-marketplace.py 오류를 확인하세요" \
+    marketplace_validation
   check "plugin has >= 6 skills" "delivery, team standards, research, TDD, convergence, PR 스킬을 넣으세요" \
     count_ge "$(plugin_count "${P}/skills" SKILL.md)" 6
   check "team application standards contract exists" "runtime floor, Clean Architecture, incremental refactoring 계약을 추가하세요" \

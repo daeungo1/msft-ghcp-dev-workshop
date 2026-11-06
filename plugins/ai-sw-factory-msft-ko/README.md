@@ -131,6 +131,26 @@ Marketplace 설치는 catalog와 plugin 폴더가 원격 기본 브랜치에 있
 동작합니다. 현재 로컬 변경만으로는 다른 사용자가 설치할 수 없으므로
 검증 후 저장소에 push하거나 별도 marketplace repository로 배포해야 합니다.
 
+### Publish validation
+
+Repository root에서 실행합니다.
+
+```bash
+python scripts/validate-marketplace.py
+python -m unittest scripts/tests/test_validate_marketplace.py -v
+python -m unittest plugins/ai-sw-factory-msft-ko/tests/test_hooks.py -v
+uv run --with pytest pytest -q \
+  plugins/ai-sw-factory-msft-ko/mcp/sqlite-ro-server
+uv run --with pytest pytest -q \
+  templates/plugin/mcp/sqlite-ro-server
+bash scripts/verify-step.sh S5
+```
+
+Validator는 official Agent Plugins 1.0 plugin/MCP schema, marketplace와
+manifest의 name/version/source 일치, skills, agents, hooks, MCP file
+references를 검사합니다. Remote Copilot client install은 release 후 별도
+smoke test로 확인합니다.
+
 ### Migration from the previous plugin ID
 
 Plugin package identity가 변경됐으므로 in-place update가 아니라 재설치합니다.

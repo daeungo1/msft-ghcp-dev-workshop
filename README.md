@@ -7,6 +7,8 @@ ms.topic: tutorial
 
 ## AI SW Factory MSFT KO Workshop
 
+[![Validate marketplace](https://github.com/daeungo1/msft-ghcp-dev-workshop/actions/workflows/validate-marketplace.yml/badge.svg)](https://github.com/daeungo1/msft-ghcp-dev-workshop/actions/workflows/validate-marketplace.yml)
+
 이 워크숍의 목표는 **Spec Kit 표준 애플리케이션 개발 단계를 따라가며
 팀과 프로젝트의 개발 패턴을 GitHub Copilot용 `ai-sw-factory-msft-ko` plugin으로
 만드는 것**입니다.
@@ -103,6 +105,21 @@ copilot mcp list
 * Hooks: cross-platform PreToolUse/PostToolUse
 * MCP: `sqlite-ro` (optional)
 
+### Marketplace validation
+
+Publish 전에 official Agent Plugins schemas와 repository contracts를
+model-free로 검사합니다.
+
+```powershell
+python scripts/validate-marketplace.py
+python -m unittest scripts/tests/test_validate_marketplace.py -v
+bash scripts/verify-step.sh S5
+```
+
+CI는 Ubuntu, Windows, macOS에서 같은 validator와 hook/MCP tests를
+실행합니다. 검사 범위와 remote client smoke test는
+[Marketplace Validation](docs/marketplace-validation.md)을 참고하세요.
+
 SQLite MCP를 사용할 때만 DB 경로를 지정합니다.
 
 ```powershell
@@ -162,6 +179,7 @@ copilot plugin install `
 | MCP/API wrapper 구조가 궁금함 | [Integration wrapper pattern](#integration-wrapper-pattern) |
 | Spec Kit 명령 순서가 궁금함 | [Spec Kit 실행 흐름](#spec-kit-실행-흐름) |
 | 전체 검증 명령이 필요함 | [실행과 검증](#실행과-검증) |
+| Marketplace validation이 궁금함 | [Marketplace Validation](docs/marketplace-validation.md) |
 | 과거 v0.1 브랜치를 찾고 있음 | [버전과 브랜치](#버전과-브랜치) |
 
 > [!IMPORTANT]
@@ -392,6 +410,7 @@ scripts/                    개발, hook, 구조 검증
 | 목적 | 명령 |
 |---|---|
 | Harness structure | `python scripts/validate-harness.py` |
+| Marketplace package | `python scripts/validate-marketplace.py` |
 | 백엔드 테스트 | `cd backend && uv run pytest` |
 | 패키지 경계 | `cd backend && uv run lint-imports` |
 | 프론트엔드 테스트 | `cd frontend && npm test` |

@@ -1,0 +1,56 @@
+name: Validate marketplace
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: marketplace-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  validate:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Validate marketplace and Agent Plugin packages
+        run: python scripts/validate-marketplace.py
+
+      - name: Test marketplace validator
+        run: python -m unittest scripts/tests/test_validate_marketplace.py -v
+
+      - name: Validate repository harness contracts
+        run: python scripts/validate-harness.py
+
+      - name: Test cross-platform plugin hooks
+        run: python -m unittest plugins/ai-sw-factory-msft-ko/tests/test_hooks.py -v
+
+      - name: Test read-only SQLite MCP
+        shell: bash
+        run: |
+          uv run --with pytest pytest -q \
+            plugins/ai-sw-factory-msft-ko/mcp/sqlite-ro-server
+          uv run --with pytest pytest -q \
+            templates/plugin/mcp/sqlite-ro-server

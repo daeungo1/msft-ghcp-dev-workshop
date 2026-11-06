@@ -1,0 +1,5 @@
+# Shared agent infrastructure requires explicit maintainer review.
+/.github/plugin/ @daeungo1
+/plugins/ai-sw-factory-msft-ko/ @daeungo1
+/scripts/validate-marketplace.py @daeungo1
+/.github/workflows/validate-marketplace.yml @daeungo1

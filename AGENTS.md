@@ -8,6 +8,7 @@
 | 프론트엔드 테스트 | `cd frontend && npm test` |
 | 경계 검사 | `cd backend && uv run lint-imports` |
 | 하네스 검사 | `python scripts/validate-harness.py` |
+| Marketplace 검사 | `python scripts/validate-marketplace.py` |
 | 개발 서버 | `scripts/dev.sh` |
 | 단계 검증 | `scripts/verify-step.sh S<번호>` |
 | Spec Kit 상태 | `specify integration status --json` |

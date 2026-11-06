@@ -45,6 +45,7 @@ LEARNING_PATHS = (
     "README.md",
     "docs/images/plugin-installation.svg",
     "docs/images/integration-wrapper-pattern.svg",
+    "docs/marketplace-validation.md",
     "docs/multi-harness-architecture.md",
     "docs/model-routing.md",
     "labs/S0-spec.md",
@@ -87,6 +88,14 @@ PLUGIN_PATHS = (
     "templates/plugin/mcp/sqlite-ro-server/guard.py",
     "templates/plugin/mcp/sqlite-ro-server/server.py",
     "templates/plugin/mcp/sqlite-ro-server/test_server.py",
+    "scripts/validate-marketplace.py",
+    "scripts/tests/test_validate_marketplace.py",
+    ".github/workflows/validate-marketplace.yml",
+    ".github/CODEOWNERS",
+    ".github/plugin/schemas/plugin.schema.json",
+    ".github/plugin/schemas/mcp.schema.json",
+    ".github/plugin/schemas/LICENSE-APACHE-2.0.txt",
+    ".github/plugin/schemas/NOTICE",
 )
 
 
