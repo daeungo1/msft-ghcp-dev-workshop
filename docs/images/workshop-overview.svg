@@ -56,7 +56,8 @@
 
   <rect x="206" y="378" width="120" height="76" rx="10" fill="#eff6ff" stroke="#bfdbfe"/>
   <text x="222" y="408" class="step">Specify</text>
-  <text x="222" y="433" class="body">요구 정의 · Clarify</text>
+  <text x="222" y="429" class="body">요구 정의</text>
+  <text x="222" y="448" class="small">Clarify</text>
   <path d="M326 416H342" class="line"/>
 
   <rect x="350" y="378" width="120" height="76" rx="10" fill="#eff6ff" stroke="#bfdbfe"/>
@@ -77,8 +78,8 @@
   <rect x="782" y="378" width="136" height="76" rx="10" fill="#2563eb"/>
   <text x="798" y="408" class="step" style="fill:#ffffff">Converge</text>
   <text x="798" y="433" class="body" style="fill:#dbeafe">대조 · 추가 작업</text>
-  <path d="M850 454V474H698V462" class="overlay"/>
-  <text x="714" y="483" class="small" style="fill:#1d4ed8">남은 작업을 tasks로 환류</text>
+  <path d="M900 454V488H694V462" class="overlay"/>
+  <text x="702" y="477" class="body" style="fill:#1d4ed8">남은 작업을 tasks로 환류</text>
 
   <path d="M490 516V492" class="overlay"/>
 
@@ -90,7 +91,7 @@
   <text x="78" y="626" class="step">Domain + Acceptance Criteria</text>
 
   <rect x="340" y="604" width="270" height="34" rx="8" fill="#ccfbf1"/>
-  <text x="356" y="626" class="step">specs · instructions · project hook</text>
+  <text x="356" y="626" class="step">specs · instructions · hook</text>
 
   <rect x="630" y="604" width="288" height="34" rx="8" fill="#ccfbf1"/>
   <text x="646" y="626" class="step">TeamFeed domain modules</text>
