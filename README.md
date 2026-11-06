@@ -31,7 +31,12 @@ instructions, skills, agents, hooks, MCP, CI가 각각 어떤 failure를 막는�
 > cross-platform hooks, read-only MCP, convergence workflow를 하나의
 > Agent Plugins 1.0 package로 제공합니다.
 
-![요구사항에서 검증 가능한 team harness와 설치 가능한 plugin으로 이어지는 흐름](docs/images/workshop-overview.svg)
+![공식 Spec Kit SDD core에 재사용 가능한 Team Plugin과 repository별 Project Profile을 결합해 custom Team harness를 구성하는 workflow](docs/images/workshop-overview.svg)
+
+위 workflow에서 **Spec Kit core는 개발 절차**, **Team Plugin은 여러
+프로젝트가 공유하는 개발 표준**, **Project Profile은 현재 repository의
+domain과 acceptance criteria**를 담당합니다. 세 layer를 분리해 Spec Kit
+update, team policy release, project change를 서로 독립적으로 관리합니다.
 
 ## Summary — 무엇을 만드는가?
 
