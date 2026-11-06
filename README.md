@@ -75,9 +75,6 @@ copilot plugin marketplace browse ai-sw-factory-msft-ko-marketplace
 copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
-`Marketplace ... already registered`가 표시되면 이미 등록된 상태입니다.
-다음 `browse`와 `install` 명령을 계속 실행하면 됩니다.
-
 설치 결과를 확인합니다.
 
 ```powershell
@@ -350,8 +347,7 @@ copilot plugin marketplace browse ai-sw-factory-msft-ko-marketplace
 copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
-Marketplace가 이미 등록됐다는 메시지는 오류가 아닙니다. 다시 설치하거나
-최신 version을 받을 때는 다음 명령을 사용합니다.
+최신 version으로 update할 때는 다음 명령을 사용합니다.
 
 ```powershell
 copilot plugin marketplace update ai-sw-factory-msft-ko-marketplace
