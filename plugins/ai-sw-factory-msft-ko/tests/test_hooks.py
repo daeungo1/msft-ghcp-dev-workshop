@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -110,7 +111,7 @@ class PluginHookTests(unittest.TestCase):
     def test_post_tool_hook_returns_project_validation_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            script = root / ".ai-msft-harness" / "post-edit.py"
+            script = root / ".ai-sw-factory-msft-ko" / "post-edit.py"
             script.parent.mkdir()
             script.write_text(
                 "import sys\n"
@@ -138,6 +139,36 @@ class PluginHookTests(unittest.TestCase):
             self.assertIn("bash", hook)
             self.assertIn("powershell", hook)
             self.assertNotIn(".sh", hook["powershell"])
+            self.assertIn("[ -f", hook["bash"])
+            self.assertIn("Test-Path -LiteralPath", hook["powershell"])
+            self.assertIn("'{}'", hook["bash"])
+            self.assertIn("'{}'", hook["powershell"])
+
+    def test_powershell_hook_defers_when_plugin_directory_is_missing(self) -> None:
+        if os.name != "nt":
+            self.skipTest("PowerShell plugin hook applies on Windows")
+        config = json.loads((HOOKS_ROOT / "hooks.json").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as directory:
+            missing_root = Path(directory) / "removed-plugin"
+            env = os.environ.copy()
+            env["PLUGIN_ROOT"] = str(missing_root)
+            for hook in (
+                config["hooks"]["preToolUse"] + config["hooks"]["postToolUse"]
+            ):
+                result = subprocess.run(
+                    [
+                        "powershell",
+                        "-NoProfile",
+                        "-Command",
+                        hook["powershell"],
+                    ],
+                    input="{}",
+                    capture_output=True,
+                    check=True,
+                    env=env,
+                    text=True,
+                )
+                self.assertEqual(json.loads(result.stdout), {})
 
 
 if __name__ == "__main__":

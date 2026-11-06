@@ -1,20 +1,20 @@
 {
-  "name": "ai-msft-harness-marketplace",
+  "name": "ai-sw-factory-msft-ko-marketplace",
   "owner": {
     "name": "daeungo1"
   },
   "interface": {
-    "displayName": "AI MSFT Harness"
+    "displayName": "AI SW Factory MSFT KO"
   },
   "metadata": {
     "description": "Spec Kit 기반 애플리케이션 개발 하네스와 워크숍 플러그인"
   },
   "plugins": [
     {
-      "name": "ai-msft-harness",
+      "name": "ai-sw-factory-msft-ko",
       "description": "Runtime policy, Clean Architecture, module/service incremental refactoring, optional integration wrapper guidance, role-based agents, TDD, hooks, convergence",
-      "version": "1.2.1",
-      "source": "./plugins/ai-msft-harness",
+      "version": "2.0.0",
+      "source": "./plugins/ai-sw-factory-msft-ko",
       "category": "Developer Tools"
     }
   ]

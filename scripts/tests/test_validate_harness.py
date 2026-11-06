@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import tempfile
@@ -55,31 +56,37 @@ LEARNING_PATHS = (
     "labs/S6-converge.md",
 )
 PLUGIN_PATHS = (
-    "plugins/ai-msft-harness/plugin.json",
-    "plugins/ai-msft-harness/README.md",
+    "plugins/ai-sw-factory-msft-ko/plugin.json",
+    "plugins/ai-sw-factory-msft-ko/README.md",
     ".github/plugin/marketplace.json",
-    "plugins/ai-msft-harness/mcp.json",
-    "plugins/ai-msft-harness/skills/spec-driven-delivery/SKILL.md",
-    "plugins/ai-msft-harness/skills/team-application-standards/SKILL.md",
-    "plugins/ai-msft-harness/skills/evidence-research/SKILL.md",
-    "plugins/ai-msft-harness/skills/tdd/SKILL.md",
-    "plugins/ai-msft-harness/skills/convergence-check/SKILL.md",
-    "plugins/ai-msft-harness/skills/pr-description/SKILL.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/researcher.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/planner.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/test-writer.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/implementer.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/security-reviewer.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/convergence-reviewer.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
-    "plugins/ai-msft-harness/com.github.copilot/hooks/pre_tool_guard.py",
-    "plugins/ai-msft-harness/com.github.copilot/hooks/post_edit_check.py",
+    "plugins/ai-sw-factory-msft-ko/mcp.json",
+    "plugins/ai-sw-factory-msft-ko/mcp/sqlite-ro-server/guard.py",
+    "plugins/ai-sw-factory-msft-ko/mcp/sqlite-ro-server/server.py",
+    "plugins/ai-sw-factory-msft-ko/mcp/sqlite-ro-server/test_server.py",
+    "plugins/ai-sw-factory-msft-ko/skills/spec-driven-delivery/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/team-application-standards/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/evidence-research/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/tdd/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/convergence-check/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/pr-description/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/researcher.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/planner.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/test-writer.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/implementer.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/security-reviewer.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/convergence-reviewer.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/pre_tool_guard.py",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/post_edit_check.py",
     "templates/plugin/hooks.json",
     "templates/plugin/pre_tool_guard.py",
     "templates/plugin/post_edit_check.py",
     "templates/plugin/skills/spec-driven-delivery/SKILL.md",
     "templates/plugin/skills/team-application-standards/SKILL.md",
     "templates/plugin/skills/pr-description/SKILL.md",
+    "templates/plugin/mcp/sqlite-ro-server/guard.py",
+    "templates/plugin/mcp/sqlite-ro-server/server.py",
+    "templates/plugin/mcp/sqlite-ro-server/test_server.py",
 )
 
 
@@ -155,36 +162,61 @@ def write_complete_harness(root: Path) -> None:
         "README.md",
         "docs/images/plugin-installation.svg\n"
         "copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop\n"
-        "copilot plugin install ai-msft-harness@ai-msft-harness-marketplace\n"
+        "copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace\n"
         "copilot plugin install "
-        "daeungo1/msft-ghcp-dev-workshop:plugins/ai-msft-harness\n"
-        "copilot plugin marketplace update ai-msft-harness-marketplace\n"
-        "copilot plugin update ai-msft-harness@ai-msft-harness-marketplace\n"
-        "copilot plugin uninstall ai-msft-harness@ai-msft-harness-marketplace\n"
+        "daeungo1/msft-ghcp-dev-workshop:plugins/ai-sw-factory-msft-ko\n"
+        "copilot plugin marketplace update ai-sw-factory-msft-ko-marketplace\n"
+        "copilot plugin update ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace\n"
+        "copilot plugin uninstall ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace\n"
         "docs/images/integration-wrapper-pattern.svg\n"
         "hy2219/simplified-sdlc\n"
         "Resource Registry\n"
         "HTTP Adapter\n"
         "MCP Adapter\n"
-        "Database Adapter\n",
+        "Database Adapter\n"
+        "Spec Kit-based custom harness인가요?\n"
+        "github/spec-kit\n"
+        "Spec Kit core\n"
+        "Team plugin\n"
+        "Project profile\n"
+        "specify init --here --force --integration copilot\n",
     )
     write_file(
         root,
         PLUGIN_PATHS[0],
         '{"$schema":"https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",'
-        '"name":"ai-msft-harness","version":"1.0.0",'
+        '"name":"ai-sw-factory-msft-ko","version":"2.0.0",'
         '"description":"Application development harness"}\n',
     )
-    write_file(root, PLUGIN_PATHS[1], "ai-msft-harness plugin guide\n")
+    write_file(root, PLUGIN_PATHS[1], "ai-sw-factory-msft-ko plugin guide\n")
     write_file(
         root,
         PLUGIN_PATHS[2],
-        '{"name":"ai-msft-harness-marketplace","plugins":['
-        '{"name":"ai-msft-harness","version":"1.0.0",'
-        '"source":"./plugins/ai-msft-harness"}]}\n',
+        '{"name":"ai-sw-factory-msft-ko-marketplace","plugins":['
+        '{"name":"ai-sw-factory-msft-ko","version":"2.0.0",'
+        '"source":"./plugins/ai-sw-factory-msft-ko"}]}\n',
     )
     for path in PLUGIN_PATHS[3:]:
         write_file(root, path, "plugin component\n")
+    write_file(
+        root,
+        "plugins/ai-sw-factory-msft-ko/skills/spec-driven-delivery/SKILL.md",
+        "Spec Kit core\n"
+        ".specify/\n"
+        "specify init --here --force --integration copilot\n",
+    )
+    write_file(
+        root,
+        "templates/plugin/skills/spec-driven-delivery/SKILL.md",
+        (
+            root
+            / "plugins"
+            / "ai-sw-factory-msft-ko"
+            / "skills"
+            / "spec-driven-delivery"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8"),
+    )
     team_standards = (
         "Node.js >=22\n"
         "Active LTS\n"
@@ -209,7 +241,7 @@ def write_complete_harness(root: Path) -> None:
     )
     write_file(
         root,
-        "plugins/ai-msft-harness/skills/team-application-standards/SKILL.md",
+        "plugins/ai-sw-factory-msft-ko/skills/team-application-standards/SKILL.md",
         team_standards,
     )
     write_file(
@@ -217,22 +249,38 @@ def write_complete_harness(root: Path) -> None:
         "templates/plugin/skills/team-application-standards/SKILL.md",
         team_standards,
     )
+    hook_entries: dict[str, list[dict[str, object]]] = {}
+    for event_name, script_name, timeout in (
+        ("preToolUse", "pre_tool_guard.py", 15),
+        ("postToolUse", "post_edit_check.py", 150),
+    ):
+        hook_entries[event_name] = [
+            {
+                "type": "command",
+                "bash": (
+                    f'SCRIPT="${{PLUGIN_ROOT}}/com.github.copilot/hooks/'
+                    f'{script_name}"; if [ -f "$SCRIPT" ]; then '
+                    'python3 "$SCRIPT"; else printf \'{}\'; fi'
+                ),
+                "powershell": (
+                    "$script = Join-Path $env:PLUGIN_ROOT "
+                    f"'com.github.copilot\\hooks\\{script_name}'; "
+                    "if (Test-Path -LiteralPath $script) { python $script } "
+                    "else { '{}' }"
+                ),
+                "cwd": ".",
+                "timeoutSec": timeout,
+            }
+        ]
     write_file(
         root,
-        "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
-        '{"version":1,"hooks":{"preToolUse":[{"type":"command",'
-        '"bash":"python3 \\"${PLUGIN_ROOT}/com.github.copilot/hooks/'
-        'pre_tool_guard.py\\"","powershell":"python \\"$env:PLUGIN_ROOT'
-        '\\\\com.github.copilot\\\\hooks\\\\pre_tool_guard.py\\""}],'
-        '"postToolUse":[{"type":"command",'
-        '"bash":"python3 \\"${PLUGIN_ROOT}/com.github.copilot/hooks/'
-        'post_edit_check.py\\"","powershell":"python \\"$env:PLUGIN_ROOT'
-        '\\\\com.github.copilot\\\\hooks\\\\post_edit_check.py\\""}]}}\n',
+        "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json",
+        json.dumps({"version": 1, "hooks": hook_entries}) + "\n",
     )
     write_file(
         root,
         "templates/plugin/hooks.json",
-        (root / "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json")
+        (root / "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json")
         .read_text(encoding="utf-8"),
     )
     for script_name in ("pre_tool_guard.py", "post_edit_check.py"):
@@ -242,10 +290,23 @@ def write_complete_harness(root: Path) -> None:
             (
                 root
                 / "plugins"
-                / "ai-msft-harness"
+                / "ai-sw-factory-msft-ko"
                 / "com.github.copilot"
                 / "hooks"
                 / script_name
+            ).read_text(encoding="utf-8"),
+        )
+    for file_name in ("guard.py", "server.py", "test_server.py"):
+        write_file(
+            root,
+            f"templates/plugin/mcp/sqlite-ro-server/{file_name}",
+            (
+                root
+                / "plugins"
+                / "ai-sw-factory-msft-ko"
+                / "mcp"
+                / "sqlite-ro-server"
+                / file_name
             ).read_text(encoding="utf-8"),
         )
 
@@ -403,12 +464,12 @@ class ValidateHarnessTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             write_complete_harness(root)
-            (root / "plugins" / "ai-msft-harness" / "plugin.json").unlink()
+            (root / "plugins" / "ai-sw-factory-msft-ko" / "plugin.json").unlink()
 
             result = run_validator(root)
 
         self.assertEqual(result.returncode, 1)
-        self.assertIn("plugins/ai-msft-harness/plugin.json", result.stderr)
+        self.assertIn("plugins/ai-sw-factory-msft-ko/plugin.json", result.stderr)
 
     def test_marketplace_plugin_version_mismatch_returns_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -417,9 +478,9 @@ class ValidateHarnessTests(unittest.TestCase):
             write_file(
                 root,
                 ".github/plugin/marketplace.json",
-                '{"name":"ai-msft-harness-marketplace","plugins":['
-                '{"name":"ai-msft-harness","version":"2.0.0",'
-                '"source":"./plugins/ai-msft-harness"}]}\n',
+                '{"name":"ai-sw-factory-msft-ko-marketplace","plugins":['
+                '{"name":"ai-sw-factory-msft-ko","version":"2.1.0",'
+                '"source":"./plugins/ai-sw-factory-msft-ko"}]}\n',
             )
 
             result = run_validator(root)
@@ -427,13 +488,47 @@ class ValidateHarnessTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertIn("marketplace version must match plugin version", result.stderr)
 
+    def test_legacy_plugin_identity_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            readme = (root / "README.md").read_text(encoding="utf-8")
+            write_file(root, "README.md", readme + "\nai-msft-harness\n")
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("legacy plugin identity must be removed", result.stderr)
+
+    def test_legacy_display_brand_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            path = (
+                root
+                / "plugins"
+                / "ai-sw-factory-msft-ko"
+                / "skills"
+                / "team-application-standards"
+                / "SKILL.md"
+            )
+            path.write_text(
+                path.read_text(encoding="utf-8") + "\nAI MSFT\n",
+                encoding="utf-8",
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("legacy display brand must be removed", result.stderr)
+
     def test_plugin_hook_without_powershell_command_returns_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             write_complete_harness(root)
             write_file(
                 root,
-                "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
+                "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json",
                 '{"version":1,"hooks":{"preToolUse":['
                 '{"bash":"python3 pre_tool_guard.py"}],'
                 '"postToolUse":[{"bash":"python3 post_edit_check.py"}]}}\n',
@@ -443,6 +538,26 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("must define bash and powershell", result.stderr)
+
+    def test_plugin_hook_without_missing_path_fallback_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json",
+                '{"version":1,"hooks":{"preToolUse":[{"type":"command",'
+                '"bash":"python3 pre_tool_guard.py",'
+                '"powershell":"python pre_tool_guard.py"}],'
+                '"postToolUse":[{"type":"command",'
+                '"bash":"python3 post_edit_check.py",'
+                '"powershell":"python post_edit_check.py"}]}}\n',
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("missing-path no-op fallback", result.stderr)
 
     def test_stale_plugin_hook_template_returns_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -515,13 +630,26 @@ class ValidateHarnessTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertIn("manifest-driven integration wrapper", result.stderr)
 
+    def test_readme_without_speckit_layering_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            readme = (root / "README.md").read_text(encoding="utf-8")
+            readme = readme.replace("Spec Kit core\n", "")
+            write_file(root, "README.md", readme)
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("README must document Spec Kit composition", result.stderr)
+
     def test_generic_team_standards_skill_returns_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             write_complete_harness(root)
             write_file(
                 root,
-                "plugins/ai-msft-harness/skills/"
+                "plugins/ai-sw-factory-msft-ko/skills/"
                 "team-application-standards/SKILL.md",
                 "Use clean code and supported runtimes.\n",
             )
@@ -530,6 +658,36 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("team standards skill must define concrete runtime", result.stderr)
+
+    def test_stale_delivery_skill_template_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                "templates/plugin/skills/spec-driven-delivery/SKILL.md",
+                "stale delivery process\n",
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("template spec-driven-delivery skill must match", result.stderr)
+
+    def test_stale_plugin_mcp_template_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            write_file(
+                root,
+                "templates/plugin/mcp/sqlite-ro-server/server.py",
+                "TEAMFEED_DB = 'legacy'\n",
+            )
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("plugin MCP template must match", result.stderr)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1240" height="700" viewBox="0 0 1240 700" role="img" aria-labelledby="title desc">
-  <title id="title">ai-msft-harness installation flow</title>
+  <title id="title">ai-sw-factory-msft-ko installation flow</title>
   <desc id="desc">The GitHub repository publishes a marketplace catalog and Agent Plugin. Users install through the marketplace, directly from GitHub, or from a local source into Visual Studio Code and Copilot CLI.</desc>
   <defs>
     <linearGradient id="headerGradient" x1="0" x2="1">
@@ -23,7 +23,7 @@
 
   <rect width="1240" height="700" rx="22" fill="#f8fafc"/>
   <rect x="28" y="24" width="1184" height="104" rx="18" fill="url(#headerGradient)"/>
-  <text x="58" y="68" class="title" style="fill:#ffffff">Install ai-msft-harness in GitHub Copilot</text>
+  <text x="58" y="68" class="title" style="fill:#ffffff">Install ai-sw-factory-msft-ko in GitHub Copilot</text>
   <text x="58" y="101" class="subtitle">GitHub marketplace, direct repository, local source를 모두 지원합니다</text>
 
   <rect x="38" y="168" width="270" height="334" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
@@ -35,7 +35,7 @@
   <text x="80" y="358" class="label">Marketplace catalog</text>
   <text x="80" y="382" class="body">.github/plugin/marketplace.json</text>
   <rect x="62" y="420" width="222" height="58" rx="12" fill="#dbeafe"/>
-  <text x="80" y="454" class="label">Agent Plugin 1.2.1</text>
+  <text x="80" y="454" class="label">Agent Plugin 2.0.0</text>
 
   <path d="M308 335H346" class="line"/>
 
@@ -81,7 +81,7 @@
   <rect x="38" y="542" width="1164" height="120" rx="16" fill="#e2e8f0"/>
   <text x="62" y="576" class="section">Recommended CLI install</text>
   <text x="62" y="607" class="code">copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop</text>
-  <text x="62" y="635" class="code">copilot plugin install ai-msft-harness@ai-msft-harness-marketplace</text>
+  <text x="62" y="635" class="code">copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace</text>
   <text x="848" y="607" class="label">Verify</text>
   <text x="848" y="635" class="body">plugin list · skill list · mcp list</text>
 </svg>

@@ -63,31 +63,37 @@ LEARNING_PATHS = (
 )
 
 PLUGIN_PATHS = (
-    "plugins/ai-msft-harness/plugin.json",
-    "plugins/ai-msft-harness/README.md",
+    "plugins/ai-sw-factory-msft-ko/plugin.json",
+    "plugins/ai-sw-factory-msft-ko/README.md",
     ".github/plugin/marketplace.json",
-    "plugins/ai-msft-harness/mcp.json",
-    "plugins/ai-msft-harness/skills/spec-driven-delivery/SKILL.md",
-    "plugins/ai-msft-harness/skills/team-application-standards/SKILL.md",
-    "plugins/ai-msft-harness/skills/evidence-research/SKILL.md",
-    "plugins/ai-msft-harness/skills/tdd/SKILL.md",
-    "plugins/ai-msft-harness/skills/convergence-check/SKILL.md",
-    "plugins/ai-msft-harness/skills/pr-description/SKILL.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/researcher.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/planner.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/test-writer.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/implementer.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/security-reviewer.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/agents/convergence-reviewer.agent.md",
-    "plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json",
-    "plugins/ai-msft-harness/com.github.copilot/hooks/pre_tool_guard.py",
-    "plugins/ai-msft-harness/com.github.copilot/hooks/post_edit_check.py",
+    "plugins/ai-sw-factory-msft-ko/mcp.json",
+    "plugins/ai-sw-factory-msft-ko/mcp/sqlite-ro-server/guard.py",
+    "plugins/ai-sw-factory-msft-ko/mcp/sqlite-ro-server/server.py",
+    "plugins/ai-sw-factory-msft-ko/mcp/sqlite-ro-server/test_server.py",
+    "plugins/ai-sw-factory-msft-ko/skills/spec-driven-delivery/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/team-application-standards/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/evidence-research/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/tdd/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/convergence-check/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/skills/pr-description/SKILL.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/researcher.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/planner.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/test-writer.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/implementer.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/security-reviewer.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/convergence-reviewer.agent.md",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/pre_tool_guard.py",
+    "plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/post_edit_check.py",
     "templates/plugin/hooks.json",
     "templates/plugin/pre_tool_guard.py",
     "templates/plugin/post_edit_check.py",
     "templates/plugin/skills/spec-driven-delivery/SKILL.md",
     "templates/plugin/skills/team-application-standards/SKILL.md",
     "templates/plugin/skills/pr-description/SKILL.md",
+    "templates/plugin/mcp/sqlite-ro-server/guard.py",
+    "templates/plugin/mcp/sqlite-ro-server/server.py",
+    "templates/plugin/mcp/sqlite-ro-server/test_server.py",
 )
 
 REQUIRED_PATHS = AGENT_PATHS + COMPONENT_PATHS + LEARNING_PATHS + PLUGIN_PATHS + (
@@ -294,11 +300,11 @@ def validate_documented_commands(root: Path) -> list[str]:
         required_installation_content = (
             "docs/images/plugin-installation.svg",
             "copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop",
-            "copilot plugin install ai-msft-harness@ai-msft-harness-marketplace",
-            "daeungo1/msft-ghcp-dev-workshop:plugins/ai-msft-harness",
-            "copilot plugin marketplace update ai-msft-harness-marketplace",
-            "copilot plugin update ai-msft-harness@ai-msft-harness-marketplace",
-            "copilot plugin uninstall ai-msft-harness@ai-msft-harness-marketplace",
+            "copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace",
+            "daeungo1/msft-ghcp-dev-workshop:plugins/ai-sw-factory-msft-ko",
+            "copilot plugin marketplace update ai-sw-factory-msft-ko-marketplace",
+            "copilot plugin update ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace",
+            "copilot plugin uninstall ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace",
         )
         if any(item not in readme for item in required_installation_content):
             errors.append(
@@ -318,13 +324,25 @@ def validate_documented_commands(root: Path) -> list[str]:
                 "README must document the manifest-driven integration "
                 "wrapper pattern"
             )
+        required_speckit_content = (
+            "Spec Kit-based custom harness인가요?",
+            "github/spec-kit",
+            "Spec Kit core",
+            "Team plugin",
+            "Project profile",
+            "specify init --here --force --integration copilot",
+        )
+        if any(item not in readme for item in required_speckit_content):
+            errors.append(
+                "README must document Spec Kit composition and bootstrap"
+            )
     return errors
 
 
 def validate_final_plugin(root: Path) -> list[str]:
     """Validate the distributable plugin and marketplace catalog agree."""
     errors: list[str] = []
-    plugin_path = root / "plugins" / "ai-msft-harness" / "plugin.json"
+    plugin_path = root / "plugins" / "ai-sw-factory-msft-ko" / "plugin.json"
     marketplace_path = root / ".github" / "plugin" / "marketplace.json"
     if not plugin_path.is_file() or not marketplace_path.is_file():
         return errors
@@ -338,34 +356,34 @@ def validate_final_plugin(root: Path) -> list[str]:
     if plugin.get("$schema") != (
         "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
     ):
-        errors.append("ai-msft-harness plugin must use Agent Plugins 1.0 schema")
-    if plugin.get("name") != "ai-msft-harness":
-        errors.append("plugin name must be ai-msft-harness")
+        errors.append("ai-sw-factory-msft-ko plugin must use Agent Plugins 1.0 schema")
+    if plugin.get("name") != "ai-sw-factory-msft-ko":
+        errors.append("plugin name must be ai-sw-factory-msft-ko")
     plugin_version = str(plugin.get("version", ""))
     if not SEMANTIC_VERSION_PATTERN.fullmatch(plugin_version):
-        errors.append("ai-msft-harness version must be a semantic version")
+        errors.append("ai-sw-factory-msft-ko version must be a semantic version")
 
-    if marketplace.get("name") != "ai-msft-harness-marketplace":
-        errors.append("marketplace name must be ai-msft-harness-marketplace")
+    if marketplace.get("name") != "ai-sw-factory-msft-ko-marketplace":
+        errors.append("marketplace name must be ai-sw-factory-msft-ko-marketplace")
     entries = [
         item
         for item in marketplace.get("plugins", [])
-        if item.get("name") == "ai-msft-harness"
+        if item.get("name") == "ai-sw-factory-msft-ko"
     ]
     if len(entries) != 1:
-        errors.append("marketplace must contain one ai-msft-harness entry")
+        errors.append("marketplace must contain one ai-sw-factory-msft-ko entry")
         return errors
 
     entry = entries[0]
     if str(entry.get("version", "")) != plugin_version:
         errors.append("marketplace version must match plugin version")
-    if entry.get("source") != "./plugins/ai-msft-harness":
-        errors.append("marketplace source must be ./plugins/ai-msft-harness")
+    if entry.get("source") != "./plugins/ai-sw-factory-msft-ko":
+        errors.append("marketplace source must be ./plugins/ai-sw-factory-msft-ko")
 
     hooks_path = (
         root
         / "plugins"
-        / "ai-msft-harness"
+        / "ai-sw-factory-msft-ko"
         / "com.github.copilot"
         / "hooks"
         / "hooks.json"
@@ -394,6 +412,18 @@ def validate_final_plugin(root: Path) -> list[str]:
                         errors.append(
                             f"{event_name} hooks must reference portable Python scripts"
                         )
+                    bash_command = str(hook.get("bash", ""))
+                    powershell_command = str(hook.get("powershell", ""))
+                    if (
+                        "[ -f" not in bash_command
+                        or "printf '{}'" not in bash_command
+                        or "Test-Path -LiteralPath" not in powershell_command
+                        or "'{}'" not in powershell_command
+                    ):
+                        errors.append(
+                            f"{event_name} hooks must define a missing-path "
+                            "no-op fallback"
+                        )
 
     if hooks_path.is_file() and template_hooks_path.is_file():
         plugin_hooks = json.loads(hooks_path.read_text(encoding="utf-8"))
@@ -412,10 +442,30 @@ def validate_final_plugin(root: Path) -> list[str]:
                 f"template hook scripts must match final plugin: {script_name}"
             )
 
+    plugin_mcp_root = (
+        root
+        / "plugins"
+        / "ai-sw-factory-msft-ko"
+        / "mcp"
+        / "sqlite-ro-server"
+    )
+    template_mcp_root = root / "templates" / "plugin" / "mcp" / "sqlite-ro-server"
+    for file_name in ("guard.py", "server.py", "test_server.py"):
+        plugin_file = plugin_mcp_root / file_name
+        template_file = template_mcp_root / file_name
+        if (
+            plugin_file.is_file()
+            and template_file.is_file()
+            and plugin_file.read_bytes() != template_file.read_bytes()
+        ):
+            errors.append(
+                f"plugin MCP template must match final plugin: {file_name}"
+            )
+
     team_standards_path = (
         root
         / "plugins"
-        / "ai-msft-harness"
+        / "ai-sw-factory-msft-ko"
         / "skills"
         / "team-application-standards"
         / "SKILL.md"
@@ -450,6 +500,44 @@ def validate_final_plugin(root: Path) -> list[str]:
                 "architecture, and refactoring contracts"
             )
 
+    delivery_skill_path = (
+        root
+        / "plugins"
+        / "ai-sw-factory-msft-ko"
+        / "skills"
+        / "spec-driven-delivery"
+        / "SKILL.md"
+    )
+    if delivery_skill_path.is_file():
+        delivery = delivery_skill_path.read_text(encoding="utf-8")
+        for required in (
+            "Spec Kit core",
+            ".specify/",
+            "specify init --here --force --integration copilot",
+        ):
+            if required not in delivery:
+                errors.append(
+                    "spec-driven-delivery must require Spec Kit bootstrap"
+                )
+                break
+    template_delivery_skill_path = (
+        root
+        / "templates"
+        / "plugin"
+        / "skills"
+        / "spec-driven-delivery"
+        / "SKILL.md"
+    )
+    if (
+        delivery_skill_path.is_file()
+        and template_delivery_skill_path.is_file()
+        and delivery_skill_path.read_bytes()
+        != template_delivery_skill_path.read_bytes()
+    ):
+        errors.append(
+            "template spec-driven-delivery skill must match final plugin skill"
+        )
+
     template_standards_path = (
         root
         / "templates"
@@ -467,6 +555,37 @@ def validate_final_plugin(root: Path) -> list[str]:
         errors.append(
             "template team standards skill must match final plugin skill"
         )
+
+    legacy_markers = ("ai-msft-harness", "AI MSFT")
+    identity_paths = (
+        "README.md",
+        ".github/plugin/marketplace.json",
+        "plugins/ai-sw-factory-msft-ko/plugin.json",
+        "templates/plugin/plugin.json",
+        "templates/plugin/README.md",
+        "requirements/05-package.md",
+        "labs/S5-package.md",
+        "scripts/verify-step.sh",
+    )
+    for relative_path in identity_paths:
+        path = root / relative_path
+        if path.is_file() and any(
+            marker in path.read_text(encoding="utf-8")
+            for marker in legacy_markers
+        ):
+            errors.append(
+                f"{relative_path}: legacy plugin identity must be removed"
+            )
+    for relative_path in (
+        "plugins/ai-sw-factory-msft-ko/skills/"
+        "team-application-standards/SKILL.md",
+        "templates/plugin/skills/team-application-standards/SKILL.md",
+    ):
+        path = root / relative_path
+        if path.is_file() and "AI MSFT" in path.read_text(encoding="utf-8"):
+            errors.append(
+                f"{relative_path}: legacy display brand must be removed"
+            )
     return errors
 
 

@@ -1,6 +1,6 @@
 """sqlite-ro: optional read-only SQLite MCP server for application projects.
 
-Run: AI_MSFT_HARNESS_DB=/path/to/app.db uv run --with mcp python server.py
+Run: AI_SW_FACTORY_MSFT_KO_DB=/path/to/app.db uv run --with mcp python server.py
 """
 
 import os
@@ -18,9 +18,9 @@ mcp = FastMCP("sqlite-ro")
 
 
 def _db_path() -> str:
-    db = os.environ.get("AI_MSFT_HARNESS_DB")
+    db = os.environ.get("AI_SW_FACTORY_MSFT_KO_DB")
     if not db:
-        raise RuntimeError("AI_MSFT_HARNESS_DB environment variable is not set")
+        raise RuntimeError("AI_SW_FACTORY_MSFT_KO_DB environment variable is not set")
     return db
 
 

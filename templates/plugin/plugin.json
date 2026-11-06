@@ -1,6 +1,6 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "ai-msft-harness",
+  "name": "ai-sw-factory-msft-ko",
   "version": "0.1.0",
   "description": "Spec-driven application harness with role agents, TDD, guardrails, convergence, and optional read-only SQLite context",
   "author": { "name": "<your team>" },

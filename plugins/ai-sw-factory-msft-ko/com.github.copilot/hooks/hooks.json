@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "SCRIPT=\"${PLUGIN_ROOT}/com.github.copilot/hooks/pre_tool_guard.py\"; if [ -f \"$SCRIPT\" ]; then python3 \"$SCRIPT\"; else printf '{}'; fi",
+        "powershell": "$script = Join-Path $env:PLUGIN_ROOT 'com.github.copilot\\hooks\\pre_tool_guard.py'; if (Test-Path -LiteralPath $script) { python $script } else { '{}' }",
+        "cwd": ".",
+        "timeoutSec": 15
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "SCRIPT=\"${PLUGIN_ROOT}/com.github.copilot/hooks/post_edit_check.py\"; if [ -f \"$SCRIPT\" ]; then python3 \"$SCRIPT\"; else printf '{}'; fi",
+        "powershell": "$script = Join-Path $env:PLUGIN_ROOT 'com.github.copilot\\hooks\\post_edit_check.py'; if (Test-Path -LiteralPath $script) { python $script } else { '{}' }",
+        "cwd": ".",
+        "timeoutSec": 150
+      }
+    ]
+  }
+}

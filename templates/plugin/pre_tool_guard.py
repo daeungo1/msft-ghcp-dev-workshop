@@ -63,7 +63,7 @@ PROTECTED_PATHS = (
     (r"(^|/)\.github/hooks/", "hook configuration cannot be edited"),
     (r"(^|/)scripts/hooks/", "hook scripts cannot be edited"),
     (
-        r"(^|/)\.ai-msft-harness/",
+        r"(^|/)\.ai-sw-factory-msft-ko/",
         "project harness validation scripts cannot be edited",
     ),
 )

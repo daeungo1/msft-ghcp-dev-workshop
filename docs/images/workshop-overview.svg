@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="590" viewBox="0 0 1200 590" role="img" aria-labelledby="title desc">
-  <title id="title">AI MSFT Harness Workshop overview</title>
-  <desc id="desc">A participant uses the TeamFeed reference application to move through Spec Kit artifacts, role-separated Copilot agents, layered guardrails, convergence, and the reusable ai-msft-harness plugin.</desc>
+  <title id="title">AI SW Factory MSFT KO Workshop overview</title>
+  <desc id="desc">A participant uses the TeamFeed reference application to move through Spec Kit artifacts, role-separated Copilot agents, layered guardrails, convergence, and the reusable ai-sw-factory-msft-ko plugin.</desc>
   <defs>
     <linearGradient id="headerGradient" x1="0" x2="1">
       <stop offset="0" stop-color="#172554"/>
@@ -67,7 +67,7 @@
   <text x="996" y="221" class="step">Converge + Plugin</text>
   <text x="948" y="266" class="body">verify + converge</text>
   <text x="948" y="296" class="body">human approval gate</text>
-  <text x="948" y="326" class="body">ai-msft-harness</text>
+  <text x="948" y="326" class="body">ai-sw-factory-msft-ko</text>
   <rect x="948" y="358" width="192" height="38" rx="10" fill="#ffedd5"/>
   <text x="970" y="383" class="tag" fill="#9a3412">VS Code와 CLI에 설치</text>
 

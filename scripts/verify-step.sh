@@ -47,7 +47,7 @@ mcp_server_tests() {
 }
 harness_validation() { "${PYTHON_BIN}" scripts/validate-harness.py; }
 plugin_hook_tests() {
-  "${PYTHON_BIN}" -m unittest plugins/ai-msft-harness/tests/test_hooks.py
+  "${PYTHON_BIN}" -m unittest plugins/ai-sw-factory-msft-ko/tests/test_hooks.py
 }
 
 # S1: posts 테스트 커밋이 posts 구현 커밋보다 먼저(또는 같은 시각)여야 합니다.
@@ -78,7 +78,7 @@ no_string_built_sql() {
 
 plugin_count() { find "$1" -name "$2" 2>/dev/null | wc -l; }
 team_standards_contract() {
-  local skill=plugins/ai-msft-harness/skills/team-application-standards/SKILL.md
+  local skill=plugins/ai-sw-factory-msft-ko/skills/team-application-standards/SKILL.md
   [ -f "$skill" ] &&
     grep -Fq 'Node.js >=22' "$skill" &&
     grep -Fq 'Python >=3.12' "$skill" &&
@@ -86,7 +86,7 @@ team_standards_contract() {
     grep -Fq 'incremental refactoring' "$skill"
 }
 marketplace_matches_plugin() {
-  "${PYTHON_BIN}" - plugins/ai-msft-harness/plugin.json .github/plugin/marketplace.json <<'PY'
+  "${PYTHON_BIN}" - plugins/ai-sw-factory-msft-ko/plugin.json .github/plugin/marketplace.json <<'PY'
 import json
 import sys
 
@@ -99,9 +99,9 @@ matches = [
 ]
 valid = (
     len(matches) == 1
-    and plugin.get("version") == "1.2.1"
+    and plugin.get("version") == "2.0.0"
     and matches[0].get("version") == plugin.get("version")
-    and matches[0].get("source") == "./plugins/ai-msft-harness"
+    and matches[0].get("source") == "./plugins/ai-sw-factory-msft-ko"
 )
 raise SystemExit(0 if valid else 1)
 PY
@@ -170,14 +170,14 @@ check_s4() {
 }
 
 check_s5() {
-  local P=plugins/ai-msft-harness
+  local P=plugins/ai-sw-factory-msft-ko
   check "plugin.json is valid JSON" "${P}/plugin.json 을 고치세요" json_valid "${P}/plugin.json"
   check "plugin.json has \$schema/name/version/description" "필수 필드를 추가하세요" \
     json_has "${P}/plugin.json" 'all(k in d for k in ("$schema","name","version","description"))'
-  check "plugin version is 1.2.1" "plugin.json version 을 1.2.1 으로 지정하세요" \
-    json_has "${P}/plugin.json" 'd.get("version") == "1.2.1"'
-  check "plugin name is ai-msft-harness" "plugin.json 의 name 을 ai-msft-harness 로 지정하세요" \
-    json_has "${P}/plugin.json" 'd.get("name") == "ai-msft-harness"'
+  check "plugin version is 2.0.0" "plugin.json version 을 2.0.0 으로 지정하세요" \
+    json_has "${P}/plugin.json" 'd.get("version") == "2.0.0"'
+  check "plugin name is ai-sw-factory-msft-ko" "plugin.json 의 name 을 ai-sw-factory-msft-ko 로 지정하세요" \
+    json_has "${P}/plugin.json" 'd.get("name") == "ai-sw-factory-msft-ko"'
   check "plugin has >= 6 skills" "delivery, team standards, research, TDD, convergence, PR 스킬을 넣으세요" \
     count_ge "$(plugin_count "${P}/skills" SKILL.md)" 6
   check "team application standards contract exists" "runtime floor, Clean Architecture, incremental refactoring 계약을 추가하세요" \

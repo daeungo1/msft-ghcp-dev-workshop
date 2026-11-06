@@ -46,7 +46,7 @@ def run(event: dict[str, Any]) -> dict[str, str]:
         return output()
 
     root = Path(str(event.get("cwd") or os.getcwd())).resolve()
-    check_script = root / ".ai-msft-harness" / "post-edit.py"
+    check_script = root / ".ai-sw-factory-msft-ko" / "post-edit.py"
     if not check_script.is_file():
         return output()
 
@@ -60,11 +60,11 @@ def run(event: dict[str, Any]) -> dict[str, str]:
         )
     except subprocess.TimeoutExpired:
         return output(
-            "ai-msft-harness post-edit validation timed out after 120 seconds. "
+            "ai-sw-factory-msft-ko post-edit validation timed out after 120 seconds. "
             "Check the project validation script before reporting completion."
         )
     except OSError as exc:
-        return output(f"ai-msft-harness post-edit validation could not run: {exc}")
+        return output(f"ai-sw-factory-msft-ko post-edit validation could not run: {exc}")
 
     if completed.returncode == 0:
         return output()
@@ -83,7 +83,7 @@ def main() -> int:
         event = json.load(sys.stdin)
         result = run(event if isinstance(event, dict) else {})
     except Exception as exc:
-        result = output(f"ai-msft-harness post-edit internal error: {exc}")
+        result = output(f"ai-sw-factory-msft-ko post-edit internal error: {exc}")
     print(json.dumps(result, ensure_ascii=False))
     return 0
 

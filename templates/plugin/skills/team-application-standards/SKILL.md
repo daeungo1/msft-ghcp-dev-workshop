@@ -1,9 +1,9 @@
 ---
 name: team-application-standards
-description: "Use when: creating or modernizing a Node.js/TypeScript or Python service that must follow AI MSFT runtime floors, Clean Architecture boundaries, module ownership, and incremental refactoring rules."
+description: "Use when: creating or modernizing a Node.js/TypeScript or Python service that must follow AI SW Factory MSFT KO runtime floors, Clean Architecture boundaries, module ownership, and incremental refactoring rules."
 ---
 
-# AI MSFT Team Application Standards
+# AI SW Factory MSFT KO Team Application Standards
 
 ## 적용 범위
 

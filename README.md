@@ -1,14 +1,14 @@
 ---
-title: AI MSFT Harness Workshop
+title: AI SW Factory MSFT KO Workshop
 description: Spec Kit 표준 개발 단계로 팀 맞춤형 GitHub Copilot harness를 만들고 TeamFeed 예제로 검증하는 개발자 워크숍
 ms.date: 2026-11-04
 ms.topic: tutorial
 ---
 
-## AI MSFT Harness Workshop
+## AI SW Factory MSFT KO Workshop
 
 이 워크숍의 목표는 **Spec Kit 표준 애플리케이션 개발 단계를 따라가며
-팀과 프로젝트의 개발 패턴을 GitHub Copilot용 `ai-msft-harness` plugin으로
+팀과 프로젝트의 개발 패턴을 GitHub Copilot용 `ai-sw-factory-msft-ko` plugin으로
 만드는 것**입니다.
 
 TeamFeed는 harness가 실제 애플리케이션 개발에서 어떻게 작동하는지 보여주는
@@ -16,15 +16,15 @@ reference application입니다. 회원, 게시글, 팔로우, 피드, 신고 기
 단계적으로 구현하면서 각 harness layer의 필요성과 효과를 검증합니다.
 
 > [!IMPORTANT]
-> **최종 산출물: [`plugins/ai-msft-harness/`](plugins/ai-msft-harness/)**
+> **최종 산출물: [`plugins/ai-sw-factory-msft-ko/`](plugins/ai-sw-factory-msft-ko/)**
 >
 > S0-S6에서 만든 role-based agents, skills, hooks, MCP를 Agent Plugins 1.0
 > 패키지로 제공합니다. VS Code에서는 **Chat: Install Plugin from Source**,
-> CLI에서는 `copilot plugin install ./plugins/ai-msft-harness`로 설치합니다.
+> CLI에서는 `copilot plugin install ./plugins/ai-sw-factory-msft-ko`로 설치합니다.
 
-## Install ai-msft-harness
+## Install ai-sw-factory-msft-ko
 
-![GitHub repository에서 marketplace 또는 direct source를 통해 VS Code와 Copilot CLI에 ai-msft-harness를 설치하는 흐름](docs/images/plugin-installation.svg)
+![GitHub repository에서 marketplace 또는 direct source를 통해 VS Code와 Copilot CLI에 ai-sw-factory-msft-ko를 설치하는 흐름](docs/images/plugin-installation.svg)
 
 ### Prerequisites
 
@@ -35,8 +35,8 @@ reference application입니다. 회원, 게시글, 팔로우, 피드, 신고 기
 
 > [!WARNING]
 > Plugin은 agents, skills, hooks, MCP server를 설치합니다. 설치 전에
-> [`plugin.json`](plugins/ai-msft-harness/plugin.json), [hooks](plugins/ai-msft-harness/com.github.copilot/hooks/hooks.json),
-> [MCP configuration](plugins/ai-msft-harness/mcp.json)을 검토하세요.
+> [`plugin.json`](plugins/ai-sw-factory-msft-ko/plugin.json), [hooks](plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json),
+> [MCP configuration](plugins/ai-sw-factory-msft-ko/mcp.json)을 검토하세요.
 
 ### Option A: Marketplace install (recommended)
 
@@ -44,8 +44,8 @@ reference application입니다. 회원, 게시글, 팔로우, 피드, 신고 기
 
 ```powershell
 copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
-copilot plugin marketplace browse ai-msft-harness-marketplace
-copilot plugin install ai-msft-harness@ai-msft-harness-marketplace
+copilot plugin marketplace browse ai-sw-factory-msft-ko-marketplace
+copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
 ### Option B: Direct GitHub install
@@ -54,7 +54,7 @@ Marketplace를 등록하지 않고 repository subdirectory에서 바로 설치�
 
 ```powershell
 copilot plugin install `
-  daeungo1/msft-ghcp-dev-workshop:plugins/ai-msft-harness
+  daeungo1/msft-ghcp-dev-workshop:plugins/ai-sw-factory-msft-ko
 ```
 
 ### Option C: Local development install
@@ -65,7 +65,7 @@ copilot plugin install `
 git clone https://github.com/daeungo1/msft-ghcp-dev-workshop.git
 cd msft-ghcp-dev-workshop
 copilot plugin marketplace add .
-copilot plugin install ai-msft-harness@ai-msft-harness-marketplace
+copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
 Local marketplace plugin은 workspace source를 live로 읽으므로 변경 후 새
@@ -79,12 +79,12 @@ Marketplace install:
 2. **Add Marketplace...** 선택
 3. `daeungo1/msft-ghcp-dev-workshop` 입력
 4. Chat 또는 Agents 창에서 **Customize → Browse** 열기
-5. `ai-msft-harness` 검색 후 **Install** 선택
+5. `ai-sw-factory-msft-ko` 검색 후 **Install** 선택
 
 Local source install:
 
 1. Command Palette에서 **Chat: Install Plugin from Source** 실행
-2. `<repository>/plugins/ai-msft-harness` 선택
+2. `<repository>/plugins/ai-sw-factory-msft-ko` 선택
 3. **Agent Customizations → Plugins**에서 enabled 상태 확인
 
 ### Verify the installation
@@ -97,7 +97,7 @@ copilot mcp list
 
 정상 설치 기준:
 
-* Plugin: `ai-msft-harness` version `1.2.1`, enabled
+* Plugin: `ai-sw-factory-msft-ko` version `2.0.0`, enabled
 * Skills: 6개
 * Agents: 6개 (VS Code **Agent Customizations → Agents**에서 확인)
 * Hooks: cross-platform PreToolUse/PostToolUse
@@ -106,13 +106,38 @@ copilot mcp list
 SQLite MCP를 사용할 때만 DB 경로를 지정합니다.
 
 ```powershell
-$env:AI_MSFT_HARNESS_DB = "C:\absolute\path\application.db"
+$env:AI_SW_FACTORY_MSFT_KO_DB = "C:\absolute\path\application.db"
 ```
 
-![Spec Kit 개발 단계에서 재사용 가능한 ai-msft-harness까지 이어지는 워크숍 개요](docs/images/workshop-overview.svg)
+![Spec Kit 개발 단계에서 재사용 가능한 ai-sw-factory-msft-ko까지 이어지는 워크숍 개요](docs/images/workshop-overview.svg)
 
 이 워크숍은 각 팀이 자신의 애플리케이션 개발 패턴을 설치 가능한 plugin으로
 만드는 과정을 Spec Kit 단계에 맞춰 설명합니다.
+
+### Spec Kit-based custom harness인가요?
+
+네. 다만 Spec Kit을 fork하거나 core command를 plugin에 복사하지 않고,
+다음 세 layer로 구성합니다.
+
+| Layer | Owner | Responsibility |
+|---|---|---|
+| Spec Kit core | `github/spec-kit` | constitution, specify, clarify, plan, tasks, implement, converge |
+| Team plugin | `ai-sw-factory-msft-ko` | runtime/architecture standards, role-based agents, TDD, hooks, MCP |
+| Project profile | target repository | constitution, feature specs, project instructions, `.ai-sw-factory-msft-ko/post-edit.py` |
+
+Target repository에서 먼저 Spec Kit을 초기화하고 team plugin을 설치합니다.
+
+```powershell
+uv tool install specify-cli --force `
+  --from git+https://github.com/github/spec-kit.git@v1.2.5
+specify init --here --force --integration copilot
+copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
+copilot plugin install `
+  ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
+```
+
+이 방식은 upstream Spec Kit update와 우리 팀 policy release를 독립적으로
+관리하면서도 같은 delivery flow에서 함께 사용하게 합니다.
 
 ### 이 워크숍에서 만드는 것
 
@@ -123,14 +148,14 @@ $env:AI_MSFT_HARNESS_DB = "C:\absolute\path\application.db"
 | Role-based Copilot agents | research, planning, testing, implementation, security review, convergence review |
 | Multi-layer harness | instructions, skills, agents, hooks, MCP, CI |
 | Team application standards | Node.js 22+, Python 3.12+, Clean Architecture, module/service incremental refactoring |
-| 최종 설치 패키지 | [`ai-msft-harness`](plugins/ai-msft-harness/) Agent Plugin |
+| 최종 설치 패키지 | [`ai-sw-factory-msft-ko`](plugins/ai-sw-factory-msft-ko/) Agent Plugin |
 | 프로세스 패키지 | Spec Kit extension, workflow, bundle |
 
 ### 빠른 길찾기
 
 | 지금 필요한 것 | 이동할 곳 |
 |---|---|
-| Plugin을 설치하고 싶음 | [Install ai-msft-harness](#install-ai-msft-harness) |
+| Plugin을 설치하고 싶음 | [Install ai-sw-factory-msft-ko](#install-ai-sw-factory-msft-ko) |
 | Workshop 환경을 준비하고 싶음 | [빠른 시작](#빠른-시작) |
 | 전체 실습 순서를 보고 싶음 | [S0-S6 학습 흐름](#s0-s6-학습-흐름) |
 | Harness layer를 이해하고 싶음 | [Multi-layer harness architecture](#multi-layer-harness-architecture) |
@@ -157,7 +182,7 @@ $env:AI_MSFT_HARNESS_DB = "C:\absolute\path\application.db"
 
 ## S0-S6 학습 흐름
 
-S0-S6는 `ai-msft-harness`를 만드는 주 과정이고, TeamFeed 기능은 각 단계의
+S0-S6는 `ai-sw-factory-msft-ko`를 만드는 주 과정이고, TeamFeed 기능은 각 단계의
 harness를 검증하기 위한 실습 시나리오입니다.
 
 ![S0 specification에서 S6 convergence까지 TeamFeed 예제로 harness를 단계적으로 추가하는 흐름](docs/images/workshop-workflow.svg)
@@ -169,7 +194,7 @@ harness를 검증하기 위한 실습 시나리오입니다.
 | [S2](labs/S2-follow.md) | 팔로우 | Deterministic guardrails | import-linter, hooks, CI |
 | [S3](labs/S3-feed.md) | 피드 | 실제 스키마를 least-privilege로 조회 | read-only SQLite MCP |
 | [S4](labs/S4-report.md) | 신고와 관리자 처리 | Independent security review | security reviewer, CodeQL |
-| [S5](labs/S5-package.md) | 팀 배포 | Harness versioning과 reuse | `ai-msft-harness`, marketplace |
+| [S5](labs/S5-package.md) | 팀 배포 | Harness versioning과 reuse | `ai-sw-factory-msft-ko`, marketplace |
 | [S6](labs/S6-converge.md) | 완성도 확인 | Specification과 code convergence | verification, converge, human gate |
 
 각 단계는 같은 패턴을 반복합니다.
@@ -203,7 +228,7 @@ Harness는 하나의 거대한 prompt가 아닙니다. 각 layer는 서로 다�
 
 ![여러 external resource가 필요한 경우 참고할 수 있는 Integration Port, Resource Registry, protocol adapter 구조](docs/images/integration-wrapper-pattern.svg)
 
-이 구조는 `ai-msft-harness`가 제공하는 runtime component가 아닙니다.
+이 구조는 `ai-sw-factory-msft-ko`가 제공하는 runtime component가 아닙니다.
 여러 MCP, HTTP API, database를 하나의 catalog로 관리해야 할 때 참고할 수
 있는 optional architecture shape입니다. 단일 integration은 module-local
 port와 adapter로 연결합니다.
@@ -357,7 +382,7 @@ specs/001-teamfeed-mvp/     기능 명세, 계획, 작업
 spec-kit/extensions/        TeamFeed 품질 extension source
 spec-kit/workflows/         human gate를 포함한 workflow source
 spec-kit/bundles/           팀 배포 bundle source
-plugins/ai-msft-harness/    VS Code와 Copilot CLI 설치용 최종 plugin
+plugins/ai-sw-factory-msft-ko/    VS Code와 Copilot CLI 설치용 최종 plugin
 labs/                       S0-S6 실습
 scripts/                    개발, hook, 구조 검증
 ```
@@ -383,21 +408,26 @@ scripts/                    개발, hook, 구조 검증
 ### Update
 
 ```powershell
-copilot plugin marketplace update ai-msft-harness-marketplace
-copilot plugin update ai-msft-harness@ai-msft-harness-marketplace
+copilot plugin marketplace update ai-sw-factory-msft-ko-marketplace
+copilot plugin update ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
 ### Disable or uninstall
 
 ```powershell
-copilot plugin disable ai-msft-harness@ai-msft-harness-marketplace
-copilot plugin enable ai-msft-harness@ai-msft-harness-marketplace
-copilot plugin uninstall ai-msft-harness@ai-msft-harness-marketplace
+copilot plugin disable ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
+copilot plugin enable ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
+copilot plugin uninstall ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
+
+Plugin ID를 변경하거나 uninstall한 뒤 기존 session이 old hook를 계속
+호출하면 **Developer: Reload Window**를 실행하고 새 Copilot session을
+시작합니다. Hook command는 missing plugin path에서 `{}`를 반환하도록
+구성되어 stale path가 normal permission flow를 차단하지 않습니다.
 
 ### Publish a new version
 
-1. [`plugin.json`](plugins/ai-msft-harness/plugin.json)의 semantic version 변경
+1. [`plugin.json`](plugins/ai-sw-factory-msft-ko/plugin.json)의 semantic version 변경
 2. [`marketplace.json`](.github/plugin/marketplace.json)의 version을 동일하게 변경
 3. Plugin tests와 `scripts/verify-step.sh S5` 실행
 4. Default branch에 commit/push

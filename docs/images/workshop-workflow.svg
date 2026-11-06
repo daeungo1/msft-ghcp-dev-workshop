@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1240" height="720" viewBox="0 0 1240 720" role="img" aria-labelledby="title desc">
-  <title id="title">AI MSFT Harness S0 to S6 learning workflow</title>
-  <desc id="desc">Seven stages use the TeamFeed reference application to progressively build the ai-msft-harness plugin through specification, role separation, deterministic guardrails, read-only context, independent review, packaging, and convergence.</desc>
+  <title id="title">AI SW Factory MSFT KO S0 to S6 learning workflow</title>
+  <desc id="desc">Seven stages use the TeamFeed reference application to progressively build the ai-sw-factory-msft-ko plugin through specification, role separation, deterministic guardrails, read-only context, independent review, packaging, and convergence.</desc>
   <defs>
     <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
       <path d="M0 0L9 4.5L0 9Z" fill="#64748b"/>
@@ -17,7 +17,7 @@
   </defs>
 
   <rect width="1240" height="720" rx="22" fill="#f8fafc"/>
-  <text x="40" y="54" class="title">TeamFeed reference app으로 ai-msft-harness를 단계별로 만듭니다</text>
+  <text x="40" y="54" class="title">TeamFeed reference app으로 ai-sw-factory-msft-ko를 단계별로 만듭니다</text>
   <text x="40" y="86" class="subtitle">Spec Kit 단계마다 failure를 관찰하고 team development pattern을 plugin assets로 추출합니다</text>
 
   <rect x="40" y="126" width="1160" height="64" rx="14" fill="#172554"/>

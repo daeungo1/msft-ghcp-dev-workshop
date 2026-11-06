@@ -5,6 +5,18 @@ description: "Use when: taking an application feature from constitution and spec
 
 # Spec-Driven Application Delivery
 
+## Prerequisite
+
+이 plugin은 Spec Kit core를 복사하지 않고 team policy를 overlay합니다.
+Repository에 `.specify/`와 Copilot의 `speckit-*` skills가 없으면 구현을
+시작하지 않고 다음 초기화 명령을 안내합니다.
+
+```bash
+uv tool install specify-cli --force \
+  --from git+https://github.com/github/spec-kit.git@v1.2.5
+specify init --here --force --integration copilot
+```
+
 ## 단계
 
 1. Constitution: 프로젝트 전반의 품질, 보안, 경계 원칙을 확인합니다.

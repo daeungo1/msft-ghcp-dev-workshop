@@ -9,7 +9,7 @@ Copilot CLI는 `plugin.json`에 `$schema`를 선언하면 Agent Plugins 1.0 형�
 ## 만들어야 하는 구조
 
 ```text
-plugins/ai-msft-harness/
+plugins/ai-sw-factory-msft-ko/
 ├── plugin.json                       # Agent Plugins 1.0 manifest
 ├── README.md                         # 설치, 공유, 프로젝트별 맞춤 방법
 ├── skills/
@@ -20,7 +20,7 @@ plugins/ai-msft-harness/
 │   ├── convergence-check/SKILL.md
 │   └── pr-description/SKILL.md
 ├── mcp.json                          # templates/plugin/mcp.json 복사
-├── mcp/sqlite-ro-server/             # templates/mcp/sqlite-ro-server 복사 (server.py, guard.py)
+├── mcp/sqlite-ro-server/             # templates/plugin/mcp/sqlite-ro-server 복사
 └── com.github.copilot/
     ├── agents/
     │   ├── researcher.agent.md
@@ -40,13 +40,13 @@ plugins/ai-msft-harness/
 | 파일 | 메모 |
 |---|---|
 | `plugin.json` | 허용 필드는 `$schema`, `name`, `version`, `description`, `author`, `homepage`, `repository`, `license`, `keywords`, `extensions` 뿐입니다. 그 밖의 필드는 무시됩니다 |
-| `mcp.json` | stdio 서버의 `type`은 `stdio`입니다. `${PLUGIN_ROOT}`와 `${PLUGIN_DATA}`는 런타임이 확장합니다. SQLite를 쓰려면 `AI_MSFT_HARNESS_DB`를 지정합니다 |
-| `hooks.json` | 훅 스크립트 경로는 `${PLUGIN_ROOT}` 기준입니다. 프로젝트별 검사는 `.ai-msft-harness/post-edit.py`가 담당합니다 |
+| `mcp.json` | stdio 서버의 `type`은 `stdio`입니다. `${PLUGIN_ROOT}`와 `${PLUGIN_DATA}`는 런타임이 확장합니다. SQLite를 쓰려면 `AI_SW_FACTORY_MSFT_KO_DB`를 지정합니다 |
+| `hooks.json` | 훅 스크립트 경로는 `${PLUGIN_ROOT}` 기준입니다. 프로젝트별 검사는 `.ai-sw-factory-msft-ko/post-edit.py`가 담당합니다 |
 
 ## 설치와 확인
 
 ```bash
-copilot plugin install ./plugins/ai-msft-harness   # 로컬 설치 (수정 후에는 다시 실행해 캐시 갱신)
+copilot plugin install ./plugins/ai-sw-factory-msft-ko   # 로컬 설치 (수정 후에는 다시 실행해 캐시 갱신)
 copilot plugin list
 ```
 
