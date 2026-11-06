@@ -1,95 +1,72 @@
 ---
 title: AI SW Factory MSFT KO Workshop
-description: Spec Kit 표준 개발 단계로 팀 맞춤형 GitHub Copilot harness를 만들고 TeamFeed 예제로 검증하는 개발자 워크숍
-ms.date: 2026-11-04
+description: Spec Kit과 GitHub Copilot로 팀 개발 표준을 설치 가능한 Agent Plugin으로 만드는 워크숍
+ms.date: 2026-11-06
 ms.topic: tutorial
 ---
 
-## AI SW Factory MSFT KO Workshop
+# AI SW Factory MSFT KO
 
 [![Validate marketplace](https://github.com/daeungo1/msft-ghcp-dev-workshop/actions/workflows/validate-marketplace.yml/badge.svg)](https://github.com/daeungo1/msft-ghcp-dev-workshop/actions/workflows/validate-marketplace.yml)
 
-이 워크숍의 목표는 **Spec Kit 표준 애플리케이션 개발 단계를 따라가며
-팀과 프로젝트의 개발 패턴을 GitHub Copilot용 `ai-sw-factory-msft-ko` plugin으로
-만드는 것**입니다.
+`ai-sw-factory-msft-ko`는 **Spec Kit 기반의 custom Team harness**입니다.
+Spec Kit이 제공하는 specification-driven delivery를 공통 개발 흐름으로
+사용하고, 우리 팀의 runtime, architecture, TDD, security, verification
+기준을 GitHub Copilot customization으로 추가합니다.
 
-TeamFeed는 harness가 실제 애플리케이션 개발에서 어떻게 작동하는지 보여주는
-reference application입니다. 회원, 게시글, 팔로우, 피드, 신고 기능을
-단계적으로 구현하면서 각 harness layer의 필요성과 효과를 검증합니다.
+즉, Spec Kit을 대체하거나 fork하는 framework가 아닙니다. Spec Kit core
+위에 team-specific instructions, skills, agents, hooks, MCP, CI를
+overlay하고, 그 결과를 **설치 가능한 GitHub Copilot Agent Plugin**으로
+배포합니다.
+
+TeamFeed는 최종 제품이 아니라 harness를 만들고 검증하기 위한 reference
+application입니다. 회원, 게시글, 팔로우, 피드, 신고 기능을 구현하며
+instructions, skills, agents, hooks, MCP, CI가 각각 어떤 failure를 막는지
+확인합니다.
 
 > [!IMPORTANT]
-> **최종 산출물: [`plugins/ai-sw-factory-msft-ko/`](plugins/ai-sw-factory-msft-ko/)**
+> **최종 산출물:** [`ai-sw-factory-msft-ko` 2.0.0](plugins/ai-sw-factory-msft-ko/)
 >
-> S0-S6에서 만든 role-based agents, skills, hooks, MCP를 Agent Plugins 1.0
-> 패키지로 제공합니다. VS Code에서는 **Chat: Install Plugin from Source**,
-> CLI에서는 `copilot plugin install ./plugins/ai-sw-factory-msft-ko`로 설치합니다.
+> Node.js 22+, Python 3.12+, Clean Architecture, role-based agents, TDD,
+> cross-platform hooks, read-only MCP, convergence workflow를 하나의
+> Agent Plugins 1.0 package로 제공합니다.
 
-## Install ai-sw-factory-msft-ko
+![요구사항에서 검증 가능한 team harness와 설치 가능한 plugin으로 이어지는 흐름](docs/images/workshop-overview.svg)
 
-![GitHub repository에서 marketplace 또는 direct source를 통해 VS Code와 Copilot CLI에 ai-sw-factory-msft-ko를 설치하는 흐름](docs/images/plugin-installation.svg)
+## Summary — 무엇을 만드는가?
 
-### Prerequisites
+| 항목 | 내용 |
+|---|---|
+| Goal | Spec Kit 위에 팀의 개발 방식과 quality gates를 추가한 custom Team harness |
+| Method | Spec Kit → role separation → TDD → guardrails → verification → convergence |
+| Reference app | FastAPI + React 기반 TeamFeed |
+| Deliverable | VS Code와 Copilot CLI에 설치하는 `ai-sw-factory-msft-ko` plugin |
+| Runtime baseline | Node.js 22+, Python 3.12+ |
+| Architecture | Module-first Clean Architecture, ports and adapters, incremental refactoring |
+| Distribution | GitHub-hosted marketplace, direct GitHub, local source |
 
-* GitHub에 로그인된 VS Code와 GitHub Copilot
-* GitHub Copilot CLI 사용 시 `copilot --version`이 동작하는 환경
-* Private repository에서 설치할 경우 해당 repository의 read access
-* Optional SQLite MCP를 사용할 경우 `uv`와 Python 3.12+
+### 바로 이동
 
-> [!WARNING]
-> Plugin은 agents, skills, hooks, MCP server를 설치합니다. 설치 전에
-> [`plugin.json`](plugins/ai-sw-factory-msft-ko/plugin.json), [hooks](plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json),
-> [MCP configuration](plugins/ai-sw-factory-msft-ko/mcp.json)을 검토하세요.
+| 하고 싶은 일 | 이동 |
+|---|---|
+| Plugin을 바로 설치 | [Quick install](#quick-install) |
+| 무엇이 포함되는지 확인 | [What you get](#what-you-get) |
+| 구조와 책임 경계 이해 | [Architecture](#architecture) |
+| 워크숍을 처음부터 진행 | [Workshop guide](#workshop-guide) |
+| 다른 설치 방식 확인 | [Installation details](#installation-details) |
+| 검증 명령 실행 | [Validation](#validation) |
+| Plugin update 또는 publish | [Plugin operations](#plugin-operations) |
 
-### Option A: Marketplace install (recommended)
+## Quick install
 
-다른 사용자와 팀에 배포할 때 사용하는 권장 경로입니다.
+다른 사용자와 팀에 배포할 때는 marketplace install을 권장합니다.
 
 ```powershell
 copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
-copilot plugin marketplace browse ai-sw-factory-msft-ko-marketplace
 copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
-### Option B: Direct GitHub install
-
-Marketplace를 등록하지 않고 repository subdirectory에서 바로 설치합니다.
-
-```powershell
-copilot plugin install `
-  daeungo1/msft-ghcp-dev-workshop:plugins/ai-sw-factory-msft-ko
-```
-
-### Option C: Local development install
-
-이 repository를 clone해 plugin을 수정하거나 테스트할 때 사용합니다.
-
-```powershell
-git clone https://github.com/daeungo1/msft-ghcp-dev-workshop.git
-cd msft-ghcp-dev-workshop
-copilot plugin marketplace add .
-copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
-```
-
-Local marketplace plugin은 workspace source를 live로 읽으므로 변경 후 새
-Copilot session을 시작하면 최신 파일이 반영됩니다.
-
-### Install from VS Code
-
-Marketplace install:
-
-1. Command Palette에서 **Chat: Manage Plugin Marketplaces** 실행
-2. **Add Marketplace...** 선택
-3. `daeungo1/msft-ghcp-dev-workshop` 입력
-4. Chat 또는 Agents 창에서 **Customize → Browse** 열기
-5. `ai-sw-factory-msft-ko` 검색 후 **Install** 선택
-
-Local source install:
-
-1. Command Palette에서 **Chat: Install Plugin from Source** 실행
-2. `<repository>/plugins/ai-sw-factory-msft-ko` 선택
-3. **Agent Customizations → Plugins**에서 enabled 상태 확인
-
-### Verify the installation
+설치 결과를 확인합니다.
 
 ```powershell
 copilot plugin list
@@ -97,237 +74,91 @@ copilot skill list
 copilot mcp list
 ```
 
-정상 설치 기준:
+정상 상태:
 
 * Plugin: `ai-sw-factory-msft-ko` version `2.0.0`, enabled
-* Skills: 6개
-* Agents: 6개 (VS Code **Agent Customizations → Agents**에서 확인)
-* Hooks: cross-platform PreToolUse/PostToolUse
-* MCP: `sqlite-ro` (optional)
+* Skills: 6
+* Agents: 6
+* Hooks: cross-platform `PreToolUse` / `PostToolUse`
+* MCP: optional `sqlite-ro`
 
-### Marketplace validation
+VS Code에서는 **Chat: Manage Plugin Marketplaces**에서
+`daeungo1/msft-ghcp-dev-workshop`를 추가한 뒤
+**Customize → Browse**에서 `ai-sw-factory-msft-ko`를 설치합니다.
+전체 설치 방식은 [Installation details](#installation-details)를 참고하세요.
 
-Publish 전에 official Agent Plugins schemas와 repository contracts를
-model-free로 검사합니다.
+## What you get
 
-```powershell
-python scripts/validate-marketplace.py
-python -m unittest scripts/tests/test_validate_marketplace.py -v
-bash scripts/verify-step.sh S5
-```
+| Package content | Responsibility |
+|---|---|
+| Instructions | Repository-wide rules와 path-specific constraints |
+| Skills | Spec-driven delivery, team standards, evidence research, TDD, convergence, PR description |
+| Role-based agents | Researcher, planner, test writer, implementer, security reviewer, convergence reviewer |
+| Hooks | 위험 명령 차단과 post-edit verification |
+| Read-only MCP | 실제 SQLite schema와 data를 least privilege로 조회 |
+| CI contracts | Runtime, tests, boundaries, package structure를 공유 gate로 검증 |
 
-CI는 Ubuntu, Windows, macOS에서 같은 validator와 hook/MCP tests를
-실행합니다. 검사 범위와 remote client smoke test는
-[Marketplace Validation](docs/marketplace-validation.md)을 참고하세요.
+Team application standards에는 다음 기준이 포함됩니다.
 
-SQLite MCP를 사용할 때만 DB 경로를 지정합니다.
+* Node.js hard floor `>=22`; production은 Active LTS 또는 Maintenance LTS
+* Python hard floor `>=3.12`; 새 서비스는 승인된 최신 bugfix release 우선
+* `Adapters → Application Use Cases → Core` dependency direction
+* Module 또는 service 단위의 incremental refactoring
+* Legacy modernization은 characterization test와 Strangler Fig 우선
+* SQL parameter binding, server-side authorization, explicit error handling
 
-```powershell
-$env:AI_SW_FACTORY_MSFT_KO_DB = "C:\absolute\path\application.db"
-```
+## Architecture
 
-![Spec Kit 개발 단계에서 재사용 가능한 ai-sw-factory-msft-ko까지 이어지는 워크숍 개요](docs/images/workshop-overview.svg)
+Harness는 하나의 거대한 prompt가 아닙니다. 변경 속도와 책임이 다른 세
+layer를 조합합니다.
 
-이 워크숍은 각 팀이 자신의 애플리케이션 개발 패턴을 설치 가능한 plugin으로
-만드는 과정을 Spec Kit 단계에 맞춰 설명합니다.
-
-### Spec Kit-based custom harness인가요?
-
-네. 다만 Spec Kit을 fork하거나 core command를 plugin에 복사하지 않고,
-다음 세 layer로 구성합니다.
+Spec Kit core는 모든 팀이 공유하는 delivery flow를 담당합니다. Team
+plugin은 여러 repository에서 재사용할 개발 표준과 automation을 담당하고,
+Project profile은 각 application의 domain과 acceptance criteria를
+담당합니다. 이 분리 덕분에 Spec Kit update, team policy release, project
+변경을 서로 독립적으로 관리할 수 있습니다.
 
 | Layer | Owner | Responsibility |
 |---|---|---|
 | Spec Kit core | `github/spec-kit` | constitution, specify, clarify, plan, tasks, implement, converge |
-| Team plugin | `ai-sw-factory-msft-ko` | runtime/architecture standards, role-based agents, TDD, hooks, MCP |
-| Project profile | target repository | constitution, feature specs, project instructions, `.ai-sw-factory-msft-ko/post-edit.py` |
+| Team plugin | `ai-sw-factory-msft-ko` | runtime/architecture standards, agents, TDD, hooks, MCP |
+| Project profile | target repository | project constitution, specs, instructions, project hook |
 
-Target repository에서 먼저 Spec Kit을 초기화하고 team plugin을 설치합니다.
+![TeamFeed reference application, Spec Kit agent workflow, deterministic quality gates의 관계](docs/images/teamfeed-architecture.svg)
 
-```powershell
-uv tool install specify-cli --force `
-  --from git+https://github.com/github/spec-kit.git@v1.2.5
-specify init --here --force --integration copilot
-copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
-copilot plugin install `
-  ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
-```
+핵심 원칙:
 
-이 방식은 upstream Spec Kit update와 우리 팀 policy release를 독립적으로
-관리하면서도 같은 delivery flow에서 함께 사용하게 합니다.
-
-### 이 워크숍에서 만드는 것
-
-| 결과물 | 핵심 학습 |
-|---|---|
-| Reference application | FastAPI + React TeamFeed로 harness 동작 검증 |
-| Spec Kit 1.2.5 개발 흐름 | constitution, spec, plan, tasks, implement, converge |
-| Role-based Copilot agents | research, planning, testing, implementation, security review, convergence review |
-| Multi-layer harness | instructions, skills, agents, hooks, MCP, CI |
-| Team application standards | Node.js 22+, Python 3.12+, Clean Architecture, module/service incremental refactoring |
-| 최종 설치 패키지 | [`ai-sw-factory-msft-ko`](plugins/ai-sw-factory-msft-ko/) Agent Plugin |
-| 프로세스 패키지 | Spec Kit extension, workflow, bundle |
-
-### 빠른 길찾기
-
-| 지금 필요한 것 | 이동할 곳 |
-|---|---|
-| Plugin을 설치하고 싶음 | [Install ai-sw-factory-msft-ko](#install-ai-sw-factory-msft-ko) |
-| Workshop 환경을 준비하고 싶음 | [빠른 시작](#빠른-시작) |
-| 전체 실습 순서를 보고 싶음 | [S0-S6 학습 흐름](#s0-s6-학습-흐름) |
-| Harness layer를 이해하고 싶음 | [Multi-layer harness architecture](#multi-layer-harness-architecture) |
-| MCP/API wrapper 구조가 궁금함 | [Integration wrapper pattern](#integration-wrapper-pattern) |
-| Spec Kit 명령 순서가 궁금함 | [Spec Kit 실행 흐름](#spec-kit-실행-흐름) |
-| 전체 검증 명령이 필요함 | [실행과 검증](#실행과-검증) |
-| Marketplace validation이 궁금함 | [Marketplace Validation](docs/marketplace-validation.md) |
-| 과거 v0.1 브랜치를 찾고 있음 | [버전과 브랜치](#버전과-브랜치) |
-
-> [!IMPORTANT]
-> 현재 `main`은 v0.2 기준선입니다. 기존 워크숍 완성본은 `main-v0.1`과
-> `final`, 단계별 정답은 `s0-done`부터 `s5-done`에 보존되어 있습니다.
-
-## 수료 목표
-
-워크숍을 마치면 다음을 설명하고 재현할 수 있습니다.
-
-* 요구사항을 명세, 계획, 작업, 테스트로 추적
-* 조사자와 작성자, 구현자와 리뷰어의 역할 분리
-* Guidance와 deterministic guardrails의 차이
-* Read-only MCP를 이용한 least-privilege context 제공
-* 모델과 무관하게 유지되는 테스트와 검증 계약
-* 구현 후 명세와 코드의 차이를 찾는 convergence 반복
-* Team harness를 다른 저장소에 배포하는 packaging 방식
-
-## S0-S6 학습 흐름
-
-S0-S6는 `ai-sw-factory-msft-ko`를 만드는 주 과정이고, TeamFeed 기능은 각 단계의
-harness를 검증하기 위한 실습 시나리오입니다.
-
-![S0 specification에서 S6 convergence까지 TeamFeed 예제로 harness를 단계적으로 추가하는 흐름](docs/images/workshop-workflow.svg)
-
-| 단계 | 앱 기능 | Harness 목표 | 주요 산출물 |
-|---|---|---|---|
-| [S0](labs/S0-spec.md) | 범위 정의 | 개발 기준 고정 | constitution, spec, plan, tasks |
-| [S1](labs/S1-member-post.md) | 회원과 게시글 | 역할과 TDD 분리 | researcher, planner, test-writer, implementer |
-| [S2](labs/S2-follow.md) | 팔로우 | Deterministic guardrails | import-linter, hooks, CI |
-| [S3](labs/S3-feed.md) | 피드 | 실제 스키마를 least-privilege로 조회 | read-only SQLite MCP |
-| [S4](labs/S4-report.md) | 신고와 관리자 처리 | Independent security review | security reviewer, CodeQL |
-| [S5](labs/S5-package.md) | 팀 배포 | Harness versioning과 reuse | `ai-sw-factory-msft-ko`, marketplace |
-| [S6](labs/S6-converge.md) | 완성도 확인 | Specification과 code convergence | verification, converge, human gate |
-
-각 단계는 같은 패턴을 반복합니다.
-
-```text
-요건 읽기 → harness 없이 시도 → failure 관찰 → harness 추가 → 재실행 → verification
-```
-
-## Multi-layer harness architecture
-
-![Reference application TeamFeed와 Spec Kit, role-based agents, quality gates의 관계](docs/images/teamfeed-architecture.svg)
-
-Harness는 하나의 거대한 prompt가 아닙니다. 각 layer는 서로 다른 failure를
-막습니다.
-
-| Layer | Responsibility | Location |
-|---|---|---|
-| Spec Kit artifacts | Intent, scope, acceptance criteria, implementation tasks | `.specify/`, `specs/` |
-| Instructions | Repository-wide and path-specific policies | `.github/copilot-instructions.md`, `.github/instructions/` |
-| Skills | Repeatable workflows | `.github/skills/` |
-| Agents | Role boundaries for research, planning, testing, implementation, review | `.github/agents/` |
-| Hooks | Destructive command blocking and immediate post-edit feedback | `.github/hooks/`, `scripts/hooks/` |
-| MCP | Least-privilege access to DB and GitHub context | `.mcp.json`, `.vscode/mcp.json` |
-| CI | Shared quality gates for every contributor | `.github/workflows/` |
-| Convergence | Gap detection between specification and current implementation | `speckit-converge` |
+1. Spec Kit artifacts가 intent, scope, acceptance criteria를 고정합니다.
+2. Research, test, implementation, review를 독립된 역할로 분리합니다.
+3. Hooks, tests, boundaries, CI가 deterministic checks를 실행합니다.
+4. `speckit-converge`가 specification과 code의 남은 차이를 tasks로 돌려보냅니다.
+5. 검증된 team pattern만 plugin으로 package합니다.
 
 더 자세한 책임 경계는
 [Multi-Harness Architecture](docs/multi-harness-architecture.md)를 참고하세요.
 
-## Optional integration wrapper pattern
+---
 
-![여러 external resource가 필요한 경우 참고할 수 있는 Integration Port, Resource Registry, protocol adapter 구조](docs/images/integration-wrapper-pattern.svg)
+## Workshop guide
 
-이 구조는 `ai-sw-factory-msft-ko`가 제공하는 runtime component가 아닙니다.
-여러 MCP, HTTP API, database를 하나의 catalog로 관리해야 할 때 참고할 수
-있는 optional architecture shape입니다. 단일 integration은 module-local
-port와 adapter로 연결합니다.
+S0–S6에서 TeamFeed 기능을 단계적으로 구현하면서
+`ai-sw-factory-msft-ko`를 완성합니다. 앱 기능은 학습 시나리오이고,
+각 단계에서 추가되는 harness layer가 핵심 결과물입니다.
 
-| Component | Responsibility |
-|---|---|
-| Resource descriptor | Resource ID, protocol type, connection key, operation, input/output contract 선언 |
-| Resource Registry | Descriptor validation과 duplicate detection |
-| Adapter Router | Validated resource type에 맞는 adapter 선택 |
-| HTTP Adapter | Origin, timeout, request/response contract 보호 |
-| MCP Adapter | Allowed remote tool과 structured result 검증 |
-| Database Adapter | Read-only access와 parameter binding 기본값 |
+![S0 specification에서 S6 convergence까지 진행하는 워크숍 흐름](docs/images/workshop-workflow.svg)
 
-적용할 때 유지할 최소 constraints:
+### 1. 준비
 
-* URL, password, client secret, token은 descriptor에 저장하지 않음
-* Connection 정보는 environment variable 또는 secret store에서 주입
-* Remote MCP tool은 allowlist로 제한
-* Database adapter는 read-only와 parameterized query를 기본값으로 사용
-* Invalid descriptor를 조용히 skip하지 않음
-
-형상은 비개발자 대상 reference repository인
-[`hy2219/simplified-sdlc`](https://github.com/hy2219/simplified-sdlc)의
-resource catalog와 adapters 책임 분리를 참고했습니다. 해당 repository의
-구현이나 schema를 plugin에 포함하거나 그대로 요구하지 않습니다.
-
-## Spec Kit 실행 흐름
-
-Spec Kit은 요구사항을 코드로 바로 넘기지 않습니다. 사람이 검토할 수 있는
-산출물을 단계별로 만들고, 구현 후 convergence status를 다시 확인합니다.
-
-```text
-constitution
-    ↓
-specify → clarify
-    ↓
-plan → tasks
-    ↓
-test-writer → implementer
-    ↓
-verify → independent review
-    ↓
-converge ── 남은 작업 있음 ──┐
-    ↑                         │
-    └──────── implement ──────┘
-```
-
-Copilot 세션에서 사용하는 기본 순서는 다음과 같습니다.
-
-```text
-/speckit-constitution
-/speckit-specify
-/speckit-clarify
-/speckit-plan
-/speckit-tasks
-/speckit-implement
-/speckit-converge
-```
-
-전체 과정을 human gate와 함께 실행하려면 설치된 workflow를 사용합니다.
-
-```bash
-specify workflow run teamfeed-delivery \
-  --input spec="Build the next TeamFeed capability"
-```
-
-## 빠른 시작
-
-### 1. 권장 환경
+권장 환경:
 
 * GitHub Codespaces 또는 VS Code Dev Containers
 * Python 3.12
 * Node.js 22
-* uv
+* `uv`
 * GitHub Copilot CLI 또는 VS Code Copilot Chat
 * Spec Kit 1.2.5
 
-Windows에서는 Bash hooks와 도구 버전 차이를 줄이기 위해 제공된 Dev
-Container를 권장합니다.
-
-### 2. 설치
+Repository와 dependencies를 준비합니다.
 
 ```bash
 git clone https://github.com/daeungo1/msft-ghcp-dev-workshop.git
@@ -340,7 +171,7 @@ uv sync --directory backend
 npm --prefix frontend install
 ```
 
-### 3. 준비 상태 확인
+준비 상태를 확인합니다.
 
 ```bash
 specify --version
@@ -348,7 +179,85 @@ specify integration status --json
 python scripts/validate-harness.py
 ```
 
-### 4. 앱 실행
+Windows에서는 Bash hooks와 toolchain 차이를 줄이기 위해 Dev Container를
+권장합니다.
+
+### 2. 각 단계를 진행하는 방법
+
+모든 lab은 같은 learning loop를 사용합니다.
+
+```text
+요건 읽기 → baseline 시도 → failure 관찰 → harness 추가
+          → 다시 실행 → verification evidence 기록
+```
+
+1. 해당 lab 문서에서 요구사항과 acceptance criteria를 읽습니다.
+2. 새 harness layer 없이 먼저 시도해 failure mode를 확인합니다.
+3. 단계에서 요구하는 instruction, skill, agent, hook, MCP를 추가합니다.
+4. targeted test를 먼저 실행하고 repository gate를 실행합니다.
+5. 모델의 완료 선언이 아니라 command output을 evidence로 남깁니다.
+
+### 3. S0–S6 learning path
+
+| Stage | TeamFeed scenario | Harness focus | 완료 확인 |
+|---|---|---|---|
+| [S0 · Specification](labs/S0-spec.md) | 범위와 수용 기준 | constitution, spec, plan, tasks | `bash scripts/verify-step.sh S0` |
+| [S1 · TDD](labs/S1-member-post.md) | 회원과 게시글 | role separation, failing test first | `bash scripts/verify-step.sh S1` |
+| [S2 · Guardrails](labs/S2-follow.md) | 팔로우 | import boundaries, hooks, CI | `bash scripts/verify-step.sh S2` |
+| [S3 · Context](labs/S3-feed.md) | 피드 | read-only SQLite MCP | `bash scripts/verify-step.sh S3` |
+| [S4 · Security](labs/S4-report.md) | 신고와 관리자 처리 | independent security review, CodeQL | `bash scripts/verify-step.sh S4` |
+| [S5 · Packaging](labs/S5-package.md) | 팀 배포 | Agent Plugin, marketplace, versioning | `bash scripts/verify-step.sh S5` |
+| [S6 · Convergence](labs/S6-converge.md) | 완성도 확인 | verify, converge, human gate | `bash scripts/verify-step.sh S6` |
+
+#### S0 — Specification baseline
+
+구현 전에 constitution, feature spec, plan, tasks를 만듭니다. 요구사항,
+acceptance criteria, non-goals가 코드보다 먼저 review 가능한 상태여야 합니다.
+
+#### S1 — Role separation and TDD
+
+Researcher와 planner가 근거와 작업을 정리하고, test writer가 실패 테스트를
+먼저 만듭니다. Implementer는 테스트 기대값을 바꾸지 않고 최소 구현으로
+GREEN을 만듭니다.
+
+#### S2 — Deterministic guardrails
+
+Instructions만으로 막기 어려운 package boundary 위반과 위험 명령을
+import-linter, hooks, CI로 차단합니다. 같은 규칙이 local과 pull request에서
+동작해야 합니다.
+
+#### S3 — Least-privilege context
+
+Schema를 추측하지 않고 read-only SQLite MCP로 확인합니다. Database write는
+application repository layer만 담당하고 remote context tool은 SELECT만
+허용합니다.
+
+#### S4 — Independent security review
+
+구현자와 다른 context에서 authorization, input validation, SQL, secret
+exposure를 검토합니다. 발견된 결함은 재현 가능한 test로 고정합니다.
+
+#### S5 — Plugin packaging
+
+Agents, skills, hooks, MCP를 Agent Plugins 1.0 package로 묶습니다.
+Marketplace catalog와 plugin version을 맞추고 Windows, macOS, Linux에서
+동일한 validation을 실행합니다.
+
+#### S6 — Verification and convergence
+
+Spec, plan, tasks와 현재 code를 다시 비교합니다. 남은 차이는 tasks에
+추가하고 implement → verify → converge loop를 반복한 뒤 human gate에서
+종료합니다.
+
+### 4. 워크숍 완료 확인
+
+전체 단계 gate를 실행합니다.
+
+```bash
+bash scripts/verify-step.sh ALL
+```
+
+Reference application을 실행합니다.
 
 ```bash
 bash scripts/dev.sh
@@ -357,81 +266,211 @@ bash scripts/dev.sh
 * Frontend: `http://localhost:5173`
 * Backend API: `http://localhost:8000`
 
-> [!NOTE]
-> `X-Member-Id`는 교육용 인증 방식입니다. 실제 계정이나 민감 데이터를
-> 넣지 마세요.
+마지막으로 local plugin을 설치해 다른 project에서도 discovery되는지
+확인합니다.
 
-## 역할과 모델 선택
-
-저장소는 특정 모델을 필수로 지정하지 않습니다. 역할에 필요한 역량과
-검증 비용을 기준으로 런타임에서 모델을 선택합니다.
-
-| 역할 | 우선 역량 | 결과 검증 |
-|---|---|---|
-| Researcher | 긴 컨텍스트와 출처 추적 | 파일 경로와 공식 URL |
-| Planner | 제약 통합과 작업 분해 | 요구사항과 작업의 추적성 |
-| Test writer | 수용 기준의 정밀한 해석 | 예상 이유로 실패하는 테스트 |
-| Implementer | 저장소 이해와 타입 안전성 | targeted와 full test |
-| Reviewer | 독립 추론과 적대적 검토 | 파일과 줄 근거가 있는 findings |
-
-작성자와 리뷰어는 가능하면 다른 모델 또는 최소한 새 컨텍스트를 사용합니다.
-모델이 달라도 같은 테스트, 경계 검사, 보안 규칙, convergence gate를
-통과해야 합니다.
-
-> [!NOTE]
-> HydraFusion은 이 저장소의 필수 기술이나 공식 지원 계약이 아닙니다.
-> 멀티 모델 또는 fusion 접근을 설명할 때 참고 사례로만 다룹니다.
-
-세부 기준은 [Capability-Based Model Routing](docs/model-routing.md)을
-참고하세요.
-
-## 저장소 구조
-
-```text
-backend/                    FastAPI, SQLAlchemy, SQLite
-frontend/                   React, TypeScript, Vite
-requirements/               단계별 요건과 수용 기준
-specs/001-teamfeed-mvp/     기능 명세, 계획, 작업
-.specify/                   Spec Kit 관리 파일과 설치 상태
-.github/agents/             role-based custom agents
-.github/skills/             Spec Kit과 TeamFeed skills
-.github/instructions/       저장소 및 경로별 규칙
-.github/hooks/              Copilot hook 설정
-spec-kit/extensions/        TeamFeed 품질 extension source
-spec-kit/workflows/         human gate를 포함한 workflow source
-spec-kit/bundles/           팀 배포 bundle source
-plugins/ai-sw-factory-msft-ko/    VS Code와 Copilot CLI 설치용 최종 plugin
-labs/                       S0-S6 실습
-scripts/                    개발, hook, 구조 검증
+```bash
+copilot plugin marketplace add .
+copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
+copilot plugin list
+copilot skill list
+copilot mcp list
 ```
 
-## 실행과 검증
+> [!NOTE]
+> TeamFeed의 `X-Member-Id`는 교육용 인증 방식입니다. 실제 account나
+> sensitive data를 사용하지 마세요.
+
+---
+
+## Details and reference
+
+### Installation details
+
+![GitHub repository에서 VS Code와 Copilot CLI로 plugin을 설치하는 세 가지 경로](docs/images/plugin-installation.svg)
+
+#### Prerequisites
+
+* GitHub에 로그인된 VS Code와 GitHub Copilot
+* CLI 설치 시 `copilot --version`이 동작하는 환경
+* Private repository 설치 시 repository read access
+* Optional SQLite MCP 사용 시 `uv`와 Python 3.12+
+
+> [!WARNING]
+> Plugin은 agents, skills, hooks, MCP server를 설치합니다. 설치 전에
+> [`plugin.json`](plugins/ai-sw-factory-msft-ko/plugin.json),
+> [hooks](plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/hooks.json),
+> [MCP configuration](plugins/ai-sw-factory-msft-ko/mcp.json)을 검토하세요.
+
+#### Marketplace install — recommended
+
+```powershell
+copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
+copilot plugin marketplace browse ai-sw-factory-msft-ko-marketplace
+copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
+```
+
+#### Direct GitHub install
+
+```powershell
+copilot plugin install `
+  daeungo1/msft-ghcp-dev-workshop:plugins/ai-sw-factory-msft-ko
+```
+
+#### Local development install
+
+```powershell
+git clone https://github.com/daeungo1/msft-ghcp-dev-workshop.git
+cd msft-ghcp-dev-workshop
+copilot plugin marketplace add .
+copilot plugin install ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
+```
+
+Local marketplace는 workspace source를 live로 읽습니다. 변경 후 새 Copilot
+session을 시작하면 최신 파일이 반영됩니다.
+
+#### VS Code install
+
+1. **Chat: Manage Plugin Marketplaces** 실행
+2. **Add Marketplace...**에서 `daeungo1/msft-ghcp-dev-workshop` 입력
+3. Chat 또는 Agents 창에서 **Customize → Browse** 열기
+4. `ai-sw-factory-msft-ko` 검색 후 **Install** 선택
+
+Local source는 **Chat: Install Plugin from Source**에서
+`plugins/ai-sw-factory-msft-ko`를 선택합니다.
+
+#### Optional SQLite MCP
+
+```powershell
+$env:AI_SW_FACTORY_MSFT_KO_DB = "C:\absolute\path\application.db"
+```
+
+### Spec Kit workflow
+
+#### Spec Kit-based custom harness인가요?
+
+네. Spec Kit core, Team plugin, Project profile을 조합하는 custom harness입니다.
+Spec Kit core를 fork하거나 plugin에 복사하지 않습니다. Target repository에
+Spec Kit을 초기화하고 team plugin을 overlay합니다.
+
+```powershell
+uv tool install specify-cli --force `
+  --from git+https://github.com/github/spec-kit.git@v1.2.5
+specify init --here --force --integration copilot
+copilot plugin marketplace add daeungo1/msft-ghcp-dev-workshop
+copilot plugin install `
+  ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
+```
+
+Copilot session의 기본 순서:
+
+```text
+/speckit-constitution
+/speckit-specify
+/speckit-clarify
+/speckit-plan
+/speckit-tasks
+/speckit-implement
+/speckit-converge
+```
+
+Human gate를 포함한 workflow:
+
+```bash
+specify workflow run teamfeed-delivery \
+  --input spec="Build the next TeamFeed capability"
+```
+
+### Optional integration wrapper
+
+![여러 external resource가 필요한 경우의 Integration Port, Resource Registry, protocol adapter 구조](docs/images/integration-wrapper-pattern.svg)
+
+이 구조는 plugin이 제공하는 runtime component가 아니라 architecture
+reference입니다. 여러 MCP, HTTP API, database를 하나의 catalog로 관리해야
+할 때만 적용합니다. 단일 integration은 module-local port와 adapter로
+유지합니다.
+
+| Component | Responsibility |
+|---|---|
+| Resource Registry | Resource descriptor validation과 duplicate detection |
+| HTTP Adapter | Origin, timeout, request/response contract 보호 |
+| MCP Adapter | Allowed tool과 structured result 검증 |
+| Database Adapter | Read-only access와 parameter binding |
+
+최소 constraints:
+
+* Credentials는 descriptor에 저장하지 않고 secret store에서 주입
+* Remote MCP tools는 allowlist 적용
+* Database adapter는 read-only와 parameter binding을 기본값으로 사용
+* Invalid descriptor는 명시적으로 실패
+
+형상은 [`hy2219/simplified-sdlc`](https://github.com/hy2219/simplified-sdlc)의
+resource catalog와 adapter separation을 참고했으며 해당 구현이나 schema를
+복사하지 않습니다.
+
+### Roles and model selection
+
+저장소는 특정 model을 필수로 지정하지 않습니다. 역할에 필요한 capability와
+verification cost를 기준으로 runtime에서 model을 선택합니다.
+
+| Role | Required capability | Evidence |
+|---|---|---|
+| Researcher | 긴 context와 source tracking | file path와 official URL |
+| Planner | constraints 통합과 task decomposition | requirement-task traceability |
+| Test writer | acceptance criteria의 정밀한 해석 | 예상 이유로 실패하는 test |
+| Implementer | repository 이해와 type safety | targeted와 full test |
+| Reviewer | independent reasoning | file과 line evidence |
+
+HydraFusion은 필수 기술이나 공식 지원 계약이 아니라 multi-model 접근을
+설명하기 위한 reference입니다. 자세한 기준은
+[Capability-Based Model Routing](docs/model-routing.md)을 참고하세요.
+
+### Repository map
+
+```text
+backend/                         FastAPI, SQLAlchemy, SQLite
+frontend/                        React, TypeScript, Vite
+requirements/                    단계별 요구사항과 acceptance criteria
+specs/001-teamfeed-mvp/          feature spec, plan, tasks
+.specify/                        Spec Kit managed files
+.github/agents/                  role-based custom agents
+.github/skills/                  reusable workflows
+.github/instructions/            repository and path rules
+.github/hooks/                   deterministic Copilot hooks
+spec-kit/                        extension, workflow, bundle source
+plugins/ai-sw-factory-msft-ko/   installable Agent Plugin
+labs/                            S0–S6 workshop guide
+scripts/                         development and validation tools
+```
+
+### Validation
 
 | 목적 | 명령 |
 |---|---|
 | Harness structure | `python scripts/validate-harness.py` |
 | Marketplace package | `python scripts/validate-marketplace.py` |
-| 백엔드 테스트 | `cd backend && uv run pytest` |
-| 패키지 경계 | `cd backend && uv run lint-imports` |
-| 프론트엔드 테스트 | `cd frontend && npm test` |
-| 프론트엔드 빌드 | `cd frontend && npm run build` |
+| Backend tests | `cd backend && uv run pytest` |
+| Package boundaries | `cd backend && uv run lint-imports` |
+| Frontend tests | `cd frontend && npm test` |
+| Frontend build | `cd frontend && npm run build` |
 | Hook fixtures | `bash scripts/hooks/test_hooks.sh` |
-| 전체 워크숍 | `bash scripts/verify-step.sh ALL` |
+| 전체 workshop | `bash scripts/verify-step.sh ALL` |
 
-품질 extension은 같은 검증 순서를
-`/speckit-teamfeed-quality-verify` skill로 제공합니다. 로컬 Spec Kit 구성
-설치 방법은 [Spec Kit Components](spec-kit/README.md)를 참고하세요.
+Marketplace validator는 official Agent Plugins schemas, catalog-manifest
+일치, skills, agents, hooks, MCP references를 확인합니다. CI는 Ubuntu,
+Windows, macOS에서 같은 contracts를 실행합니다. 자세한 내용은
+[Marketplace Validation](docs/marketplace-validation.md)을 참고하세요.
 
-## Plugin management and distribution
+### Plugin operations
 
-### Update
+#### Update
 
 ```powershell
 copilot plugin marketplace update ai-sw-factory-msft-ko-marketplace
 copilot plugin update ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
-### Disable or uninstall
+#### Disable or uninstall
 
 ```powershell
 copilot plugin disable ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
@@ -439,37 +478,28 @@ copilot plugin enable ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 copilot plugin uninstall ai-sw-factory-msft-ko@ai-sw-factory-msft-ko-marketplace
 ```
 
-Plugin ID를 변경하거나 uninstall한 뒤 기존 session이 old hook를 계속
-호출하면 **Developer: Reload Window**를 실행하고 새 Copilot session을
-시작합니다. Hook command는 missing plugin path에서 `{}`를 반환하도록
-구성되어 stale path가 normal permission flow를 차단하지 않습니다.
+Uninstall 또는 plugin ID 변경 뒤 기존 session이 old hook를 호출하면
+**Developer: Reload Window**를 실행하고 새 Copilot session을 시작합니다.
 
-### Publish a new version
+#### Publish a new version
 
 1. [`plugin.json`](plugins/ai-sw-factory-msft-ko/plugin.json)의 semantic version 변경
-2. [`marketplace.json`](.github/plugin/marketplace.json)의 version을 동일하게 변경
-3. Plugin tests와 `scripts/verify-step.sh S5` 실행
+2. [`marketplace.json`](.github/plugin/marketplace.json)의 version 동기화
+3. `python scripts/validate-marketplace.py`와 `bash scripts/verify-step.sh S5` 실행
 4. Default branch에 commit/push
-5. Marketplace catalog update와 plugin update로 설치 검증
+5. Remote marketplace browse/install smoke test 실행
 
-Public repository는 누구나 marketplace로 추가할 수 있습니다. Private
-repository는 설치 사용자가 GitHub에 로그인되어 있고 repository read
-access를 가져야 합니다.
-
-## 버전과 브랜치
+### Versions and branches
 
 ![v0.1 보존 브랜치와 현재 v0.2 main의 관계](docs/images/branch-map.svg)
 
-* `main`: 현재 v0.2 기준선
-* `main-v0.1`: 기존 v0.1 완성 상태 보존
-* `s0-done`부터 `s5-done`: v0.1 단계별 정답
-* `final`: v0.1 회고와 데모용 완성본
+* `main`: 현재 v0.2
+* `main-v0.1`: 기존 v0.1 완성 상태
+* `s0-done`–`s5-done`: v0.1 단계별 정답
+* `final`: v0.1 회고와 demo용 완성본
 * `authoring`: 강사용 구성 이력
 
-기존 체크포인트를 재작성하거나 force-push하지 않습니다. v0.2 단계별
-체크포인트는 S0-S6 경로가 확정된 뒤 별도로 배포합니다.
-
-## 공식 기준
+### Official references
 
 * [GitHub Spec Kit](https://github.com/github/spec-kit)
 * [Spec Kit v1.2.5](https://github.com/github/spec-kit/releases/tag/v1.2.5)
@@ -479,6 +509,6 @@ access를 가져야 합니다.
 * [GitHub Copilot agent skills](https://docs.github.com/en/copilot/concepts/customizations/agent-skills)
 * [GitHub Copilot MCP](https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/extend-copilot-chat-with-mcp)
 
-## 라이선스
+### License
 
 이 저장소는 [MIT License](LICENSE)를 따릅니다.
