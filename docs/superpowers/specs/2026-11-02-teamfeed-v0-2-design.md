@@ -56,10 +56,11 @@ TeamFeed v0.2는 기존 애플리케이션 도메인을 유지하면서 워크�
 * 설치 파일의 출처를 확인하는 artifact inventory
 * 구현과 명세의 수렴 여부를 확인하는 `speckit-converge`
 
-공식 GitHub와 Microsoft 자료에서는 "GitHub Copilot HydraFusion"을 제품이나
-공개 모델 계약으로 확인할 수 없었다. 공개 검색 결과의 HydraFusion은
-센서 융합 연구 프로젝트를 가리킨다. 따라서 HydraFusion을 실험적으로 사용할
-수는 있지만 저장소의 필수 frontmatter, CI, 검증 명령에는 포함하지 않는다.
+> 2026-11-06 update: GitHub는 Project HydraFusion의 multi-model
+> orchestration과 auto model selection을 결합한 **GitHub Copilot Fusion**을
+> 2026-10-28 GA로 발표했다. Workshop runtime default는 Fusion Standard로
+> 변경하되, plan과 admin policy에 따른 availability를 위해 agent
+> frontmatter와 CI에는 특정 model을 고정하지 않는다.
 
 ## Approaches
 
@@ -178,4 +179,3 @@ The repository is ready when all of the following hold:
 * [Spec Kit bundles](https://github.github.io/spec-kit/reference/bundles.html)
 * [GitHub Copilot agent skills](https://docs.github.com/en/copilot/concepts/customizations/agent-skills)
 * [GitHub Copilot MCP configuration](https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/extend-copilot-chat-with-mcp)
-

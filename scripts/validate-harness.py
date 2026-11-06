@@ -49,6 +49,7 @@ COMPONENT_PATHS = tuple(path for path, _, _ in COMPONENT_MANIFESTS) + (
 
 LEARNING_PATHS = (
     "README.md",
+    "docs/images/copilot-fusion-routing.svg",
     "docs/images/plugin-installation.svg",
     "docs/images/integration-wrapper-pattern.svg",
     "docs/marketplace-validation.md",
@@ -344,6 +345,16 @@ def validate_documented_commands(root: Path) -> list[str]:
         if any(item not in readme for item in required_speckit_content):
             errors.append(
                 "README must document Spec Kit composition and bootstrap"
+            )
+        required_fusion_content = (
+            "docs/images/copilot-fusion-routing.svg",
+            "Copilot Fusion",
+            "copilot --model fusion --fusion-tier standard",
+            "https://docs.github.com/en/copilot/concepts/models/copilot-fusion",
+        )
+        if any(item not in readme for item in required_fusion_content):
+            errors.append(
+                "README must document Copilot Fusion selection and official guidance"
             )
     return errors
 

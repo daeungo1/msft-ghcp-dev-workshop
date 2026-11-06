@@ -40,6 +40,10 @@ TeamFeed 저장소 전체에 적용되는 규칙입니다. 작업 원칙과 명�
 ## 모델 선택
 
 * 저장소는 특정 모델을 필수로 요구하지 않습니다.
+* 워크숍 runtime default는 Copilot Fusion Standard입니다. S4 security
+  review와 S6 convergence는 Fusion High, final audit은 필요할 때만 Fusion
+  Max를 사용합니다.
+* Agent frontmatter에는 Fusion이나 개별 model을 고정하지 않습니다.
 * 조사, 계획, 테스트, 구현, 리뷰 역할에 필요한 역량을 기준으로 런타임에서
   모델을 선택합니다.
 * 선택형 모델을 사용할 수 없으면 오류를 숨기지 말고 지원되는 모델로 역할을

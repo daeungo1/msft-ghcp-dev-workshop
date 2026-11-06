@@ -43,6 +43,7 @@ COMPONENT_PATHS = (
 )
 LEARNING_PATHS = (
     "README.md",
+    "docs/images/copilot-fusion-routing.svg",
     "docs/images/plugin-installation.svg",
     "docs/images/integration-wrapper-pattern.svg",
     "docs/marketplace-validation.md",
@@ -188,7 +189,11 @@ def write_complete_harness(root: Path) -> None:
         "Spec Kit core\n"
         "Team plugin\n"
         "Project profile\n"
-        "specify init --here --force --integration copilot\n",
+        "specify init --here --force --integration copilot\n"
+        "docs/images/copilot-fusion-routing.svg\n"
+        "Copilot Fusion\n"
+        "copilot --model fusion --fusion-tier standard\n"
+        "https://docs.github.com/en/copilot/concepts/models/copilot-fusion\n",
     )
     write_file(
         root,
@@ -651,6 +656,19 @@ class ValidateHarnessTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 1)
         self.assertIn("README must document Spec Kit composition", result.stderr)
+
+    def test_readme_without_copilot_fusion_guidance_returns_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_complete_harness(root)
+            readme = (root / "README.md").read_text(encoding="utf-8")
+            readme = readme.replace("Copilot Fusion\n", "")
+            write_file(root, "README.md", readme)
+
+            result = run_validator(root)
+
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("README must document Copilot Fusion", result.stderr)
 
     def test_generic_team_standards_skill_returns_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

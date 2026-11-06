@@ -158,6 +158,30 @@ S0–S6에서 TeamFeed 기능을 단계적으로 구현하면서
 * GitHub Copilot CLI 또는 VS Code Copilot Chat
 * Spec Kit 1.2.5
 
+#### Copilot Fusion 선택
+
+워크숍의 기본 runtime model은 **Copilot Fusion Standard**입니다. Copilot
+Fusion은 Project HydraFusion의 multi-model orchestration과 Copilot auto
+model selection을 결합한 GitHub의 공식 GA 기능입니다.
+
+VS Code의 model picker에서 **Copilot Fusion → Standard**를 선택합니다.
+Copilot CLI interactive session에서는 `/model`을 입력하고 같은 항목을
+선택합니다. Non-interactive 실행은 다음과 같습니다.
+
+```bash
+copilot --model fusion --fusion-tier standard -p "YOUR PROMPT"
+```
+
+| Workshop stage | 권장 effort | 기준 |
+|---|---|---|
+| S0–S3, S5 | Fusion Standard | 일상적인 조사, 계획, 구현, packaging |
+| S4, S6 | Fusion High | Security review, cross-file reasoning, convergence |
+| Final audit (optional) | Fusion Max | 가장 깊은 분석이 필요하고 추가 cost/latency를 허용할 때 |
+
+Fusion이 model picker에 없으면 plan 또는 organization model policy를
+확인합니다. 사용할 수 없는 tier를 조용히 대체하지 말고, 지원되는 model을
+명시적으로 선택한 뒤 같은 tests와 quality gates를 실행합니다.
+
 Repository와 dependencies를 준비합니다.
 
 ```bash
@@ -410,8 +434,23 @@ resource catalog와 adapter separation을 참고했으며 해당 구현이나 sc
 
 ### Roles and model selection
 
-저장소는 특정 model을 필수로 지정하지 않습니다. 역할에 필요한 capability와
-verification cost를 기준으로 runtime에서 model을 선택합니다.
+워크숍에서는 **Copilot Fusion을 runtime default**로 선택합니다. Copilot
+Fusion은 하나의 고정 model이 아니라 task마다 model과 execution pattern을
+선택하는 intelligent router and orchestrator입니다.
+
+![Copilot Fusion이 effort level과 task에 따라 Single, Cascade, Critique execution pattern을 선택하는 흐름](docs/images/copilot-fusion-routing.svg)
+
+* **Fusion Standard:** cost, quality, latency를 균형 있게 사용
+* **Fusion High:** 복잡한 bug, security review, 여러 파일 변경에 사용
+* **Fusion Max:** 가장 깊은 reasoning과 final audit에 선택적으로 사용
+
+Fusion은 task에 따라 Single, Cascade, Critique pattern을 선택할 수 있습니다.
+사용자는 최종 응답 하나를 받지만, High와 Max는 추가 model calls로 더 많은
+AI credits와 시간을 사용할 수 있습니다.
+
+Agent file에는 특정 model 이름을 고정하지 않습니다. Model availability는
+Copilot plan과 organization/enterprise policy에 따라 달라지고, Fusion이
+내부에서 사용하는 model pool도 변경될 수 있기 때문입니다.
 
 | Role | Required capability | Evidence |
 |---|---|---|
@@ -421,8 +460,9 @@ verification cost를 기준으로 runtime에서 model을 선택합니다.
 | Implementer | repository 이해와 type safety | targeted와 full test |
 | Reviewer | independent reasoning | file과 line evidence |
 
-HydraFusion은 필수 기술이나 공식 지원 계약이 아니라 multi-model 접근을
-설명하기 위한 reference입니다. 자세한 기준은
+Fusion 내부의 Critique가 explicit security reviewer나 convergence reviewer를
+대체하지는 않습니다. Role boundary와 deterministic tests는 model routing과
+독립적으로 유지합니다. 세부 기준과 fallback은
 [Capability-Based Model Routing](docs/model-routing.md)을 참고하세요.
 
 ### Repository map
@@ -508,6 +548,9 @@ Uninstall 또는 plugin ID 변경 뒤 기존 session이 old hook를 호출하면
 * [Spec Kit bundles](https://github.github.io/spec-kit/reference/bundles.html)
 * [GitHub Copilot agent skills](https://docs.github.com/en/copilot/concepts/customizations/agent-skills)
 * [GitHub Copilot MCP](https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/extend-copilot-chat-with-mcp)
+* [About GitHub Copilot Fusion](https://docs.github.com/en/copilot/concepts/models/copilot-fusion)
+* [Choosing a model in Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/choose-a-model)
+* [Copilot Fusion GA announcement](https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion/)
 
 ### License
 

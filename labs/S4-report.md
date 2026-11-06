@@ -25,8 +25,11 @@ description: 테스트가 통과해도 새는 인가 누락을 작성자와 분�
 사용합니다. 모델을 바꿔도 403 테스트, SQL 경계, CodeQL 결과는 동일한
 판정 기준입니다.
 
-HydraFusion은 공식 GitHub Copilot 계약으로 확인되지 않았으므로 선택 가능한
-클라이언트에서만 실험합니다. 자세한 기준은
+Project HydraFusion의 multi-model orchestration은 공식 GA 제품인
+**GitHub Copilot Fusion**으로 이어졌습니다. 이 단계에서는 model picker의
+**Fusion High**를 권장합니다. Fusion이 task에 따라 별도 model의 critique를
+사용할 수 있지만, read-only security reviewer와 403 regression test를
+대체하지는 않습니다. 자세한 기준은
 [`docs/model-routing.md`](../docs/model-routing.md)를 참고하세요.
 
 ## 시작 전 확인
