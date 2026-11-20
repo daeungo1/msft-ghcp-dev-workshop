@@ -48,7 +48,11 @@ def run(event: dict[str, Any]) -> dict[str, str]:
     root = Path(str(event.get("cwd") or os.getcwd())).resolve()
     check_script = root / ".ai-sw-factory-msft-ko" / "post-edit.py"
     if not check_script.is_file():
-        return output()
+        return output(
+            "Project post-edit validation is not configured. "
+            "No project checks were run. To enable them, have the project owner "
+            "review and add .ai-sw-factory-msft-ko/post-edit.py at the project root."
+        )
 
     try:
         completed = subprocess.run(
@@ -67,7 +71,10 @@ def run(event: dict[str, Any]) -> dict[str, str]:
         return output(f"ai-sw-factory-msft-ko post-edit validation could not run: {exc}")
 
     if completed.returncode == 0:
-        return output()
+        return output(
+            "Project post-edit validation passed (configured checks only). "
+            "Run the remaining test, build, and release gates before reporting completion."
+        )
 
     combined = (completed.stdout + completed.stderr).strip()
     tail = "\n".join(combined.splitlines()[-40:])

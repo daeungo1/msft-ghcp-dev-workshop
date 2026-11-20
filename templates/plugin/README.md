@@ -14,7 +14,7 @@ plugins/ai-sw-factory-msft-ko/
 ├── README.md                         # 설치, 공유, 프로젝트별 맞춤 방법
 ├── skills/
 │   ├── spec-driven-delivery/SKILL.md
-│   ├── team-application-standards/SKILL.md
+│   ├── team-application-standards/     # SKILL.md와 references/를 함께 복사
 │   ├── evidence-research/SKILL.md
 │   ├── tdd/SKILL.md
 │   ├── convergence-check/SKILL.md
@@ -42,6 +42,15 @@ plugins/ai-sw-factory-msft-ko/
 | `plugin.json` | 허용 필드는 `$schema`, `name`, `version`, `description`, `author`, `homepage`, `repository`, `license`, `keywords`, `extensions` 뿐입니다. 그 밖의 필드는 무시됩니다 |
 | `mcp.json` | stdio 서버의 `type`은 `stdio`입니다. `${PLUGIN_ROOT}`와 `${PLUGIN_DATA}`는 런타임이 확장합니다. SQLite를 쓰려면 `AI_SW_FACTORY_MSFT_KO_DB`를 지정합니다 |
 | `hooks.json` | 훅 스크립트 경로는 `${PLUGIN_ROOT}` 기준입니다. 프로젝트별 검사는 `.ai-sw-factory-msft-ko/post-edit.py`가 담당합니다 |
+
+`team-application-standards/references/application-profile.md`에는
+기술 선택과 production 요구사항 결정표가 있습니다. 기존 stack과 작은 앱의
+도메인 파일 구조를 유지하고 필요한 architecture 추출만 계획합니다.
+
+Post-edit 스크립트가 없으면 hook은 `not configured`를, 있으면 설정된
+검사의 성공/실패를 반환합니다. 설정 예제와 client 로딩 확인 절차는
+[완성 plugin 안내](../../plugins/ai-sw-factory-msft-ko/README.md#프로젝트별-맞춤-검사)를
+따릅니다. Hook context는 CI를 대체하는 강제 차단이 아닙니다.
 
 ## 설치와 확인
 

@@ -1,6 +1,6 @@
 ---
 name: team-application-standards
-description: "Use when: creating or modernizing a Node.js/TypeScript or Python service that must follow AI SW Factory MSFT KO runtime floors, Clean Architecture boundaries, module ownership, and incremental refactoring rules."
+description: "Use when: choosing a stack and production requirements for a Python or TypeScript application, or evolving its module boundaries, runtime policy, and verification gates."
 ---
 
 # AI SW Factory MSFT KO Team Application Standards
@@ -9,7 +9,24 @@ description: "Use when: creating or modernizing a Node.js/TypeScript or Python s
 
 새 애플리케이션, 신규 module/service, legacy module refactoring, runtime
 upgrade plan에 이 skill을 적용합니다. 기존 코드 전체를 한 번에 재구성하지
-않고 현재 작업이 소유한 module/service boundary부터 적용합니다.
+않고 현재 작업이 소유한 module/service boundary부터 incremental refactoring을
+적용합니다.
+
+## 0. Requirement-driven application profile
+
+Framework나 폴더 구조를 먼저 정하지 않습니다. 기존 manifest, lock file,
+constitution, spec, CI를 확인한 뒤
+[Application profile](references/application-profile.md)의 결정표를 기존
+plan에 기록합니다. 확인된 사실, 제안, 미확인 가정을 구분합니다.
+
+* 기존 stack과 동작을 기본값으로 유지하고 변경에는 요구사항 근거를 붙임
+* Backend runtime과 frontend build runtime을 구분하며 Node.js backend를
+  React build 때문에 추가하지 않음
+* 인증, 데이터, API, UX, 성능, 복구, 관측성, 배포, 비용을 결정표로 검토
+* 각 항목은 결정과 검증 명령 또는 근거 있는 `N/A`를 가짐
+* 생산 환경에 영향을 주는 미확정 값은 blocker로 남기고 임의로 채우지 않음
+* PostgreSQL, OIDC, queue, cache, Kubernetes, microservices는 조건이 맞을 때만 선택
+* 교육용 profile의 검증 통과를 production readiness로 보고하지 않음
 
 ## 1. Runtime lifecycle policy
 
@@ -100,6 +117,28 @@ Rules:
 * Composition root만 concrete adapter를 use case에 연결
 * Cross-module 호출은 상대 module의 public API, port, event contract로만 수행
 * ORM entity와 framework request object를 Core로 전달하지 않음
+
+### Compact application과 기존 프로젝트
+
+위 directory tree는 복잡한 use case를 분리할 때의 target example이며
+모든 앱에 필요한 scaffold가 아닙니다. 작은 modular monolith는 기존의
+도메인별 파일 구성을 유지합니다. Single-use wrapper와 빈 port를 만들지
+않고 business rule의 복잡도나 외부 의존성 교체 필요가 생길 때 추출합니다.
+
+TeamFeed의 교육용 profile은 다음 구성을 유지합니다.
+
+| 기존 파일 | 책임 |
+|---|---|
+| `routes.py`, `schemas.py` | HTTP 입력, validation, 응답 DTO |
+| `service.py` | use case와 업무 규칙 |
+| `repository.py`, `models.py` | SQLAlchemy persistence와 ORM model |
+| `api.py` | 다른 도메인에 공개하는 계약 |
+| `main.py`, `db.py`, `security.py` | 앱 조립, DB 연결, 인증과 인가 공통 처리 |
+
+이 구조를 framework-independent Core가 이미 분리된 구조라고 부르지
+않습니다. 기존 service가 Session이나 ORM에 의존하면 그 결합을 기록하고,
+요청 범위에서 분리할 use case에만 아래 Python/TypeScript 규칙을 적용합니다.
+전면 재배치 없이 기존 public API와 import-linter 계약을 보존합니다.
 
 ## 3. Python service example
 
@@ -258,7 +297,8 @@ Rules:
 
 ## 9. Architecture automation
 
-Project post-edit 및 CI에 다음 검사를 연결합니다.
+Project post-edit에는 빠른 검사를, CI와 release gate에는 전체 검사를
+연결합니다. 아래 항목을 모든 편집마다 실행하지 않습니다.
 
 * runtime floor and lock-file validation
 * type checking
@@ -274,6 +314,14 @@ protocol adapter contract tests를 추가합니다.
 Python은 import-linter, TypeScript는 dependency-cruiser 또는 ESLint boundary
 rules를 기본 후보로 사용합니다. 도구가 다르더라도 dependency direction
 contract는 동일해야 합니다.
+
+Plugin의 `com.github.copilot/hooks/hooks.json`은 pre/post tool hook을
+포함합니다. Post hook은 프로젝트 소유자가 검토한
+`.ai-sw-factory-msft-ko/post-edit.py`만 호출합니다. 미설정 메시지는 검증
+통과가 아니며, 성공 메시지도 해당 script에 연결한 검사에만 해당합니다.
+Hook은 dependency 설치, 테스트 기대값 변경, DB migration, 배포를 자동
+실행하지 않습니다. Client별 지원과 실제 실행은 설치 후 별도로 확인하고
+CI를 공유 gate로 유지합니다.
 
 ## 10. Reject criteria
 
@@ -305,6 +353,8 @@ Optional multi-resource shape를 채택한 경우 다음도 거부합니다.
 6. legacy path caller count 또는 남은 migration task
 7. Optional multi-resource shape를 채택한 경우에만 descriptors, registry,
    adapter contract test 결과
+8. Application profile 결정표, 교육용/production 구분, 미해결 release blocker
+9. Hook 로딩 및 configured/unconfigured 상태와 CI/release 검증 결과의 구분
 
 ## Official references
 

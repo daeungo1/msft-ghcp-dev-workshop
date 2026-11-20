@@ -1,7 +1,7 @@
 ---
 title: AI SW Factory MSFT KO Workshop
 description: Spec Kit과 GitHub Copilot로 팀 개발 표준을 설치 가능한 Agent Plugin으로 만드는 워크숍
-ms.date: 2026-11-06
+ms.date: 2026-11-18
 ms.topic: tutorial
 ---
 
@@ -25,7 +25,7 @@ instructions, skills, agents, hooks, MCP, CI가 각각 어떤 failure를 막는�
 확인합니다.
 
 > [!IMPORTANT]
-> **최종 산출물:** [`ai-sw-factory-msft-ko` 2.0.0](plugins/ai-sw-factory-msft-ko/)
+> **최종 산출물:** [`ai-sw-factory-msft-ko` 2.1.0](plugins/ai-sw-factory-msft-ko/)
 >
 > Node.js 22+, Python 3.12+, Clean Architecture, role-based agents, TDD,
 > cross-platform hooks, read-only MCP, convergence workflow를 하나의
@@ -86,7 +86,7 @@ copilot mcp list
 
 정상 상태:
 
-* Plugin: `ai-sw-factory-msft-ko` version `2.0.0`, enabled
+* Plugin: `ai-sw-factory-msft-ko` version `2.1.0`, enabled
 * Skills: 6
 * Agents: 6
 * Hooks: cross-platform `PreToolUse` / `PostToolUse`
@@ -111,12 +111,25 @@ VS Code에서는 **Chat: Manage Plugin Marketplaces**에서
 
 Team application standards에는 다음 기준이 포함됩니다.
 
+* 기존 stack과 앱 규모에 맞는 기술 선택, 교육용/production profile 구분
+* 인증, 데이터/migration, API, 접근성, 성능, 복구, 관측성, 배포, 비용 결정표
 * Node.js hard floor `>=22`; production은 Active LTS 또는 Maintenance LTS
 * Python hard floor `>=3.12`; 새 서비스는 승인된 최신 bugfix release 우선
 * `Adapters → Application Use Cases → Core` dependency direction
 * Module 또는 service 단위의 incremental refactoring
 * Legacy modernization은 characterization test와 Strangler Fig 우선
 * SQL parameter binding, server-side authorization, explicit error handling
+
+`2.1.0`은 TeamFeed의 FastAPI + React stack과 도메인별 파일 구조를
+유지합니다. Clean Architecture의 세부 폴더를 일괄 생성하거나 PostgreSQL,
+OIDC, cloud 서비스를 자동 추가하지 않습니다. 운영에 필요한 선택과
+검증 근거는 [application profile](plugins/ai-sw-factory-msft-ko/skills/team-application-standards/references/application-profile.md)에
+따라 plan에 기록합니다.
+
+Hooks도 패키지에 포함됩니다. 프로젝트 post-edit 스크립트가 없으면
+`not configured`를 반환하며 검증 통과로 취급하지 않습니다. 연결 예제와
+client 로딩 확인은 [plugin 안내](plugins/ai-sw-factory-msft-ko/README.md#프로젝트별-맞춤-검사)를
+참고하세요.
 
 ## Architecture
 

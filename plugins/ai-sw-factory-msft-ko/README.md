@@ -1,7 +1,7 @@
 ---
 title: AI SW Factory MSFT KO Plugin
 description: Spec Kit 기반 애플리케이션 개발 절차를 GitHub Copilot에 설치하는 Agent Plugins 1.0 패키지
-ms.date: 2026-11-04
+ms.date: 2026-11-18
 ms.topic: reference
 ---
 
@@ -51,6 +51,10 @@ verify → converge → reusable plugin
 `team-application-standards` skill은 다음 값을 구체적인 기본 계약으로
 제공합니다.
 
+* 기존 stack과 요구사항으로 선택하는
+  [application profile 결정표](skills/team-application-standards/references/application-profile.md)
+* 인증, 데이터/migration, API, UX, 성능, 복구, 관측성, 배포, 비용 검토
+* 작은 앱의 도메인별 파일 구조 유지와 필요한 use case만 선택적 추출
 * `Node.js >=22`, 신규 서비스는 승인된 최신 supported LTS 우선
 * `Python >=3.12`, 신규 서비스는 승인된 latest bugfix-supported version 우선
 * Business module/service 기준 분리
@@ -60,6 +64,19 @@ verify → converge → reusable plugin
 * Legacy modernization의 Strangler Fig approach
 * 여러 external resources를 위한 optional registry/adapter architecture shape
 * Python import-linter와 TypeScript dependency boundary automation
+
+### 2.1.0 변경 사항
+
+TeamFeed의 FastAPI, SQLAlchemy, SQLite, React, TypeScript, Vite를 유지하는
+교육용 profile과 실제 배포 전 결정할 production 요구사항을 구분합니다.
+`core/application/ports/adapters` tree는 모든 앱의 필수 scaffold가 아니라
+필요한 use case를 분리할 때의 예제입니다.
+
+새 앱에서 `/spec-driven-delivery` 또는 `team-application-standards`를 사용할
+때는 대상 사용자, 데이터 민감도, 예상 부하와 배포 환경을 함께 전달하세요.
+Plan에 기술 선택의 이유, 대안, 검증 방법과 미결정 release blocker를 남깁니다.
+이 update가 앱에 OIDC, PostgreSQL, migration이나 운영 인프라를 구현하지는
+않습니다.
 
 ### VS Code에 로컬 설치
 
@@ -102,17 +119,75 @@ VS Code에서는 **Chat: Manage Plugin Marketplaces**로 같은 저장소를 추
 
 ### 프로젝트별 맞춤 검사
 
-플러그인의 post-edit hook은 프로젝트 루트에 아래 스크립트가 있을 때만
-실행합니다.
+Hooks는 Agent/Skill과 별도로 다음 위치에 포함됩니다. Agent Plugins 1.0의
+`plugin.json`에 legacy `hooks` 필드를 추가하지 않습니다.
+
+```text
+com.github.copilot/hooks/
+  hooks.json
+  pre_tool_guard.py
+  post_edit_check.py
+```
+
+`preToolUse`는 위험 명령과 보호 경로를 검사하고, `postToolUse`는 성공한
+편집 뒤 프로젝트 루트의 아래 스크립트가 있을 때만 실행합니다.
 
 ```text
 .ai-sw-factory-msft-ko/post-edit.py
 ```
 
-팀은 이 Python 스크립트에 자체 lint, test, architecture boundary 명령을
-넣습니다.
-종료 코드가 0이 아니면 Copilot에 실패 내용이 돌아가며 완료 보고 전에
-수정하도록 요구합니다.
+프로젝트 소유자가 내용을 검토하고 직접 추가합니다. Hook이 보호하는 경로를
+에이전트가 우회해서 수정하지 않습니다. TeamFeed에서 빠른 backend 경계
+검사만 연결하는 예제입니다. `uv`와 backend dependencies가 준비돼 있어야 합니다.
+
+```python
+from pathlib import Path
+import subprocess
+
+root = Path(__file__).resolve().parents[1]
+subprocess.run(
+    ["uv", "run", "--no-sync", "lint-imports"],
+    cwd=root / "backend",
+    check=True,
+    timeout=90,
+)
+```
+
+다른 stack에서는 그 프로젝트의 확인된 빠른 명령으로 바꿉니다. Dependency
+설치, 자동 수정, migration, 배포를 post-edit에 연결하지 않습니다. 전체
+tests, frontend build, 보안 검사는 CI/release gate에 둡니다.
+
+| 상태 | Copilot에 반환하는 내용 |
+|---|---|
+| 스크립트 없음 | `not configured`, `No project checks were run` |
+| 종료 코드 0 | `passed (configured checks only)` |
+| 종료 코드가 0이 아님 | 실패 메시지와 출력의 마지막 40줄 |
+| 120초 초과 또는 실행 불가 | timeout 또는 실행 오류 |
+
+Post hook의 context 메시지는 도구 실행을 취소하거나 release를 강제로
+차단하지 않습니다. Pre hook의 deny와 구분하고 공유 차단은 CI에 둡니다.
+
+### Hook 로딩 확인
+
+Agent/Skill 목록에 보이는 것만으로 hook 실행을 확인할 수는 없습니다.
+VS Code 1.146.0의 plugin 카드 요약은 기여 유형을 앞의 두 종류만 표시하므로
+Agent와 Skill이 있으면 Hook은 카드에 나타나지 않습니다. 이는 패키지에
+Hook이 없거나 실행되지 않는다는 증거가 아닙니다. 별도의 Hooks 화면에도
+plugin Hook이 표시되지 않는 사례가
+[보고돼 있습니다](https://github.com/microsoft/vscode/issues/347955).
+카드 표시를 위해 같은 Hook을 workspace에 중복 등록하지 마세요.
+Client별 지원은 [공식 plugin 문서](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-creating)와
+[hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference)를
+확인하세요. Cloud agent의 repository hook 설정과 local plugin hook 설치를
+동일하게 취급하지 않습니다.
+
+1. Local source install은 변경 후 `copilot plugin install`을 다시 실행해
+   cache를 갱신하고 새 session을 시작합니다.
+2. 해당 session에서 안전한 일반 파일 편집 뒤 post-edit의
+   미설정/성공/실패 context를 확인합니다.
+3. 실제 파괴적 명령을 실행해 시험하지 말고 아래 hook tests로 deny를 검증합니다.
+4. 메시지가 없으면 plugin enabled 상태, client 지원, workspace trust와
+   hook-disable 정책을 확인합니다. 출력이 없다는 이유로 통과라고 보고하지 않습니다.
 
 ### 선택형 SQLite MCP
 

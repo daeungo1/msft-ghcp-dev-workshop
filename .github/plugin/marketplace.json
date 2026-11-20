@@ -12,8 +12,8 @@
   "plugins": [
     {
       "name": "ai-sw-factory-msft-ko",
-      "description": "Runtime policy, Clean Architecture, module/service incremental refactoring, optional integration wrapper guidance, role-based agents, TDD, hooks, convergence",
-      "version": "2.0.0",
+      "description": "Requirements-driven stack and production planning, proportional architecture, role-based agents, TDD, observable hooks, convergence",
+      "version": "2.1.0",
       "source": "./plugins/ai-sw-factory-msft-ko",
       "category": "Developer Tools"
     }

@@ -132,6 +132,67 @@ class PluginHookTests(unittest.TestCase):
 
         self.assertIn("project check failed", output["additionalContext"])
 
+    def test_post_tool_hook_reports_unconfigured_validation_instead_of_success(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = run_hook(
+                "post_edit_check.py",
+                {
+                    "cwd": directory,
+                    "toolName": "edit",
+                    "toolResult": {"resultType": "success"},
+                },
+            )
+
+        self.assertIn("not configured", output["additionalContext"])
+        self.assertIn(".ai-sw-factory-msft-ko/post-edit.py", output["additionalContext"])
+        self.assertIn("No project checks were run", output["additionalContext"])
+
+    def test_post_tool_hook_reports_only_configured_checks_as_passed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script = root / ".ai-sw-factory-msft-ko" / "post-edit.py"
+            script.parent.mkdir()
+            script.write_text(
+                "from pathlib import Path\n"
+                "Path('check-ran').write_text('done', encoding='utf-8')\n",
+                encoding="utf-8",
+            )
+
+            output = run_hook(
+                "post_edit_check.py",
+                {
+                    "cwd": directory,
+                    "toolName": "apply_patch",
+                    "toolResult": {"resultType": "success"},
+                },
+            )
+
+            self.assertTrue((root / "check-ran").is_file())
+        self.assertIn("passed", output["additionalContext"])
+        self.assertIn("configured checks only", output["additionalContext"])
+
+    def test_post_tool_hook_does_not_run_checks_after_reads_or_failed_edits(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            script = root / ".ai-sw-factory-msft-ko" / "post-edit.py"
+            script.parent.mkdir()
+            script.write_text(
+                "raise SystemExit('validation must not run')\n",
+                encoding="utf-8",
+            )
+            for tool_name, result_type in (("view", "success"), ("edit", "failure")):
+                with self.subTest(tool_name=tool_name, result_type=result_type):
+                    output = run_hook(
+                        "post_edit_check.py",
+                        {
+                            "cwd": directory,
+                            "toolName": tool_name,
+                            "toolResult": {"resultType": result_type},
+                        },
+                    )
+
+                    self.assertEqual(output, {})
+
     def test_hooks_config_has_platform_specific_commands(self) -> None:
         config = json.loads((HOOKS_ROOT / "hooks.json").read_text(encoding="utf-8"))
 

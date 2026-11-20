@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ai-sw-factory-msft-ko",
-  "version": "2.0.0",
-  "description": "Spec-driven application development harness with runtime policy, Clean Architecture, incremental refactoring, optional integration wrapper guidance, role agents, TDD, guardrails, and convergence",
+  "version": "2.1.0",
+  "description": "Requirements-driven application stack and production planning with proportional architecture, role agents, TDD, observable project hooks, optional read-only MCP, and convergence",
   "author": {
     "name": "AI SW Factory MSFT KO Workshop",
     "url": "https://github.com/daeungo1/msft-ghcp-dev-workshop"
