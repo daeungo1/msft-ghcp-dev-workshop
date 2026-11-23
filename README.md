@@ -1,7 +1,7 @@
 ---
 title: AI SW Factory MSFT KO Workshop
 description: Spec Kit과 GitHub Copilot로 팀 개발 표준을 설치 가능한 Agent Plugin으로 만드는 워크숍
-ms.date: 2026-11-18
+ms.date: 2026-11-23
 ms.topic: tutorial
 ---
 
@@ -100,7 +100,7 @@ VS Code에서는 **Chat: Manage Plugin Marketplaces**에서
 
 ## What you get
 
-| Package content | Responsibility |
+| Harness content | Responsibility |
 |---|---|
 | Instructions | Repository-wide rules와 path-specific constraints |
 | Skills | Spec-driven delivery, team standards, evidence research, TDD, convergence, PR description |
@@ -108,6 +108,26 @@ VS Code에서는 **Chat: Manage Plugin Marketplaces**에서
 | Hooks | 위험 명령 차단과 post-edit verification |
 | Read-only MCP | 실제 SQLite schema와 data를 least privilege로 조회 |
 | CI contracts | Runtime, tests, boundaries, package structure를 공유 gate로 검증 |
+
+### Plugin 구성
+
+다음 개수는 설치 가능한 plugin 패키지에 포함된 항목 기준입니다.
+
+| 구성                    | 개수 | 역할                                        |
+|-------------------------|-----:|---------------------------------------------|
+| [Agents][plugin-agents] | 6    | 연구, 계획, 테스트, 구현, 보안 및 수렴 검토 |
+| [Skills][plugin-skills] | 6    | Spec 기반 개발, 팀 표준, TDD 등             |
+| [Hooks][plugin-hooks]   | 2    | `preToolUse`, `postToolUse`                 |
+| [MCP][plugin-mcp]       | 1    | 선택형 SQLite 읽기 전용 서버                |
+
+Hook은 이벤트별로 등록된 명령 수입니다. 카드 표시와 실행 확인은
+[Hook 로딩 확인](plugins/ai-sw-factory-msft-ko/README.md#hook-로딩-확인)을
+참고하세요.
+
+[plugin-agents]: plugins/ai-sw-factory-msft-ko/com.github.copilot/agents/
+[plugin-skills]: plugins/ai-sw-factory-msft-ko/skills/
+[plugin-hooks]: plugins/ai-sw-factory-msft-ko/com.github.copilot/hooks/
+[plugin-mcp]: plugins/ai-sw-factory-msft-ko/mcp/
 
 Team application standards에는 다음 기준이 포함됩니다.
 
